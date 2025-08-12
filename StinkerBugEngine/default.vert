@@ -14,7 +14,7 @@ void main(){
 	vec3 crntPos = vec3(model * vec4(aPos, 1.0));
 
 
-	vertColor = vec4(aNormal, 1.0);
+	vertColor = vec4(abs(aNormal), 1.0);
 
 	gl_Position = camMatrix * vec4(crntPos, 1.0);
 }

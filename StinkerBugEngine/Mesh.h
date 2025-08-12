@@ -6,7 +6,6 @@
 #include <vector>
 #include <array>
 
-
 #include <glm/glm.hpp>
 #include "glm/matrix.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -18,6 +17,7 @@
 #include "Transform.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "CommonShapes.h"
 
 #include "VAO.h"
 #include "VBO.h"
@@ -31,6 +31,11 @@ public:
     // Constructor for vector (dynamic size)
 	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds)
 		: vertices(verts), indices(inds) {
+		RecalculateMesh();
+	}
+
+	Mesh(const Shapes::Shape& shape)
+		: vertices(shape.getVertices()), indices(shape.getIndices()) {
 		RecalculateMesh();
 	}
 

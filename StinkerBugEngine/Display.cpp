@@ -58,8 +58,8 @@ int Display::init(unsigned int windowWidth, unsigned int windowHeight, const cha
 	glViewport(0, 0, windowWidth, windowHeight);
 	glEnable(GL_DEPTH_TEST);
 
-	// glEnable(GL_CULL_FACE);
-	// glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	Display::SetSize(windowWidth, windowHeight);
 

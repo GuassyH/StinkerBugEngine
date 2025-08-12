@@ -51,5 +51,8 @@ void Mesh::Draw(Shader& shader, Camera& camera) {
 
 
 Mesh::~Mesh() { 
+	VAO1.Delete();
+	VBO1.Delete();
+	EBO1.Delete();
 	// Yay
 }
