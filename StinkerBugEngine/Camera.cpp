@@ -1,6 +1,8 @@
 #include "Camera.h"
+#include "Constants.h"
 
 
+glm::vec3& WorldUp = Constants::Dirs::Up;
 
 Camera::Camera(int width, int height, glm::vec3 position) {
 	Camera::width = width;
@@ -29,10 +31,9 @@ void Camera::UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int win
 	view = glm::lookAt(transform.position, transform.position + transform.rotation, WorldUp);
 	projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 
-	localForward = glm::normalize(transform.rotation);
-	right = glm::normalize(glm::cross(localForward, WorldUp));
-	localRight = glm::normalize(glm::cross(transform.rotation, localUp));
-	localUp = glm::normalize(glm::cross(right, localForward));
+	forward = glm::normalize(transform.rotation);
+	right = glm::normalize(glm::cross(forward, WorldUp));
+	localUp = glm::normalize(glm::cross(right, forward));
 
 
 	camMatrix = projection * view;
@@ -58,7 +59,7 @@ void Camera::Move() {
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { horizontal -= 1.0; }
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { horizontal += 1.0; }
 
-	glm::vec3 forward = glm::normalize(glm::vec3(transform.rotation.x, 0.0f, transform.rotation.z));
+	glm::vec3 proj_forward = glm::normalize(transform.rotation * glm::vec3(1, 0, 1));
 
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { speedMul = 2.0f; }
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) { speedMul = 0.5f; }
@@ -68,7 +69,7 @@ void Camera::Move() {
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { elevator += 1; }
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { elevator -= 1; }
 
-	glm::vec3 dir = vertical * forward + horizontal * right + elevator * WorldUp;
+	glm::vec3 dir = vertical * proj_forward + horizontal * right + elevator * WorldUp;
 	if (glm::length(dir) > 0) { moveDir = glm::normalize(dir); }
 	else { moveDir = glm::vec3(0.0); }
 
@@ -77,6 +78,38 @@ void Camera::Move() {
 	// std::cout << glm::length(moveDir) * speedMul * moveSpeed << "\n";
 }
 
+bool firstClick = false;
 void Camera::Look() {
+	float deltaTime = DeltaTime::getInstance().get();
+	Display& display = Display::getInstance();
+	GLFWwindow* window = display.window;
 
+
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		if (firstClick) {
+			glfwSetCursorPos(window, (width / 2), (height / 2));
+			focusMouse = !focusMouse;
+			firstClick = false;
+		}
+	}
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) { firstClick = true; }
+
+	if (focusMouse) {
+
+		double mouseX;
+		double mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
+
+		float rotX = sensitivity * ((float)(mouseY - (height / 2)) / (float)height) * 100;
+		float rotY = sensitivity * ((float)(mouseX - (width / 2)) / (float)width) * 100;
+
+
+		glm::vec3 newOrientation = glm::rotate(transform.rotation, glm::radians(-rotX), glm::normalize(glm::cross(transform.rotation, WorldUp)));
+		if (!((glm::angle(newOrientation, WorldUp) <= glm::radians(5.0f)) || (glm::angle(newOrientation, -WorldUp) <= glm::radians(5.0f)))) {
+			transform.rotation = newOrientation;
+		}
+		transform.rotation = glm::rotate(transform.rotation, glm::radians(-rotY), WorldUp);
+
+		glfwSetCursorPos(window, (width / 2), (height / 2));
+	}
 }

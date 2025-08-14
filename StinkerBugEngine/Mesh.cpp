@@ -20,8 +20,9 @@ void Mesh::RecalculateMesh() {
 	EBO1.Unbind();
 }
 
-void Mesh::Draw(Shader& shader, Camera& camera) {
-	shader.Use();
+void Mesh::Draw(Camera& camera) {
+	Shader& r_shader = material->shader;
+	r_shader.Use();
 
 	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), transform.scale);
 
@@ -38,10 +39,11 @@ void Mesh::Draw(Shader& shader, Camera& camera) {
 	glm::mat4 model = translationMatrix * rotMatrix * scaleMatrix;
 
 
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(camera.camMatrix));
-
-
+	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotation"), 1, GL_FALSE, glm::value_ptr(rotMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(camera.camMatrix));
+	glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+	glUniform4f(glGetUniformLocation(r_shader.ID, "color"), material->Color.r, material->Color.g, material->Color.b, material->Color.a);
 
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
@@ -54,5 +56,6 @@ Mesh::~Mesh() {
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
+
 	// Yay
 }

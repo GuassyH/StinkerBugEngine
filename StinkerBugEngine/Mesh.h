@@ -15,9 +15,9 @@
 
 #include "Vertex.h"
 #include "Transform.h"
-#include "Shader.h"
+#include "Material.h"
 #include "Camera.h"
-#include "CommonShapes.h"
+#include "Constants.h"
 
 #include "VAO.h"
 #include "VBO.h"
@@ -29,25 +29,25 @@ public:
 	GLuint id = 0;
 
     // Constructor for vector (dynamic size)
-	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds)
-		: vertices(verts), indices(inds) {
+	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds, Material& material)
+		: vertices(verts), indices(inds), material(&material) {
 		RecalculateMesh();
 	}
 
-	Mesh(const Shapes::Shape& shape)
-		: vertices(shape.getVertices()), indices(shape.getIndices()) {
+	Mesh(const Constants::Shapes::Shape& shape, Material& material)
+		: vertices(shape.getVertices()), indices(shape.getIndices()), material(&material) {
 		RecalculateMesh();
 	}
 
     // Constructor for array (fixed size)
 	template <size_t NVerts, size_t NInds>
-	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds)
-		: vertices(verts.begin(), verts.end()), indices(inds.begin(), inds.end()) {
+	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds, Material& material)
+		: vertices(verts.begin(), verts.end()), indices(inds.begin(), inds.end()), material(&material) {
 		RecalculateMesh();
 	}
 	
 	void RecalculateMesh();
-	void Draw(Shader& shader, Camera& camera);
+	void Draw(Camera& camera);
 
 	~Mesh();
 
@@ -57,6 +57,8 @@ public:
 	std::vector<GLuint> indices = {};
 
 	glm::mat4 model = {};
+
+	Material* material = nullptr;
 
 	VAO VAO1;
 	VBO VBO1;

@@ -18,23 +18,18 @@ class Camera {
 public:
 	Transform transform;
 
-	glm::mat4 view = glm::mat4(1.0);
-	glm::mat4 proj = glm::mat4(1.0);
 	glm::mat4 camMatrix = glm::mat4(1.0);
 
-	glm::vec3 localUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 localForward = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::vec3 localRight = glm::vec3(1.0f, 0.0f, 0.0f);
-
+	glm::vec3 forward = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+	glm::vec3 localUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	glm::vec3 WorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
 
 	float FOVdeg = 60.0f;
 
 	float farPlane = 1000.0f;
 	float nearPlane = 0.1f;
-
 
 	Camera(int width, int height, glm::vec3 position);
 	void UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int windowWidth, int windowHeight);
@@ -42,12 +37,17 @@ public:
 	void Move();
 	void Look();
 
-	int width, height;
-	float horizontal, vertical, elevator;
 	glm::vec3 moveDir;
 
-	float moveSpeed = 1;
+	float moveSpeed = 2;
 	float speedMul = 1;
+
+	float sensitivity = 2;
+private:
+	int width, height;
+	float horizontal, vertical, elevator;
+
+	bool focusMouse = true;
 };
 
 

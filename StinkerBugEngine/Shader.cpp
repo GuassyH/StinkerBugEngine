@@ -4,6 +4,7 @@
 #include <string>      // for std::string
 #include <iostream>    // for std::cerr
 
+// READFILE IS BORROWED
 std::string ReadFile(const std::string& filepath) {
 	std::ifstream file(filepath);
 	if (!file.is_open()) {
@@ -38,12 +39,27 @@ void CheckCompileErrors(unsigned int shader, const std::string& type) {
 	}
 }
 
+// Should be a template maybe?
 Shader::Shader(const char* vertexShaderFile, const char* fragmentShaderFile) {
 	std::string vertCode = ReadFile(vertexShaderFile);
-	std::string fragCode = ReadFile(fragmentShaderFile);
+	std::string fragBaseCode = ReadFile(fragmentShaderFile);
+
+	std::ostringstream defStr; defStr << "#version 460 core" << "\n";
+	
+	defStr << "#define LIT" << "\n";
+	defStr << "#define DEPTH" << "\n";
+
+	std::string fragCode = defStr.str() + "\n//" + fragBaseCode;
+	// std::cout << fragCode << std::endl;
 
 	const char* vertSource = vertCode.c_str();
 	const char* fragSource = fragCode.c_str();
+
+	Compile(vertSource, fragSource);
+}
+
+
+void Shader::Compile(const char* vertSource, const char* fragSource) {
 
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertSource, NULL);
@@ -66,7 +82,8 @@ Shader::Shader(const char* vertexShaderFile, const char* fragmentShaderFile) {
 }
 
 void Shader::Use() {
+	// glEnable(GL_BLEND);
+	// glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glUseProgram(ID);
 }
 
-// COPIED I WANT TO LEARN HOW IT WORKS

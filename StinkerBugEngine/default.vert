@@ -7,14 +7,16 @@ layout (location = 2) in vec2 aTex;
 
 uniform mat4 model;
 uniform mat4 camMatrix; // proj * view
+uniform mat4 rotation;
 
 out vec4 vertColor;
-
+out vec3 normal;
+out vec3 crntPos;
 void main(){
-	vec3 crntPos = vec3(model * vec4(aPos, 1.0));
+	crntPos = vec3(model * vec4(aPos, 1.0));
 
-
-	vertColor = vec4(abs(aNormal), 1.0);
+	normal = vec3(rotation * vec4(aNormal, 1.0));
+	vertColor = vec4(vec3(0.8), 1.0);
 
 	gl_Position = camMatrix * vec4(crntPos, 1.0);
 }

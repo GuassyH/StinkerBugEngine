@@ -1,5 +1,5 @@
-#ifndef COMMON_SHAPES_H
-#define COMMON_SHAPES_H
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
 #include <iostream>
 #include <array>
@@ -9,7 +9,8 @@
 #include "glad/glad.h"
 #include "Vertex.h"
 
-namespace Shapes {
+namespace Constants {
+    namespace Shapes {
     struct Shape {
         virtual const std::vector<Vertex>& getVertices() const = 0;
         virtual const std::vector<GLuint>& getIndices() const = 0;
@@ -34,6 +35,70 @@ namespace Shapes {
         const std::vector<GLuint>& getIndices() const override { return indices; }
     };
 
+
+    struct UVSphere : public Shape {
+        static inline const std::vector<Vertex> vertices = [] {
+            std::vector<Vertex> verts;
+            const unsigned int sectorCount = 64; // longitude
+            const unsigned int stackCount = 32; // latitude
+            const float radius = 0.5f;
+
+            const float PI = 3.14159265359f;
+            const float sectorStep = 2 * PI / sectorCount;
+            const float stackStep = PI / stackCount;
+
+            for (unsigned int i = 0; i <= stackCount; ++i) {
+                float stackAngle = PI / 2 - i * stackStep; // from pi/2 to -pi/2
+                float xy = radius * cosf(stackAngle);
+                float z = radius * sinf(stackAngle);
+
+                for (unsigned int j = 0; j <= sectorCount; ++j) {
+                    float sectorAngle = j * sectorStep; // 0 to 2pi
+
+                    float x = xy * cosf(sectorAngle);
+                    float y = xy * sinf(sectorAngle);
+
+                    glm::vec3 pos(x, y, z);
+                    glm::vec3 normal = glm::normalize(pos);
+                    glm::vec2 texCoord(
+                        (float)j / sectorCount,
+                        (float)i / stackCount
+                    );
+
+                    verts.push_back({ pos, normal, texCoord });
+                }
+            }
+            return verts;
+            }();
+        static inline const std::vector<GLuint> indices = [] {
+            std::vector<GLuint> inds;
+            const unsigned int sectorCount = 64;
+            const unsigned int stackCount = 32;
+
+            for (unsigned int i = 0; i < stackCount; ++i) {
+                unsigned int k1 = i * (sectorCount + 1); // start of current stack
+                unsigned int k2 = k1 + sectorCount + 1;  // start of next stack
+
+                for (unsigned int j = 0; j < sectorCount; ++j, ++k1, ++k2) {
+                    // first triangle
+                    inds.push_back(k1);
+                    inds.push_back(k2);
+                    inds.push_back(k1 + 1);
+
+                    // second triangle
+                    inds.push_back(k1 + 1);
+                    inds.push_back(k2);
+                    inds.push_back(k2 + 1);
+                }
+            }
+            return inds;
+            }();
+
+        const std::vector<Vertex>& getVertices() const override { return vertices; }
+        const std::vector<GLuint>& getIndices() const override { return indices; }
+    };
+
+
     struct Triangle : public Shape {
         static inline const std::vector<Vertex> vertices = {
             // POSITION     NORMAL     TEXCOORD
@@ -48,6 +113,7 @@ namespace Shapes {
         const std::vector<Vertex>& getVertices() const override { return vertices; }
         const std::vector<GLuint>& getIndices() const override { return indices; }
     };
+
 
     struct Cube : public Shape {
         static inline const std::vector<Vertex> vertices = {
@@ -112,6 +178,23 @@ namespace Shapes {
         const std::vector<GLuint>& getIndices() const override { return indices; }
     };
 
+}
+    namespace Colors {
+        static inline glm::vec4 Red = glm::vec4(1.0, 0.0, 0.0, 1.0);
+        static inline glm::vec4 Green = glm::vec4(0.0, 1.0, 0.0, 1.0);
+        static inline glm::vec4 Blue = glm::vec4(0.0, 0.0, 1.0, 1.0);
+
+        static inline glm::vec4 Purple = glm::vec4(0.6, 0.0, 0.7, 1.0);
+
+        static inline glm::vec4 White = glm::vec4(1.0);
+        static inline glm::vec4 Black = glm::vec4(0.0, 0.0, 0.0, 1.0);
+    }
+    namespace Dirs {
+        static inline glm::vec3 Up = glm::vec3(0.0, 1.0, 0.0);
+        static inline glm::vec3 Right = glm::vec3(1.0, 0.0, 0.0);
+        static inline glm::vec3 Forward = glm::vec3(1.0, 0.0, -1.0);
+    }
+    
 }
 
 #endif
