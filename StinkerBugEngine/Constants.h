@@ -60,6 +60,8 @@ namespace Constants {
 
                     glm::vec3 pos(x, y, z);
                     glm::vec3 normal = glm::normalize(pos);
+                    pos.x += radius;
+                    pos.z += radius;
                     glm::vec2 texCoord(
                         (float)j / sectorCount,
                         (float)i / stackCount
@@ -102,8 +104,8 @@ namespace Constants {
     struct Triangle : public Shape {
         static inline const std::vector<Vertex> vertices = {
             // POSITION     NORMAL     TEXCOORD
-            { {-1, -1, 0}, {-1, -1, 0}, {0, 0} },
-            { {1, -1, 0},  {1, -1, 0},  {1, 0} },
+            { {0, 0, 0}, {-1, -1, 0}, {0, 0} },
+            { {1, 0, 0},  {1, -1, 0},  {1, 0} },
             { {0, 1, 0},   {0, 1, 0},   {0.5f, 1} },
         };
         static inline const std::vector<GLuint> indices = {
@@ -178,6 +180,22 @@ namespace Constants {
         const std::vector<GLuint>& getIndices() const override { return indices; }
     };
 
+    struct Quad : public Shape {
+        static inline const std::vector<Vertex> vertices = {
+            // POSITION     NORMAL     TEXCOORD
+            { {-1, -1, 0},    {0, 1, 0}, {0, 0} },
+            { {1, -1, 0},    {0, 1, 0}, {1, 0} },
+            { {-1, 1, 0},    {0, 1, 0}, {0, 1} },
+            { {1, 1, 0},    {0, 1, 0}, {1, 1} },
+        };
+        static inline const std::vector<GLuint> indices = {
+            0, 1, 2,
+            2, 1, 3,
+        };
+
+        const std::vector<Vertex>& getVertices() const override { return vertices; }
+        const std::vector<GLuint>& getIndices() const override { return indices; }
+    };
 }
     namespace Colors {
         static inline glm::vec4 Red = glm::vec4(1.0, 0.0, 0.0, 1.0);

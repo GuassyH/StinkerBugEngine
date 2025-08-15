@@ -32,8 +32,8 @@ void Camera::UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int win
 	projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 
 	forward = glm::normalize(transform.rotation);
+	localUp = glm::normalize(glm::cross(right, forward));	
 	right = glm::normalize(glm::cross(forward, WorldUp));
-	localUp = glm::normalize(glm::cross(right, forward));
 
 
 	camMatrix = projection * view;
@@ -75,7 +75,6 @@ void Camera::Move() {
 
 	transform.position += moveDir * moveSpeed * speedMul * deltaTime;
 
-	// std::cout << glm::length(moveDir) * speedMul * moveSpeed << "\n";
 }
 
 bool firstClick = false;

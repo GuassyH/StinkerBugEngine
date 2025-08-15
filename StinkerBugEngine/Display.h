@@ -25,6 +25,9 @@ public:
 	
 	static Display& getInstance() { static Display instance; return instance; }
 
+	Display(const Display&) = delete;
+	Display& operator=(const Display&) = delete;
+
 	int init(unsigned int windowWidth, unsigned int windowHeight, const char* title);
 	void BeginFrame();
 	void EndFrame();

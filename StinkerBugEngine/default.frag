@@ -2,8 +2,8 @@
 
 
 #ifdef LIT
-	vec3 lightDir = vec3(10, 13, 8.4);
-	vec4 lightColor = vec4(1);
+	uniform vec3 lightDir;
+	uniform vec4 lightColor;
 #endif
 
 #ifdef SHADOW
@@ -12,6 +12,7 @@
 
 uniform vec3 camPos;
 uniform vec4 color;
+uniform float ambient = 0.2;
 
 in vec3 crntPos;
 in vec3 normal;
@@ -19,13 +20,12 @@ in vec4 vertColor;
 
 out vec4 fragColor;
 
-float ambient = 0.2;
 
 #ifdef LIT
 vec4 directionalLight(){
 	
 	// easy to understand
-	vec3 lightDirection = normalize(lightDir);
+	vec3 lightDirection = -lightDir;
 	
 	// diffuse lighting
 	lightDirection = normalize(lightDirection);

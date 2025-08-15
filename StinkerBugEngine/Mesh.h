@@ -13,6 +13,8 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
+#include "SceneManager.h"
+
 #include "Vertex.h"
 #include "Transform.h"
 #include "Material.h"
@@ -28,23 +30,14 @@ class Mesh {
 public:
 	GLuint id = 0;
 
+	Mesh() = default;
     // Constructor for vector (dynamic size)
-	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds, Material& material)
-		: vertices(verts), indices(inds), material(&material) {
-		RecalculateMesh();
-	}
+	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds, Material& material);
 
-	Mesh(const Constants::Shapes::Shape& shape, Material& material)
-		: vertices(shape.getVertices()), indices(shape.getIndices()), material(&material) {
-		RecalculateMesh();
-	}
-
+	Mesh(const Constants::Shapes::Shape& shape, Material& material);
     // Constructor for array (fixed size)
 	template <size_t NVerts, size_t NInds>
-	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds, Material& material)
-		: vertices(verts.begin(), verts.end()), indices(inds.begin(), inds.end()), material(&material) {
-		RecalculateMesh();
-	}
+	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds, Material& material);
 	
 	void RecalculateMesh();
 	void Draw(Camera& camera);

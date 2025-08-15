@@ -9,6 +9,7 @@ class Material {
 public:
 	bool Lit = true;
 	bool Depth = true;
+	bool fullscreen_pass = false;
 	glm::vec4 Color = glm::vec4(0.8, 0.8, 0.8, 1.0);
 	Shader shader;
 

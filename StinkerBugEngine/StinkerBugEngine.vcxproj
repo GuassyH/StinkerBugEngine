@@ -23,9 +23,12 @@
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
+    <ClCompile Include="FullScreenPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="stb.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
@@ -35,8 +38,11 @@
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="EBO.h" />
+    <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="VAO.h" />
@@ -46,6 +52,8 @@
   <ItemGroup>
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="skybox.frag" />
+    <None Include="skybox.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

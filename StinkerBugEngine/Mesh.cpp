@@ -1,6 +1,28 @@
 #include "Mesh.h"
 
+#include "SceneManager.h"
 
+
+// Constructor for vector (dynamic size)
+Mesh::Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds, Material& material)
+	: vertices(verts), indices(inds), material(&material) {
+	SceneManager::getInstance().RegisterMesh(this);
+	RecalculateMesh();
+}
+
+Mesh::Mesh(const Constants::Shapes::Shape& shape, Material& material)
+	: vertices(shape.getVertices()), indices(shape.getIndices()), material(&material) {
+	SceneManager::getInstance().RegisterMesh(this);
+	RecalculateMesh();
+}
+
+// Constructor for array (fixed size)
+template <size_t NVerts, size_t NInds>
+Mesh::Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds, Material& material)
+	: vertices(verts.begin(), verts.end()), indices(inds.begin(), inds.end()), material(&material) {
+	SceneManager::getInstance().RegisterMesh(this);
+	RecalculateMesh();
+}
 
 void Mesh::RecalculateMesh() {
     VAO1 = VAO();
@@ -44,6 +66,15 @@ void Mesh::Draw(Camera& camera) {
 	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(camera.camMatrix));
 	glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
 	glUniform4f(glGetUniformLocation(r_shader.ID, "color"), material->Color.r, material->Color.g, material->Color.b, material->Color.a);
+
+	if (material->Lit && SceneManager::getInstance().GetActiveScene()) {
+		glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene()->light_direction;
+		glm::vec3 l_col = SceneManager::getInstance().GetActiveScene()->light_color;
+		glUniform3f(glGetUniformLocation(r_shader.ID, "lightDir"), l_dir.x, l_dir.y, l_dir.z);
+		glUniform4f(glGetUniformLocation(r_shader.ID, "lightColor"), l_col.r, l_col.g, l_col.b, 1.0f);
+		glUniform1f(glGetUniformLocation(r_shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene()->ambient);
+
+	}
 
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);

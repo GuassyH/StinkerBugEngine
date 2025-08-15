@@ -22,6 +22,12 @@
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{e7268e97-3c4d-4983-a6ca-109de82464f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Scene">
+      <UniqueIdentifier>{dc11289c-85ca-4257-8f4f-01a77d2bed96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene">
+      <UniqueIdentifier>{9992ce60-9a20-403a-9f04-910cfda581cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -49,6 +55,15 @@
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="dependencies\include\glad.c">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="FullScreenPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stb.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,12 +104,27 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="FullScreenPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="default.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="skybox.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="skybox.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
