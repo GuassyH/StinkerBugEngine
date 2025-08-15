@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{9992ce60-9a20-403a-9f04-910cfda581cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Collision">
+      <UniqueIdentifier>{5cf1456c-2932-42a3-92b2-c353d1083f25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -112,6 +115,12 @@
     </ClInclude>
     <ClInclude Include="FullScreenPass.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereCollider.h">
+      <Filter>Header Files\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

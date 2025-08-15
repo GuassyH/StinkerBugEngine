@@ -2,25 +2,25 @@
 
 #include "SceneManager.h"
 
-
+SceneManager& sceneManager = SceneManager::getInstance();
 // Constructor for vector (dynamic size)
 Mesh::Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds, Material& material)
-	: vertices(verts), indices(inds), material(&material) {
-	SceneManager::getInstance().RegisterMesh(this);
+	: vertices(verts), indices(inds), material(&material), ID(sceneManager.GetActiveScene()->meshes.size()) {
+	sceneManager.RegisterMesh(this);
 	RecalculateMesh();
 }
 
 Mesh::Mesh(const Constants::Shapes::Shape& shape, Material& material)
-	: vertices(shape.getVertices()), indices(shape.getIndices()), material(&material) {
-	SceneManager::getInstance().RegisterMesh(this);
+	: vertices(shape.getVertices()), indices(shape.getIndices()), material(&material), ID(sceneManager.GetActiveScene()->meshes.size()) {
+	sceneManager.RegisterMesh(this);
 	RecalculateMesh();
 }
 
 // Constructor for array (fixed size)
 template <size_t NVerts, size_t NInds>
 Mesh::Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds, Material& material)
-	: vertices(verts.begin(), verts.end()), indices(inds.begin(), inds.end()), material(&material) {
-	SceneManager::getInstance().RegisterMesh(this);
+	: vertices(verts.begin(), verts.end()), indices(inds.begin(), inds.end()), material(&material), ID(sceneManager.GetActiveScene()->meshes.size()) {
+	sceneManager.RegisterMesh(this);
 	RecalculateMesh();
 }
 

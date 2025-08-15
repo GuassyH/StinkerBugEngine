@@ -6,6 +6,10 @@
 #include "Mesh.h"
 #include "FullScreenPass.h"
 
+#include "Collider.h"
+#include "SphereCollider.h"
+
+
 int main(void) {
 	Display& display = Display::getInstance();
 	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { return -1; }
@@ -31,7 +35,6 @@ int main(void) {
 	Mesh box = Mesh(Constants::Shapes::Cube(), red);
 
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
-	
 
 	floor.transform.scale = glm::vec3(10);
 	floor.transform.position = glm::vec3(-5, 0, -5);
@@ -53,7 +56,6 @@ int main(void) {
 			velocity.y = 3;
 		}
 		velocity.y -= 4.905 * deltaTime.get();
-
 
 		globe.transform.position += velocity * deltaTime.get();
 

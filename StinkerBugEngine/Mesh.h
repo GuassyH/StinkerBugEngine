@@ -28,7 +28,7 @@
 
 class Mesh {
 public:
-	GLuint id = 0;
+	GLuint ID = 0;
 
 	Mesh() = default;
     // Constructor for vector (dynamic size)
