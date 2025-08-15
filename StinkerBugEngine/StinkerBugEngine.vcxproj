@@ -39,9 +39,11 @@
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="EBO.h" />
+    <ClInclude Include="EntityID.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />

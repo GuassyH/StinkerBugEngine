@@ -32,26 +32,22 @@ public:
 
 	Mesh() = default;
     // Constructor for vector (dynamic size)
-	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds, Material& material);
+	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds);
 
-	Mesh(const Constants::Shapes::Shape& shape, Material& material);
+	Mesh(const Constants::Shapes::Shape& shape);
     // Constructor for array (fixed size)
 	template <size_t NVerts, size_t NInds>
-	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds, Material& material);
+	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds);
 	
 	void RecalculateMesh();
-	void Draw(Camera& camera);
+	void Draw(Camera& camera, Material* material, Transform& transform);
 
 	~Mesh();
-
-	Transform transform;
 
 	std::vector<Vertex> vertices = {};
 	std::vector<GLuint> indices = {};
 
 	glm::mat4 model = {};
-
-	Material* material = nullptr;
 
 	VAO VAO1;
 	VBO VBO1;

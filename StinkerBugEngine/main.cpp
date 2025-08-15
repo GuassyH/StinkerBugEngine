@@ -3,6 +3,7 @@
 #include "Display.h"
 #include "Constants.h"
 #include "SceneManager.h"
+#include "Scene.h"
 #include "Mesh.h"
 #include "FullScreenPass.h"
 
@@ -19,9 +20,9 @@ int main(void) {
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 	SceneManager& sceneManager = SceneManager::getInstance();
-	Scene sceneOne;
+	Scene scene;
 
-	sceneManager.LoadScene(sceneOne);
+	sceneManager.SetActiveScene(scene);
 
 	Shader skybox_shader("skybox.vert", "skybox.frag");
 
@@ -29,42 +30,31 @@ int main(void) {
 	Material material;
 	Material red; red.Color = Constants::Colors::Red;
 
-	Mesh floor = Mesh(Constants::Shapes::Plane(), material);
-	Mesh backWall = Mesh(Constants::Shapes::Plane(), material);
-	Mesh globe = Mesh(Constants::Shapes::UVSphere(), material);
-	Mesh box = Mesh(Constants::Shapes::Cube(), red);
+	
+
+	Mesh floor = Mesh(Constants::Shapes::Plane());
+	Mesh cube = Mesh(Constants::Shapes::Cube());
 
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
 
-	floor.transform.scale = glm::vec3(10);
-	floor.transform.position = glm::vec3(-5, 0, -5);
+	EntityID e_floor = scene.CreateEntity();
+	scene.transforms[e_floor] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(4.0) };
+	scene.meshRenderers[e_floor] = CreateMeshRenderer(floor, material);
 
-	backWall.transform.scale = glm::vec3(10, 0.0, 0.25);
-	backWall.transform.position = glm::vec3(-5, 0, -5);
-	backWall.transform.rotation = glm::vec3(-90, -90, 0);
+	EntityID e_cube = scene.CreateEntity();
+	scene.transforms[e_cube] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
+	scene.meshRenderers[e_cube] = CreateMeshRenderer(cube, red);
 
-	box.transform.position = glm::vec3(-3, 0.0, 0.0);
-	globe.transform.position = glm::vec3(0, globe.transform.scale.y / 2, 0);
-
-
-	glm::vec3 velocity = glm::vec3(0);
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
 		skybox_pass.Draw(camera);
 
-		if (globe.transform.position.y <= floor.transform.position.y + globe.transform.scale.y / 2) {
-			velocity.y = 3;
-		}
-		velocity.y -= 4.905 * deltaTime.get();
-
-		globe.transform.position += velocity * deltaTime.get();
 
 		camera.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera.Input();
 
 
-
-		sceneManager.DrawScene(camera);
+		scene.Draw(camera);
 
 
 		display.EndFrame();

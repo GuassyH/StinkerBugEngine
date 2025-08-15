@@ -1,5 +1,7 @@
 #include "FullScreenPass.h"
 
+#include "SceneManager.h"
+#include "Scene.h"
 
 Display& display = Display::getInstance();
 FullScreenPass::FullScreenPass(Camera& camera, Material& material) : material(&material) {

@@ -10,7 +10,6 @@
 #include "glm/glm.hpp"
 #include "glad/glad.h"
 
-#include "SceneManager.h"
 
 #include "VAO.h"
 #include "VBO.h"
