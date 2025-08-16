@@ -40,11 +40,13 @@ int main(void) {
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
 
 	Entity e_floor = scene.CreateEntity();
-	// scene.AddComponent<MeshRenderer>(e_floor, floor, red);
-	scene.AddComponent<MeshRenderer>(e_floor, floor, red);
+	scene.AddComponent<MeshRenderer>(e_floor, floor, material);
 	
-	scene.transforms[e_floor.id].position = glm::vec3(-5.0, 0.0, -5.0);
-	scene.transforms[e_floor.id].scale = glm::vec3(10.0);
+	Transform& floor_t = scene.GetComponent<Transform>(e_floor);
+
+	floor_t.position = glm::vec3(-5.0, 0.0, -5.0);
+	floor_t.scale = glm::vec3(10.0);
+	
 
 	Entity e_cube = scene.CreateEntity();
 	scene.AddComponent<MeshRenderer>(e_cube, cube, material);

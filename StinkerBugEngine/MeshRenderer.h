@@ -22,16 +22,6 @@ struct MeshRenderer{
 	MeshRenderer() = default; // still allow default construction
 };
 
-/*
-// Constructor for vector (dynamic size)
-inline MeshRenderer CreateMeshRenderer(Mesh& mesh, Material& material)
-{
-	MeshRenderer mr;
-	mr.mesh = &mesh;
-	mr.material = &material;
-	return mr;
-}
-*/
 
 
 #endif

@@ -10,12 +10,14 @@ public:
 	uint32_t id;
 
 	Entity(uint32_t id, Scene* scene);
-	//template<typename T, typename... Args>
-	//T& AddComponent(Args&&... args);
+
+	// template<typename T, typename... Args>
+	// T& AddComponent(Args&&... args);
 
 private:
 	Scene* scene;
 };
+
 
 
 

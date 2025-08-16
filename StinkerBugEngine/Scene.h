@@ -37,6 +37,18 @@ public:
 		return map[entity.id] = T(std::forward<Args>(args)...);
 	}
 
+	template<typename T>
+	T& GetComponent(const Entity& entity) {
+		auto& map = GetComponentMap<T>();
+		auto it = map.find(entity.id);
+		if (it != map.end()) {
+			return it->second;
+		}
+		else {
+			throw std::runtime_error("Component not found");
+		}
+	}
+
 	void DrawMeshes(Camera& camera);
 	void CheckCollisions();
 // private:
