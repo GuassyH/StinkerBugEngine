@@ -5,8 +5,13 @@
 glm::vec3& WorldUp = Constants::Dirs::Up;
 
 Camera::Camera(int width, int height, glm::vec3 position) {
+	Display& display = Display::getInstance();
+	GLFWwindow* window = display.window;
+
 	Camera::width = width;
 	Camera::height = height;
+
+	glfwSetCursorPos(window, (width / 2), (height / 2));
 
 	transform.position = position;
 	transform.rotation = glm::vec3(0.0, 0.0, -1.0);

@@ -14,13 +14,13 @@
 #include "SphereCollider.h"
 
 
+
 int main(void) {
 	Display& display = Display::getInstance();
 	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { return -1; }
 
 	Camera camera = Camera(display.windowWidth, display.windowHeight, glm::vec3(0.0));
-	camera.transform.position = glm::vec3(0.5, 0.5, -20.0f);
-	camera.transform.rotation = glm::vec3(0.0, 0.0, -1.0);
+	camera.transform.position = glm::vec3(0, 3, 10.0f);
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 	SceneManager& sceneManager = SceneManager::getInstance();
@@ -44,33 +44,44 @@ int main(void) {
 
 	Entity e_floor = scene.CreateEntity();
 	scene.AddComponent<MeshRenderer>(e_floor, floor, material);
-	Transform& floor_t = scene.GetComponent<Transform>(e_floor);
+	scene.AddComponent<RigidBody>(e_floor).isKinematic = true;
+	scene.GetComponent<Transform>(e_floor).position = glm::vec3(-5.0, 0.0, -5.0);
+	scene.GetComponent<Transform>(e_floor).scale = glm::vec3(10.0);
 
-	floor_t.position = glm::vec3(-5.0, 0.0, -5.0);
-	floor_t.scale = glm::vec3(10.0);
-
-
-	Entity e_cube = scene.CreateEntity();
-	scene.GetComponent<Transform>(e_cube).position = glm::vec3(0.0, 20, 0.0);
-	scene.AddComponent<MeshRenderer>(e_cube, cube, material);
-	scene.AddComponent<RigidBody>(e_cube);
-
-	
 	Entity e_globe = scene.CreateEntity();
-	scene.GetComponent<Transform>(e_globe).position = glm::vec3(3.0, 20, 0.0);
 	scene.AddComponent<MeshRenderer>(e_globe, sphere, material);
-	scene.AddComponent<RigidBody>(e_globe);
+	scene.AddComponent<RigidBody>(e_globe).useGravity = true;
+	scene.GetComponent<Transform>(e_globe).position = glm::vec3(1.0, 2, 0.0);
+	scene.AddComponent<SphereCollider>(e_globe);
+
+	Entity e_globe2 = scene.CreateEntity();
+	scene.AddComponent<MeshRenderer>(e_globe2, sphere, material);
+	scene.AddComponent<RigidBody>(e_globe2).useGravity = true;
+	scene.GetComponent<Transform>(e_globe2).position = glm::vec3(-1.0, 2, 0.0);
+	scene.AddComponent<SphereCollider>(e_globe2);
+
+	Entity e_globe3 = scene.CreateEntity();
+	scene.AddComponent<MeshRenderer>(e_globe3, sphere, material);
+	scene.AddComponent<RigidBody>(e_globe3).useGravity = true;
+	scene.GetComponent<Transform>(e_globe3).position = glm::vec3(3.0, 2, 0.0);
+	scene.AddComponent<SphereCollider>(e_globe3);
+
 
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
 		skybox_pass.Draw(camera);
 
+		if (glfwGetKey(display.window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+			scene.GetComponent<RigidBody>(e_globe2).velocity += glm::vec3(5.0, 0.0, 0.0) * deltaTime.get();
+		}
+		if (glfwGetKey(display.window, GLFW_KEY_LEFT) == GLFW_PRESS) {
+			scene.GetComponent<RigidBody>(e_globe2).velocity += glm::vec3(-5.0, 0.0, 0.0) * deltaTime.get();
+		}
 
 		camera.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera.Input();
 
 		scene.UpdatePhysics();
-		scene.CheckCollisions();
 		scene.DrawMeshes(camera);
 
 
