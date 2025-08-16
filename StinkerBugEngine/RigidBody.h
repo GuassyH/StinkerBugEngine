@@ -8,14 +8,8 @@ struct RigidBody {
 	bool isKinematic;
 
 	glm::vec3 velocity;
-};
 
-inline RigidBody CreateRigidBody() {
-	RigidBody rb;
-	rb.useGravity = true;
-	rb.isKinematic = false;
-	rb.velocity = glm::vec3(0.0);
-	return rb;
-}
+	RigidBody() : useGravity(true), isKinematic(false), velocity(glm::vec3(0)) {}
+};
 
 #endif

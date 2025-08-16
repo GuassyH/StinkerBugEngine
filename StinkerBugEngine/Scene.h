@@ -17,13 +17,20 @@
 #include "Entity.h"
 
 class Scene {
+private:
+	uint32_t nextEntity = 0;
+
+	std::unordered_map<uint32_t, Transform> transforms = {};
+	std::unordered_map<uint32_t, MeshRenderer> mesh_renderers = {};
+	std::unordered_map<uint32_t, std::unique_ptr<Collider>> colliders = {};
+	std::unordered_map<uint32_t, RigidBody> rigidbodies = {};
 public:
-	Scene() = default;
-
-
+	float gravity = -9.82;
 	glm::vec3 light_direction = glm::normalize(glm::vec3(-1, -1.3, -0.84));
 	glm::vec3 light_color = glm::vec3(1.0);
 	float ambient = 0.2f;
+
+	Scene() = default;
 
 	Entity CreateEntity();
 
@@ -49,15 +56,22 @@ public:
 		}
 	}
 
+	template<typename T>
+	void RemoveComponent(const Entity& entity) {
+		auto& map = GetComponentMap<T>();
+		auto it = map.find(entity.id);
+		if (it != map.end()) {
+			map.erase(it);
+		}
+		else {
+			std::cout << "Component not found" << std::endl;
+		}
+	}
+
 	void DrawMeshes(Camera& camera);
 	void CheckCollisions();
-// private:
-	uint32_t nextEntity = 0;
+	void UpdatePhysics();
 
-	std::unordered_map<uint32_t, Transform> transforms = {};
-	std::unordered_map<uint32_t, MeshRenderer> meshRenderers = {};
-	std::unordered_map<uint32_t, std::unique_ptr<Collider>> colliders = {};
-	std::unordered_map<uint32_t, RigidBody> rigidBodies = {};
 };
 
 // Specialize the template for each component type
@@ -68,12 +82,17 @@ inline std::unordered_map<uint32_t, Transform>& Scene::GetComponentMap<Transform
 
 template<>
 inline std::unordered_map<uint32_t, MeshRenderer>& Scene::GetComponentMap<MeshRenderer>() {
-	return meshRenderers;
+	return mesh_renderers;
 }
 
 template<>
 inline std::unordered_map<uint32_t, std::unique_ptr<Collider>>& Scene::GetComponentMap<std::unique_ptr<Collider>>() {
 	return colliders;
+}
+
+template<>
+inline std::unordered_map<uint32_t, RigidBody>& Scene::GetComponentMap<RigidBody>() {
+	return rigidbodies;
 }
 
 

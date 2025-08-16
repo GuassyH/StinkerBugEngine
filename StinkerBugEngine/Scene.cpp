@@ -1,6 +1,8 @@
 #include "Scene.h"
 #include "Entity.h"
+#include "DeltaTime.h"
 
+DeltaTime& deltaTime = DeltaTime::getInstance();
 
 Entity Scene::CreateEntity() {
 	transforms[nextEntity] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
@@ -8,10 +10,8 @@ Entity Scene::CreateEntity() {
 }
 
 
-
-
 void Scene::DrawMeshes(Camera& camera) {
-	for (auto& [id, renderer] : meshRenderers) {
+	for (auto& [id, renderer] : mesh_renderers) {
 		auto it = transforms.find(id);
 		Transform& t = it->second;
 
@@ -30,4 +30,14 @@ void Scene::CheckCollisions() {
 	}
 }
 
+void Scene::UpdatePhysics() {
+	for (auto& [id, rb] : rigidbodies) {
+		if (rb.isKinematic) { continue; }
+		if (rb.useGravity) { rb.velocity.y += gravity * deltaTime.get(); }
+
+		Transform& transform = transforms[id];
+		transform.position += rb.velocity * deltaTime.get();
+		if (transform.position.y < 0) { transform.position.y = 0; rb.velocity = glm::vec3(0.0); }
+	}
+}
 

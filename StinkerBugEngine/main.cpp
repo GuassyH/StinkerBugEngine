@@ -4,11 +4,12 @@
 #include "Constants.h"
 #include "SceneManager.h"
 #include "Scene.h"
-#include "Mesh.h"
 #include "FullScreenPass.h"
 
 #include "Entity.h"
 
+#include "Mesh.h"
+#include "MeshRenderer.h"
 #include "Collider.h"
 #include "SphereCollider.h"
 
@@ -18,7 +19,8 @@ int main(void) {
 	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { return -1; }
 
 	Camera camera = Camera(display.windowWidth, display.windowHeight, glm::vec3(0.0));
-	camera.transform.position = glm::vec3(0.5, 0.5, 2.0f);
+	camera.transform.position = glm::vec3(0.5, 0.5, -20.0f);
+	camera.transform.rotation = glm::vec3(0.0, 0.0, -1.0);
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 	SceneManager& sceneManager = SceneManager::getInstance();
@@ -36,20 +38,28 @@ int main(void) {
 
 	Mesh floor = Mesh(Constants::Shapes::Plane());
 	Mesh cube = Mesh(Constants::Shapes::Cube());
+	Mesh sphere = Mesh(Constants::Shapes::UVSphere());
 
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
 
 	Entity e_floor = scene.CreateEntity();
 	scene.AddComponent<MeshRenderer>(e_floor, floor, material);
-	
 	Transform& floor_t = scene.GetComponent<Transform>(e_floor);
 
 	floor_t.position = glm::vec3(-5.0, 0.0, -5.0);
 	floor_t.scale = glm::vec3(10.0);
-	
+
 
 	Entity e_cube = scene.CreateEntity();
+	scene.GetComponent<Transform>(e_cube).position = glm::vec3(0.0, 20, 0.0);
 	scene.AddComponent<MeshRenderer>(e_cube, cube, material);
+	scene.AddComponent<RigidBody>(e_cube);
+
+	
+	Entity e_globe = scene.CreateEntity();
+	scene.GetComponent<Transform>(e_globe).position = glm::vec3(3.0, 20, 0.0);
+	scene.AddComponent<MeshRenderer>(e_globe, sphere, material);
+	scene.AddComponent<RigidBody>(e_globe);
 
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
@@ -59,6 +69,7 @@ int main(void) {
 		camera.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera.Input();
 
+		scene.UpdatePhysics();
 		scene.CheckCollisions();
 		scene.DrawMeshes(camera);
 

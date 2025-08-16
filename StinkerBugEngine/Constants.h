@@ -61,6 +61,7 @@ namespace Constants {
                     glm::vec3 pos(x, y, z);
                     glm::vec3 normal = glm::normalize(pos);
                     pos.x += radius;
+                    pos.y += radius;
                     pos.z += radius;
                     glm::vec2 texCoord(
                         (float)j / sectorCount,

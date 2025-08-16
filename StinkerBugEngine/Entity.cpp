@@ -4,4 +4,3 @@
 Entity::Entity(uint32_t id, Scene* scene) : id(id), scene(scene) {}
 
 
-

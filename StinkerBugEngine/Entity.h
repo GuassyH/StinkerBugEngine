@@ -1,7 +1,8 @@
-#ifndef ENTITY_ID_H
-#define ENTITY_ID_H
+#ifndef ENTITY_H
+#define ENTITY_H
 
 #include <cstdint>
+#include <utility>
 
 class Scene;
 
@@ -19,6 +20,4 @@ private:
 };
 
 
-
-
-#endif // !ENTITY_ID_H
+#endif
