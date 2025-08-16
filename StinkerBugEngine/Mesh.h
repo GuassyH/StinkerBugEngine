@@ -13,11 +13,9 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include "SceneManager.h"
 
 #include "Vertex.h"
-#include "Transform.h"
-#include "Material.h"
+
 #include "Camera.h"
 #include "Constants.h"
 
@@ -25,11 +23,11 @@
 #include "VBO.h"
 #include "EBO.h"
 
+class Transform;
+class Material;
 
 class Mesh {
 public:
-	GLuint ID = 0;
-
 	Mesh() = default;
     // Constructor for vector (dynamic size)
 	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds);
@@ -46,8 +44,6 @@ public:
 
 	std::vector<Vertex> vertices = {};
 	std::vector<GLuint> indices = {};
-
-	glm::mat4 model = {};
 
 	VAO VAO1;
 	VBO VBO1;

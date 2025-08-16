@@ -17,9 +17,12 @@
 struct MeshRenderer{
 	Mesh* mesh = nullptr;
 	Material* material = nullptr;
+
+	MeshRenderer(Mesh& m, Material& mat) : mesh(&m), material(&mat) {}
+	MeshRenderer() = default; // still allow default construction
 };
 
-
+/*
 // Constructor for vector (dynamic size)
 inline MeshRenderer CreateMeshRenderer(Mesh& mesh, Material& material)
 {
@@ -28,6 +31,7 @@ inline MeshRenderer CreateMeshRenderer(Mesh& mesh, Material& material)
 	mr.material = &material;
 	return mr;
 }
+*/
 
 
 #endif

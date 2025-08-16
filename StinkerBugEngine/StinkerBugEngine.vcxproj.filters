@@ -28,8 +28,17 @@
     <Filter Include="Source Files\Scene">
       <UniqueIdentifier>{9992ce60-9a20-403a-9f04-910cfda581cf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Collision">
+    <Filter Include="Header Files\ECS">
+      <UniqueIdentifier>{55a699df-96ea-4de0-82c4-228673fa686d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{d4f180f9-66c5-40cb-9ccb-c6484f2a24e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components\Collision">
       <UniqueIdentifier>{5cf1456c-2932-42a3-92b2-c353d1083f25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ECS">
+      <UniqueIdentifier>{3ab70d14-3cdc-4e55-96ad-6b33ead1b568}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -69,12 +78,15 @@
     <ClCompile Include="stb.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Display.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
@@ -117,10 +129,22 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
-      <Filter>Header Files\Collision</Filter>
+      <Filter>Header Files\Components\Collision</Filter>
     </ClInclude>
     <ClInclude Include="SphereCollider.h">
-      <Filter>Header Files\Collision</Filter>
+      <Filter>Header Files\Components\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshRenderer.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

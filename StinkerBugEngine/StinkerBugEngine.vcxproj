@@ -23,9 +23,11 @@
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="FullScreenPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb.cpp" />
@@ -39,11 +41,12 @@
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="EBO.h" />
-    <ClInclude Include="EntityID.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />
+    <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />

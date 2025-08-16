@@ -2,8 +2,8 @@
 
 #include "SceneManager.h"
 #include "Scene.h"
-//sceneManager.RegisterMesh(this);
-
+#include "Transform.h"
+#include "Material.h"
 
 SceneManager& sceneManager = SceneManager::getInstance();
 // Constructor for vector (dynamic size)

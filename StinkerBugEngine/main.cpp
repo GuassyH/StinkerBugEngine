@@ -7,6 +7,8 @@
 #include "Mesh.h"
 #include "FullScreenPass.h"
 
+#include "Entity.h"
+
 #include "Collider.h"
 #include "SphereCollider.h"
 
@@ -37,13 +39,15 @@ int main(void) {
 
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
 
-	EntityID e_floor = scene.CreateEntity();
-	scene.transforms[e_floor] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(4.0) };
-	scene.meshRenderers[e_floor] = CreateMeshRenderer(floor, material);
+	Entity e_floor = scene.CreateEntity();
+	// scene.AddComponent<MeshRenderer>(e_floor, floor, red);
+	scene.AddComponent<MeshRenderer>(e_floor, floor, red);
+	
+	scene.transforms[e_floor.id].position = glm::vec3(-5.0, 0.0, -5.0);
+	scene.transforms[e_floor.id].scale = glm::vec3(10.0);
 
-	EntityID e_cube = scene.CreateEntity();
-	scene.transforms[e_cube] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
-	scene.meshRenderers[e_cube] = CreateMeshRenderer(cube, red);
+	Entity e_cube = scene.CreateEntity();
+	scene.AddComponent<MeshRenderer>(e_cube, cube, material);
 
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
@@ -53,8 +57,8 @@ int main(void) {
 		camera.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera.Input();
 
-
-		scene.Draw(camera);
+		scene.CheckCollisions();
+		scene.DrawMeshes(camera);
 
 
 		display.EndFrame();

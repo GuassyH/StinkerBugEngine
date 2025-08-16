@@ -7,42 +7,62 @@
 
 #include "unordered_map"
 #include "glm/glm.hpp"
-#include "EntityID.h"
 
 #include "Mesh.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "Collider.h"
+#include "RigidBody.h"
+
+#include "Entity.h"
 
 class Scene {
 public:
 	Scene() = default;
 
-	EntityID nextEntity = 0;
-
-	std::unordered_map<EntityID, Transform> transforms = {};
-	std::unordered_map<EntityID, MeshRenderer> meshRenderers = {};
-	std::unordered_map<EntityID, std::unique_ptr<Collider>> colliders = {};
 
 	glm::vec3 light_direction = glm::normalize(glm::vec3(-1, -1.3, -0.84));
 	glm::vec3 light_color = glm::vec3(1.0);
 	float ambient = 0.2f;
 
-	EntityID CreateEntity() {
-		return nextEntity++;
+	Entity CreateEntity();
+
+	// Specializations for each component type
+	template<typename T>
+	std::unordered_map<uint32_t, T>& GetComponentMap();
+
+	template<typename T, typename... Args>
+	T& AddComponent(const Entity& entity, Args&&... args) {
+		auto& map = GetComponentMap<T>();
+		return map[entity.id] = T(std::forward<Args>(args)...);
 	}
 
-	void Draw(Camera& camera) {
-		for (auto& [id, renderer] : meshRenderers) {
-			auto it = transforms.find(id);
-			if (it != transforms.end() && renderer.mesh) {
-				Transform& t = it->second;
+	void DrawMeshes(Camera& camera);
+	void CheckCollisions();
+// private:
+	uint32_t nextEntity = 0;
 
-				renderer.mesh->Draw(camera, renderer.material, t);
-			}
-		}
-	}
+	std::unordered_map<uint32_t, Transform> transforms = {};
+	std::unordered_map<uint32_t, MeshRenderer> meshRenderers = {};
+	std::unordered_map<uint32_t, std::unique_ptr<Collider>> colliders = {};
+	std::unordered_map<uint32_t, RigidBody> rigidBodies = {};
 };
+
+// Specialize the template for each component type
+template<>
+inline std::unordered_map<uint32_t, Transform>& Scene::GetComponentMap<Transform>() {
+	return transforms;
+}
+
+template<>
+inline std::unordered_map<uint32_t, MeshRenderer>& Scene::GetComponentMap<MeshRenderer>() {
+	return meshRenderers;
+}
+
+template<>
+inline std::unordered_map<uint32_t, std::unique_ptr<Collider>>& Scene::GetComponentMap<std::unique_ptr<Collider>>() {
+	return colliders;
+}
 
 
 
