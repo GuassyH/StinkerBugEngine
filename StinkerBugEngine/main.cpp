@@ -17,7 +17,7 @@
 #include "SphereCollider.h"
 #include "EntityBehaviour.h"
 #include "SphereMove.h"
-
+#include "JumpMechanic.h"
 
 int main(void) {
 	Display& display = Display::getInstance();
@@ -46,19 +46,26 @@ int main(void) {
 
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
 
-	Entity e_floor = scene.CreateEntity();
-	e_floor.AddComponent<MeshRenderer>(floor, material);
-	e_floor.GetComponent<Transform>().scale = glm::vec3(10);
-	e_floor.GetComponent<Transform>().position = glm::vec3(-5, 0, -5);
 
-	Entity e_ball_1 = scene.CreateEntity();
-	e_ball_1.AddComponent<RigidBody>();
-	e_ball_1.AddComponent<SphereCollider>();
-	e_ball_1.GetComponent<Transform>().position = glm::vec3(0.0, 10, 0.0);
-	e_ball_1.AddComponent<MeshRenderer>(sphere, red);
-	Transform& t = e_ball_1.GetComponent<Transform>();
-	RigidBody& rb = e_ball_1.GetComponent<RigidBody>();
-	e_ball_1.AddComponent<SphereMove>(t, rb);
+	Entity e_plane = scene.CreateEntity();
+	e_plane.GetComponent<Transform>().position = glm::vec3(-5, 0, -5);
+	e_plane.GetComponent<Transform>().scale = glm::vec3(10);
+	e_plane.AddComponent<MeshRenderer>(floor, material);
+
+	Entity e_globe = scene.CreateEntity();
+	e_globe.GetComponent<Transform>().position = glm::vec3(0, 10, 0);
+	e_globe.AddComponent<MeshRenderer>(sphere, material);
+	e_globe.AddComponent<RigidBody>();
+	e_globe.AddComponent<SphereCollider>().radius = 0.5f;
+	e_globe.AddComponent<SphereMove>();
+
+	Entity e_globe_2 = scene.CreateEntity();
+	e_globe_2.GetComponent<Transform>().position = glm::vec3(2, 10, 0);
+	e_globe_2.AddComponent<MeshRenderer>(sphere, material);
+	e_globe_2.AddComponent<RigidBody>();
+	e_globe_2.AddComponent<SphereCollider>().radius = 0.5f;
+	e_globe_2.AddComponent<JumpMechanic>();
+
 
 	scene.StartEntityBehaviours();
 	scene.WakeEntityBehaviours();

@@ -23,6 +23,7 @@
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
+    <ClCompile Include="EntityBehaviour.cpp" />
     <ClCompile Include="FullScreenPass.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -45,6 +46,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityBehaviour.h" />
     <ClInclude Include="FullScreenPass.h" />
+    <ClInclude Include="JumpMechanic.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshRenderer.h" />

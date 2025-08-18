@@ -8,12 +8,16 @@
 
 class ECSystem {
 public:
+	uint32_t nextEntity = 0;
+	std::unordered_map<uint32_t, Entity> entities;
+
 	std::unordered_map<uint32_t, std::string> entity_names;
 	std::unordered_map<uint32_t, Transform> transforms;
 	std::unordered_map<uint32_t, MeshRenderer> mesh_renderers;
 	std::unordered_map<uint32_t, SphereCollider> colliders;
 	std::unordered_map<uint32_t, RigidBody> rigidbodies;
 	std::unordered_map<uint32_t, std::unique_ptr<EntityBehaviour>> entity_behaviours;
+
 // ALL THE IMPORTANT SHIZZ
 	ECSystem() = default;
 
@@ -28,6 +32,7 @@ public:
 	{
 		entity_behaviours[id] = std::make_unique<T>(std::forward<Args>(args)...);
 		entity_behaviours[id]->parent_id = id;
+		entity_behaviours[id]->Init();
 	}
 
 	// For normal components
@@ -60,6 +65,18 @@ public:
 		}
 		else {
 			std::cout << "Component not found" << std::endl;
+		}
+	}
+
+	template<typename T>
+	bool HasComponent(const uint32_t id) {
+		auto& map = GetComponentMap<T>();
+		auto it = map.find(id);
+		if (it != map.end()) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 };

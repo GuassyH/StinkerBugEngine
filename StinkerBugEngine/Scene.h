@@ -17,11 +17,11 @@ class Entity;
 
 class Scene {
 public:
-	uint32_t nextEntity = 0;
+
 
 	Scene() = default;
-	Entity CreateEntity();
-	Entity CreateEntity(std::string name);
+	Entity& CreateEntity();
+	Entity& CreateEntity(std::string name);
 
 	// Physics
 	float gravity = -9.82;
@@ -33,8 +33,6 @@ public:
 	glm::vec3 light_color = glm::vec3(1.0);
 
 	ECSystem Scene_ECS;
-
-
 
 	void DrawMeshes(Camera& camera);
 	void CheckCollisions(uint32_t id);

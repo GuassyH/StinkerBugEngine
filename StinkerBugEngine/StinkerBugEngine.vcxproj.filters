@@ -84,6 +84,9 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="EntityBehaviour.cpp">
+      <Filter>Source Files\ECS</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Display.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="ECSystem.h">
       <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="JumpMechanic.h">
+      <Filter>Header Files\EntityBehaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -5,17 +5,23 @@
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
-Entity Scene::CreateEntity() {
-	Scene_ECS.transforms[nextEntity] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
-	Scene_ECS.entity_names[nextEntity] = std::to_string(nextEntity);
-	return Entity(nextEntity++, this);
+Entity& Scene::CreateEntity() {
+	uint32_t entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
+	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
+	Scene_ECS.entity_names[entity_id] = std::to_string(entity_id);
+	Entity new_entity(entity_id, this);
+	Scene_ECS.entities[entity_id] = new_entity;
+	return new_entity;
 }
 
 
-Entity Scene::CreateEntity(std::string name) {
-	Scene_ECS.transforms[nextEntity] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
-	Scene_ECS.entity_names[nextEntity] = name;
-	return Entity(nextEntity++, this);
+Entity& Scene::CreateEntity(std::string name) {
+	uint32_t entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
+	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
+	Scene_ECS.entity_names[entity_id] = name;
+	Entity new_entity(entity_id, this);
+	Scene_ECS.entities[entity_id] = new_entity;
+	return new_entity;
 }
 
 
