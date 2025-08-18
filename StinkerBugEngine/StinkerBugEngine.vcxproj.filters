@@ -84,9 +84,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Display.h">
@@ -149,7 +146,7 @@
     <ClInclude Include="RigidBody.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="EntityBehavour.h">
+    <ClInclude Include="EntityBehaviour.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
     <ClInclude Include="ComponentsList.h">
@@ -157,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="SphereMove.h">
       <Filter>Header Files\EntityBehaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="ECSystem.h">
+      <Filter>Header Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

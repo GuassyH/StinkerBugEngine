@@ -10,9 +10,12 @@
 
 #include "ComponentsList.h"
 
+
 class EntityBehaviour {
 public:
 	uint32_t parent_id;
+	// Transform& transform;
+
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;
 	virtual void Start() {}

@@ -15,7 +15,7 @@
 #include "MeshRenderer.h"
 #include "Collider.h"
 #include "SphereCollider.h"
-#include "EntityBehavour.h"
+#include "EntityBehaviour.h"
 #include "SphereMove.h"
 
 
@@ -47,25 +47,18 @@ int main(void) {
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
 
 	Entity e_floor = scene.CreateEntity();
-	scene.AddComponent<MeshRenderer>(e_floor, floor, material);
-	scene.AddComponent<RigidBody>(e_floor).isKinematic = true;
-	scene.GetComponent<Transform>(e_floor).position = glm::vec3(-5.0, 0.0, -5.0);
-	scene.GetComponent<Transform>(e_floor).scale = glm::vec3(10.0);
+	e_floor.AddComponent<MeshRenderer>(floor, material);
+	e_floor.GetComponent<Transform>().scale = glm::vec3(10);
+	e_floor.GetComponent<Transform>().position = glm::vec3(-5, 0, -5);
 
-	Entity e_globe = scene.CreateEntity();
-	scene.AddComponent<MeshRenderer>(e_globe, sphere, material);
-	scene.AddComponent<RigidBody>(e_globe).useGravity = true;
-	scene.GetComponent<Transform>(e_globe).position = glm::vec3(1.0, 2, 0.0);
-	scene.AddComponent<SphereCollider>(e_globe).radius = 0.5f; \
-	scene.AddComponent<SphereMove>(e_globe, scene.GetComponent<Transform>(e_globe), scene.GetComponent<RigidBody>(e_globe));
-
-	Entity e_globe2 = scene.CreateEntity();
-	scene.AddComponent<MeshRenderer>(e_globe2, sphere, material);
-	scene.AddComponent<RigidBody>(e_globe2).useGravity = true;
-	scene.GetComponent<Transform>(e_globe2).position = glm::vec3(-1.0, 2, 0.0);
-	scene.AddComponent<SphereCollider>(e_globe2).radius = 0.5f;
-
-	// SphereMove move(scene.GetComponent<Transform>(e_globe), scene.GetComponent<RigidBody>(e_globe));
+	Entity e_ball_1 = scene.CreateEntity();
+	e_ball_1.AddComponent<RigidBody>();
+	e_ball_1.AddComponent<SphereCollider>();
+	e_ball_1.GetComponent<Transform>().position = glm::vec3(0.0, 10, 0.0);
+	e_ball_1.AddComponent<MeshRenderer>(sphere, red);
+	Transform& t = e_ball_1.GetComponent<Transform>();
+	RigidBody& rb = e_ball_1.GetComponent<RigidBody>();
+	e_ball_1.AddComponent<SphereMove>(t, rb);
 
 	scene.StartEntityBehaviours();
 	scene.WakeEntityBehaviours();
@@ -74,22 +67,8 @@ int main(void) {
 		display.BeginFrame();
 		skybox_pass.Draw(camera);
 
-
-		if (glfwGetKey(display.window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-			if (shot == false) {
-				shot = true;
-				Entity bullet = scene.CreateEntity();
-				scene.AddComponent<MeshRenderer>(bullet, sphere, red);
-				scene.GetComponent<Transform>(bullet).scale = glm::vec3(0.2);
-				scene.GetComponent<Transform>(bullet).position = camera.transform.position;
-				scene.AddComponent<SphereCollider>(bullet).radius = 0.1f;
-				scene.AddComponent<RigidBody>(bullet).useGravity = false;
-				scene.GetComponent<RigidBody>(bullet).velocity = camera.forward;
-				scene.GetComponent<RigidBody>(bullet).drag = 0.0;
-			}
-		}
-		else { shot = false; }
-
+		
+		
 
 		camera.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera.Input();
