@@ -37,11 +37,13 @@
   <ItemGroup>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="ComponentsList.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="Display.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityBehavour.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -51,6 +53,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="SphereCollider.h" />
+    <ClInclude Include="SphereMove.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />

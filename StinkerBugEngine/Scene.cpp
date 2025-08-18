@@ -6,6 +6,14 @@ DeltaTime& deltaTime = DeltaTime::getInstance();
 
 Entity Scene::CreateEntity() {
 	transforms[nextEntity] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
+	entity_names[nextEntity] = std::to_string(nextEntity);
+	return Entity(nextEntity++, this);
+}
+
+
+Entity Scene::CreateEntity(std::string name) {
+	transforms[nextEntity] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
+	entity_names[nextEntity] = name;
 	return Entity(nextEntity++, this);
 }
 
@@ -40,15 +48,16 @@ void Scene::ResolveCollision(glm::vec3 collision_normal, RigidBody& rb1, RigidBo
 
 void Scene::CheckCollisions(uint32_t id) {
 	if (colliders.find(id) != colliders.end()) {
-		SphereCollider& this_collider = colliders[id];
-		this_collider.radius = transforms[id].scale.x / 2.0;
-		this_collider.position = transforms[id].position;
-
+		auto& this_collider = colliders[id];
 		for (auto& [id2, other_collider] : colliders) {
 			// if both ptrs arent null and arent the same collider
 			if (&this_collider != &other_collider) {
-				other_collider.radius = transforms[id2].scale.x / 2.0;
-				other_collider.position = transforms[id2].position;
+
+				SphereCollider* sphereCol = dynamic_cast<SphereCollider*>(&this_collider);
+
+				if (sphereCol) {
+					sphereCol->position = transforms[id].position;
+				}
 
 				glm::vec3 collision_normal = this_collider.CheckCollisions(other_collider);
 				ResolveCollision(collision_normal, rigidbodies[id], rigidbodies[id2]);
@@ -67,14 +76,28 @@ void Scene::UpdatePhysics() {
 		
 		CheckCollisions(id);
 
-		rb.velocity -= rb.velocity * (1.0f - rb.drag) * deltaTime.get();
+		rb.velocity -= (rb.velocity * rb.drag) * deltaTime.get();
 
 
 		Transform& transform = transforms[id];
 		transform.position += rb.velocity * deltaTime.get();
 		
 		// Temp Floor collision
-		if (transform.position.y < 0.0f && transform.position.x > -6 && transform.position.x < 4 && transform.position.z > -6 && transform.position.z < 4) { transform.position.y = 0.0f; rb.velocity.y = 0.0f; }
+		if (transform.position.y < 0.0f && transform.position.x > -5.5 && transform.position.x < 4.5 && transform.position.z > -5.5 && transform.position.z < 4.5) { transform.position.y = 0.0f; rb.velocity.y = 0.0f; }
 	}
 }
 
+
+void Scene::StartEntityBehaviours() {
+
+}
+
+
+void Scene::WakeEntityBehaviours() {
+}
+
+
+void Scene::UpdateEntityBehaviours() {
+	for (auto& [id, behaviour] : entity_behaviours)
+	{ behaviour->Update(); }	
+}

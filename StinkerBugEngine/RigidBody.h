@@ -24,7 +24,7 @@ struct RigidBody {
 		angular_velocity(glm::vec3(0.0)),
 		centre_of_mass(glm::vec3(0.0)),
 		mass(1.0f),
-		drag(0.1f),
+		drag(0.4f),
 		angular_drag(0.05f),
 		bounciness(1.0f)
 	{}

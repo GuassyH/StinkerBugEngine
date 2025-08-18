@@ -17,16 +17,13 @@ public:
             // Now you can safely use 'sphere'
             float distance = glm::distance(position, sphere->position);
             if (distance <= radius + sphere->radius) {
-                std::cout << "Collision detected!\n";
                 return glm::normalize(sphere->position - position);
             }
             else {
-                std::cout << "Other collider is not a sphere.\n";
                 return glm::vec3(0.0);
             }
         }
         else {
-            std::cout << "Other collider is not a sphere.\n";
             return glm::vec3(0.0);
         }
 	}

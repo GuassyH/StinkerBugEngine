@@ -40,6 +40,9 @@
     <Filter Include="Source Files\ECS">
       <UniqueIdentifier>{3ab70d14-3cdc-4e55-96ad-6b33ead1b568}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\EntityBehaviours">
+      <UniqueIdentifier>{bf78b86f-74fc-427c-97df-8e920984908a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -145,6 +148,15 @@
     </ClInclude>
     <ClInclude Include="RigidBody.h">
       <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityBehavour.h">
+      <Filter>Header Files\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentsList.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereMove.h">
+      <Filter>Header Files\EntityBehaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

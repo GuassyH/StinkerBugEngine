@@ -8,26 +8,25 @@
 #include "unordered_map"
 #include "glm/glm.hpp"
 
-#include "Mesh.h"
-#include "Transform.h"
-#include "MeshRenderer.h"
-#include "Collider.h"
-#include "RigidBody.h"
-#include "SphereCollider.h"
+#include "ComponentsList.h"
 
 #include "Entity.h"
+#include "EntityBehavour.h"
 
 class Scene {
 private:
 	uint32_t nextEntity = 0;
 
-	std::unordered_map<uint32_t, Transform> transforms = {};
-	std::unordered_map<uint32_t, MeshRenderer> mesh_renderers = {};
-	std::unordered_map<uint32_t, SphereCollider> colliders = {};
-	std::unordered_map<uint32_t, RigidBody> rigidbodies = {};
+	std::unordered_map<uint32_t, std::string> entity_names;
+	std::unordered_map<uint32_t, Transform> transforms;
+	std::unordered_map<uint32_t, MeshRenderer> mesh_renderers;
+	std::unordered_map<uint32_t, SphereCollider> colliders;
+	std::unordered_map<uint32_t, RigidBody> rigidbodies;
+	std::unordered_map<uint32_t, std::unique_ptr<EntityBehaviour>> entity_behaviours;
 public:
 	Scene() = default;
 	Entity CreateEntity();
+	Entity CreateEntity(std::string name);
 
 	// Physics
 	float gravity = -9.82;
@@ -39,13 +38,26 @@ public:
 	glm::vec3 light_color = glm::vec3(1.0);
 
 
-
 	// Specializations for each component type
 	template<typename T>
 	std::unordered_map<uint32_t, T>& GetComponentMap();
+	// template<typename T>
+	// std::unordered_map<uint32_t, std::unique_ptr<T>>& GetComponentMap();
 
+	// For EntityBehaviour
 	template<typename T, typename... Args>
-	T& AddComponent(const Entity& entity, Args&&... args) {
+	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T>>
+		AddComponent(const Entity& entity, Args&&... args)
+	{
+		entity_behaviours[entity.id] = std::make_unique<T>(std::forward<Args>(args)...);
+		entity_behaviours[entity.id]->parent_id = entity.id;
+	}
+
+	// For normal components
+	template<typename T, typename... Args>
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T>, T&>
+		AddComponent(const Entity& entity, Args&&... args)
+	{	
 		auto& map = GetComponentMap<T>();
 		return map[entity.id] = T(std::forward<Args>(args)...);
 	}
@@ -79,6 +91,9 @@ public:
 	void ResolveCollision(glm::vec3 collision_normal, RigidBody& rb1, RigidBody& rb2);
 	void UpdatePhysics();
 
+	void StartEntityBehaviours();
+	void WakeEntityBehaviours();
+	void UpdateEntityBehaviours();
 };
 
 // Specialize the template for each component type
@@ -102,6 +117,10 @@ inline std::unordered_map<uint32_t, RigidBody>& Scene::GetComponentMap<RigidBody
 	return rigidbodies;
 }
 
+template<>
+inline std::unordered_map<uint32_t, std::unique_ptr<EntityBehaviour>>& Scene::GetComponentMap<std::unique_ptr<EntityBehaviour>>() {
+	return entity_behaviours;
+}
 
 
 #endif  
