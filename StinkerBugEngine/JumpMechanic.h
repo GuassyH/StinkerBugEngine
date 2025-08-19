@@ -12,7 +12,7 @@ public:
 
 	JumpMechanic() = default;
 
-	void Start() override {
+	inline void Start() override {
 		rb = &entity->GetComponent<RigidBody>();
 	}
 

@@ -43,6 +43,9 @@
     <Filter Include="Header Files\EntityBehaviours">
       <UniqueIdentifier>{bf78b86f-74fc-427c-97df-8e920984908a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{40ae57a4-a43c-4048-b964-9eaab8360bd8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -55,9 +58,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VBO.cpp">
@@ -87,6 +87,9 @@
     <ClCompile Include="EntityBehaviour.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Display.h">
@@ -96,9 +99,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VBO.h">
@@ -162,6 +162,12 @@
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
     <ClInclude Include="JumpMechanic.h">
+      <Filter>Header Files\EntityBehaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraMovement.h">
       <Filter>Header Files\EntityBehaviours</Filter>
     </ClInclude>
   </ItemGroup>

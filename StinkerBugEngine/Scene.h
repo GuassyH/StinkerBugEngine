@@ -24,7 +24,7 @@ public:
 	Entity& CreateEntity(std::string name);
 
 	// Physics
-	float gravity = -9.82;
+	float gravity = -9.82f;
 
 
 	// Environment

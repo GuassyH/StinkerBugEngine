@@ -1,6 +1,7 @@
-#ifndef CAMERA_CLASS_H
-#define CAMERA_CLASS_H
+#ifndef CAMERA_COMPONENT_H
+#define CAMERA_COMPONENT_H
 #define GLM_ENABLE_EXPERIMENTAL
+
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -11,43 +12,31 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include "Transform.h"
-#include "DeltaTime.h"
-#include "Display.h"
+
 
 class Camera {
 public:
-	Transform transform;
+	Transform* transform = nullptr;
 
-	glm::mat4 camMatrix = glm::mat4(1.0);
+	float FOVdeg = 75.0f;
+
+	float farPlane = 1000.0f;
+	float nearPlane = 0.1f;
+
+	int width = 1920;
+	int height = 1080;
+
+	glm::mat4 CameraMatrix = glm::mat4(1.0); // M -> *VP*
 
 	glm::vec3 forward = glm::vec3(0.0f, 1.0f, 0.0f);
 	glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
 	glm::vec3 localUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+	Camera() = default;
+	Camera(int width, int height, Transform& t);
 
 
-	float FOVdeg = 60.0f;
-
-	float farPlane = 1000.0f;
-	float nearPlane = 0.1f;
-
-	Camera(int width, int height, glm::vec3 position);
 	void UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int windowWidth, int windowHeight);
-	void Input();
-	void Move();
-	void Look();
-
-	glm::vec3 moveDir;
-
-	float moveSpeed = 2;
-	float speedMul = 1;
-
-	float sensitivity = 2;
-private:
-	int width, height;
-	float horizontal, vertical, elevator;
-
-	bool focusMouse = true;
 };
 
 

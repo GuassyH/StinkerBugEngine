@@ -2,11 +2,11 @@
 #define COMPONENTS_LIST_H
 
 #include "Mesh.h"
+#include "Camera.h"
 #include "Transform.h"
 #include "MeshRenderer.h"
 #include "Collider.h"
 #include "RigidBody.h"
 #include "SphereCollider.h"
-
 
 #endif

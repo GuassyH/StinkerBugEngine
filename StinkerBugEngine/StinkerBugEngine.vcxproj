@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraMovement.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ComponentsList.h" />
     <ClInclude Include="Constants.h" />

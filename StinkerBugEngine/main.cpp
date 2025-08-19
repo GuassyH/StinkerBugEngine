@@ -12,10 +12,10 @@
 #include "Entity.h"
 
 #include "Mesh.h"
-#include "MeshRenderer.h"
-#include "Collider.h"
-#include "SphereCollider.h"
 #include "EntityBehaviour.h"
+#include "ComponentsList.h"
+#include "CameraMovement.h"
+
 #include "SphereMove.h"
 #include "JumpMechanic.h"
 
@@ -23,14 +23,11 @@ int main(void) {
 	Display& display = Display::getInstance();
 	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { return -1; }
 
-	Camera camera = Camera(display.windowWidth, display.windowHeight, glm::vec3(0.0));
-	camera.transform.position = glm::vec3(0, 3, 10.0f);
-
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 	SceneManager& sceneManager = SceneManager::getInstance();
 	Scene scene;
-
 	sceneManager.SetActiveScene(scene);
+
 
 	Shader skybox_shader("skybox.vert", "skybox.frag");
 
@@ -38,14 +35,17 @@ int main(void) {
 	Material material;
 	Material red; red.Color = Constants::Colors::Red;
 
-	
 
 	Mesh floor = Mesh(Constants::Shapes::Plane());
 	Mesh cube = Mesh(Constants::Shapes::Cube());
 	Mesh sphere = Mesh(Constants::Shapes::UVSphere());
 
-	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
+	Entity camera = scene.CreateEntity();
+	camera.GetComponent<Transform>().position = glm::vec3(0.0, 2.0, 10);
+	camera.AddComponent<Camera>(display.windowWidth, display.windowHeight, camera.GetComponent<Transform>());
+	camera.AddComponent<CameraMovement>();
 
+	FullScreenPass skybox_pass = FullScreenPass(camera.GetComponent<Camera>(), skybox_mat);
 	
 	Entity e_plane = scene.CreateEntity();
 	e_plane.GetComponent<Transform>().position = glm::vec3(-5, 0, -5);
@@ -66,22 +66,22 @@ int main(void) {
 	e_globe_2.AddComponent<SphereCollider>().radius = 0.5f;
 	e_globe_2.AddComponent<JumpMechanic>();
 
-
+	Camera& camera_component = camera.GetComponent<Camera>();
 
 	scene.StartEntityBehaviours();
 	scene.WakeEntityBehaviours();
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
-		skybox_pass.Draw(camera);
+		skybox_pass.Draw(camera_component);
 
 
 
-		camera.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
-		camera.Input();
+		camera_component.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
+
 
 		scene.UpdateEntityBehaviours();
 		scene.UpdatePhysics();
-		scene.DrawMeshes(camera);
+		scene.DrawMeshes(camera_component);
 
 
 

@@ -15,7 +15,6 @@
 
 #include "Vertex.h"
 
-#include "Camera.h"
 #include "Constants.h"
 
 #include "VAO.h"
@@ -24,6 +23,7 @@
 
 class Transform;
 class Material;
+class Camera;
 
 class Mesh {
 public:

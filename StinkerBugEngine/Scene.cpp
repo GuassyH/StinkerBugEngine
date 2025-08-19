@@ -11,7 +11,7 @@ Entity& Scene::CreateEntity() {
 	Scene_ECS.entity_names[entity_id] = std::to_string(entity_id);
 	Entity new_entity(entity_id, this);
 	Scene_ECS.entities[entity_id] = new_entity;
-	return new_entity;
+	return Scene_ECS.entities[entity_id];
 }
 
 
@@ -21,7 +21,7 @@ Entity& Scene::CreateEntity(std::string name) {
 	Scene_ECS.entity_names[entity_id] = name;
 	Entity new_entity(entity_id, this);
 	Scene_ECS.entities[entity_id] = new_entity;
-	return new_entity;
+	return Scene_ECS.entities[entity_id];
 }
 
 

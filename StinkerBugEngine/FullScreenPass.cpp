@@ -33,15 +33,7 @@ FullScreenPass::FullScreenPass(Camera& camera, Material& material) : material(&m
 void FullScreenPass::Draw(Camera& camera) {
 	material->shader.Use();
 
-	//uniform int screenWidth;
-	//uniform int screenHeight;
-	//uniform float FOVdeg;
 
-	//uniform vec3 camForward;
-	//uniform vec3 camRight;
-	//uniform vec3 camUp;
-	//uniform float camNearPlane;
-	//uniform vec3 camPos;
 
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenWidth"), display.windowWidth);
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenHeight"), display.windowHeight);
@@ -50,7 +42,7 @@ void FullScreenPass::Draw(Camera& camera) {
 	glUniform3f(glGetUniformLocation(material->shader.ID, "camForward"), camera.forward.x, camera.forward.y, camera.forward.z);
 	glUniform3f(glGetUniformLocation(material->shader.ID, "camRight"), camera.right.x, camera.right.y, camera.right.z);
 	glUniform1f(glGetUniformLocation(material->shader.ID, "FOVdeg"), camera.FOVdeg);
-	glUniform3f(glGetUniformLocation(material->shader.ID, "camPos"), camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+	glUniform3f(glGetUniformLocation(material->shader.ID, "camPos"), camera.transform->position.x, camera.transform->position.y, camera.transform->position.z);
 
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camNearPlane"), camera.nearPlane);
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camFarPlane"), camera.farPlane);
@@ -59,6 +51,8 @@ void FullScreenPass::Draw(Camera& camera) {
 	glm::vec3 l_col = SceneManager::getInstance().GetActiveScene()->light_color;
 	glUniform3f(glGetUniformLocation(material->shader.ID, "sunDir"), l_dir.x, l_dir.y, l_dir.z);
 	glUniform4f(glGetUniformLocation(material->shader.ID, "sunColor"), l_col.r, l_col.g, l_col.b, 1.0f);
+
+
 
 	glDisable(GL_DEPTH_TEST);
 

@@ -2,16 +2,20 @@
 
 #include "SceneManager.h"
 #include "Scene.h"
+
 #include "Transform.h"
 #include "Material.h"
+#include "Camera.h"
 
 SceneManager& sceneManager = SceneManager::getInstance();
+
 // Constructor for vector (dynamic size)
 Mesh::Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds)
 	: vertices(verts), indices(inds) {
 	RecalculateMesh();
 }
 
+// Constructor for custom constant Shape
 Mesh::Mesh(const Constants::Shapes::Shape& shape)
 	: vertices(shape.getVertices()), indices(shape.getIndices()) {
 	RecalculateMesh();
@@ -63,8 +67,8 @@ void Mesh::Draw(Camera& camera, Material* material, Transform& transform) {
 
 	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotation"), 1, GL_FALSE, glm::value_ptr(rotMatrix));
-	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(camera.camMatrix));
-	glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), camera.transform.position.x, camera.transform.position.y, camera.transform.position.z);
+	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(camera.CameraMatrix));
+	glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), camera.transform->position.x, camera.transform->position.y, camera.transform->position.z);
 	glUniform4f(glGetUniformLocation(r_shader.ID, "color"), material->Color.r, material->Color.g, material->Color.b, material->Color.a);
 
 	if (material->Lit && SceneManager::getInstance().GetActiveScene()) {
