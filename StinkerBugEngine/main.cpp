@@ -5,17 +5,16 @@
 
 #include "Display.h"
 #include "Constants.h"
-#include "SceneManager.h"
 #include "Scene.h"
+#include "SceneManager.h"
 #include "FullScreenPass.h"
 
+#include "ComponentsList.h"
 #include "Entity.h"
+#include "EntityBehaviour.h"
 
 #include "Mesh.h"
-#include "EntityBehaviour.h"
-#include "ComponentsList.h"
 #include "CameraMovement.h"
-
 #include "SphereMove.h"
 #include "JumpMechanic.h"
 
@@ -32,7 +31,7 @@ int main(void) {
 	Shader skybox_shader("skybox.vert", "skybox.frag");
 
 	Material skybox_mat(skybox_shader);
-	Material material;
+	Material material; material.Color = Constants::Colors::White;
 	Material red; red.Color = Constants::Colors::Red;
 
 
@@ -42,10 +41,14 @@ int main(void) {
 
 	Entity camera = scene.CreateEntity();
 	camera.GetComponent<Transform>().position = glm::vec3(0.0, 2.0, 10);
-	camera.AddComponent<Camera>(display.windowWidth, display.windowHeight, camera.GetComponent<Transform>());
+	camera.AddComponent<Camera>(display.windowWidth, display.windowHeight, camera.GetComponent<Transform>()).main = true;
 	camera.AddComponent<CameraMovement>();
 
 	FullScreenPass skybox_pass = FullScreenPass(camera.GetComponent<Camera>(), skybox_mat);
+
+	Entity big_Light = scene.CreateEntity();
+	big_Light.AddComponent<Light>().light_type = LightTypes::Spotlight;
+	big_Light.GetComponent<Light>().color = glm::vec4(0.4f);
 	
 	Entity e_plane = scene.CreateEntity();
 	e_plane.GetComponent<Transform>().position = glm::vec3(-5, 0, -5);
@@ -68,6 +71,7 @@ int main(void) {
 
 	Camera& camera_component = camera.GetComponent<Camera>();
 
+
 	scene.StartEntityBehaviours();
 	scene.WakeEntityBehaviours();
 	while (!glfwWindowShouldClose(display.window)) {
@@ -76,18 +80,16 @@ int main(void) {
 
 
 		camera_component.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
-
+		camera_component.Render(big_Light.GetComponent<Light>(), big_Light.GetComponent<Transform>());
 
 		scene.UpdateEntityBehaviours();
 		scene.UpdatePhysics();
-		scene.DrawMeshes(camera_component);
-
 
 
 		display.EndFrame();
 	}
 
-	
+	sceneManager.UnloadScene(scene);
 
 	return 0;
 }

@@ -90,6 +90,9 @@
     <ClCompile Include="Display.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowMapFBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Mesh.h">
@@ -170,6 +173,12 @@
     <ClInclude Include="Display.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapFBO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -182,6 +191,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="skybox.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="ShadowMapFBO.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="ShadowMapFBO.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>

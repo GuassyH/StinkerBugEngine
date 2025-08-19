@@ -12,11 +12,16 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include "Transform.h"
+#include "ShadowMapFBO.h"
 
+class MeshRenderer;
+class Shader;
+class Light;
 
 class Camera {
 public:
 	Transform* transform = nullptr;
+	bool main = false;
 
 	float FOVdeg = 75.0f;
 
@@ -34,9 +39,15 @@ public:
 
 	Camera() = default;
 	Camera(int width, int height, Transform& t);
-
-
 	void UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int windowWidth, int windowHeight);
+
+
+	void ShadowPass(MeshRenderer& renderer, Transform& r_transform, Light& light, Transform& l_transform);
+	void LightingPass(MeshRenderer& renderer, Transform& r_transform);
+	void Render(Light& light, Transform& l_transform);
+	
+
+	ShadowMapFBO m_shadowMapFBO;
 };
 
 

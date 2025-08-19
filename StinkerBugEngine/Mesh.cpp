@@ -6,23 +6,22 @@
 #include "Transform.h"
 #include "Material.h"
 #include "Camera.h"
+#include "Light.h"
 
 SceneManager& sceneManager = SceneManager::getInstance();
 
-// Constructor for vector (dynamic size)
+
 Mesh::Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds)
 	: vertices(verts), indices(inds) {
 	RecalculateMesh();
-}
+}	// Constructor for vector (dynamic size)
 
-// Constructor for custom constant Shape
 Mesh::Mesh(const Constants::Shapes::Shape& shape)
 	: vertices(shape.getVertices()), indices(shape.getIndices()) {
 	RecalculateMesh();
-}
+}									// Constructor for custom constant Shape
 
-// Constructor for array (fixed size)
-template <size_t NVerts, size_t NInds>
+template <size_t NVerts, size_t NInds>														// Constructor for array (fixed size)
 Mesh::Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds)
 	: vertices(verts.begin(), verts.end()), indices(inds.begin(), inds.end()) {
 	RecalculateMesh();
@@ -46,45 +45,21 @@ void Mesh::RecalculateMesh() {
 	EBO1.Unbind();
 }
 
-void Mesh::Draw(Camera& camera, Material* material, Transform& transform) {
-	Shader& r_shader = material->shader;
-	r_shader.Use();
-
-	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), transform.scale);
+void Mesh::UpdateMatrices(Transform& r_transform) {
+	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), r_transform.scale);
 
 	// Construct rotation quat (Y > X > Z)
-	glm::quat rotY = glm::angleAxis(glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::quat rotX = glm::angleAxis(glm::radians(transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	glm::quat rotZ = glm::angleAxis(glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+	glm::quat rotY = glm::angleAxis(glm::radians(r_transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::quat rotX = glm::angleAxis(glm::radians(r_transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+	glm::quat rotZ = glm::angleAxis(glm::radians(r_transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 	glm::quat rotationQuat = rotY * rotX * rotZ; // Apply Z rotation first, then X, then Y
 
-	glm::mat4 rotMatrix = glm::mat4_cast(rotationQuat);
-	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), transform.position);
+	rotationMatrix = glm::mat4_cast(rotationQuat);
+	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), r_transform.position);
 
 	// Combine to get model matrix: translate * rotate * scale
-	glm::mat4 model = translationMatrix * rotMatrix * scaleMatrix;
-
-
-	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotation"), 1, GL_FALSE, glm::value_ptr(rotMatrix));
-	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(camera.CameraMatrix));
-	glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), camera.transform->position.x, camera.transform->position.y, camera.transform->position.z);
-	glUniform4f(glGetUniformLocation(r_shader.ID, "color"), material->Color.r, material->Color.g, material->Color.b, material->Color.a);
-
-	if (material->Lit && SceneManager::getInstance().GetActiveScene()) {
-		glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene()->light_direction;
-		glm::vec3 l_col = SceneManager::getInstance().GetActiveScene()->light_color;
-		glUniform3f(glGetUniformLocation(r_shader.ID, "lightDir"), l_dir.x, l_dir.y, l_dir.z);
-		glUniform4f(glGetUniformLocation(r_shader.ID, "lightColor"), l_col.r, l_col.g, l_col.b, 1.0f);
-		glUniform1f(glGetUniformLocation(r_shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene()->ambient);
-
-	}
-
-	VAO1.Bind();
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-
+	modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
 }
-
 
 
 Mesh::~Mesh() { 

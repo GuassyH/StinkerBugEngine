@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include "Scene.h"
+#include "Entity.h"
 
 SceneManager& SceneManager::getInstance(){
 	static SceneManager instance; return instance;
@@ -16,4 +17,25 @@ Scene* SceneManager::GetActiveScene() {
 		throw std::runtime_error("No active scene loaded.");
 	}
 	return activeScene;
+}
+
+void SceneManager::UnloadScene() {
+	Scene* scene = GetActiveScene();
+	for (auto& [id, renderer] : scene->Scene_ECS.mesh_renderers) {
+		renderer.mesh->~Mesh();
+	}
+
+	for (auto& [id, entity] : scene->Scene_ECS.entities) {
+		entity.~Entity();
+	}
+}
+
+void SceneManager::UnloadScene(Scene& scene) {
+	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
+		renderer.mesh->~Mesh();
+	}
+
+	for (auto& [id, entity] : scene.Scene_ECS.entities) {
+		entity.~Entity();
+	}
 }

@@ -28,18 +28,19 @@ class Camera;
 class Mesh {
 public:
 	Mesh() = default;
-    // Constructor for vector (dynamic size)
 	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds);
-
 	Mesh(const Constants::Shapes::Shape& shape);
-    // Constructor for array (fixed size)
 	template <size_t NVerts, size_t NInds>
 	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds);
 	
 	void RecalculateMesh();
-	void Draw(Camera& camera, Material* material, Transform& transform);
+	void UpdateMatrices(Transform& r_transform);
+
 
 	~Mesh();
+
+	glm::mat4 modelMatrix = glm::mat4(1.0);
+	glm::mat4 rotationMatrix = glm::mat4(1.0);
 
 	std::vector<Vertex> vertices = {};
 	std::vector<GLuint> indices = {};

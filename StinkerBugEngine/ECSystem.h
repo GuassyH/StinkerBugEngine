@@ -16,6 +16,8 @@ public:
 	std::unordered_map<uint32_t, SphereCollider> colliders;
 	std::unordered_map<uint32_t, RigidBody> rigidbodies;
 	std::unordered_map<uint32_t, Camera> cameras;
+	std::unordered_map<uint32_t, Light> lights;
+
 	std::unordered_map<uint32_t, std::unique_ptr<EntityBehaviour>> entity_behaviours;
 
 // ALL THE IMPORTANT SHIZZ
@@ -107,6 +109,11 @@ inline std::unordered_map<uint32_t, RigidBody>& ECSystem::GetComponentMap<RigidB
 template<>
 inline std::unordered_map<uint32_t, Camera>& ECSystem::GetComponentMap<Camera>() {
 	return cameras;
+}
+
+template<>
+inline std::unordered_map<uint32_t, Light>& ECSystem::GetComponentMap<Light>() {
+	return lights;
 }
 
 

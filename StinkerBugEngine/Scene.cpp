@@ -8,7 +8,7 @@ DeltaTime& deltaTime = DeltaTime::getInstance();
 Entity& Scene::CreateEntity() {
 	uint32_t entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
-	Scene_ECS.entity_names[entity_id] = std::to_string(entity_id);
+	Scene_ECS.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
 	Entity new_entity(entity_id, this);
 	Scene_ECS.entities[entity_id] = new_entity;
 	return Scene_ECS.entities[entity_id];
@@ -22,16 +22,6 @@ Entity& Scene::CreateEntity(std::string name) {
 	Entity new_entity(entity_id, this);
 	Scene_ECS.entities[entity_id] = new_entity;
 	return Scene_ECS.entities[entity_id];
-}
-
-
-void Scene::DrawMeshes(Camera& camera) {
-	for (auto& [id, renderer] : Scene_ECS.mesh_renderers) {
-		auto it = Scene_ECS.transforms.find(id);
-		Transform& t = it->second;
-
-		renderer.mesh->Draw(camera, renderer.material, t);
-	}
 }
 
 void Scene::ResolveCollision(glm::vec3 collision_normal, RigidBody& rb1, RigidBody&  rb2){
@@ -118,3 +108,4 @@ void Scene::UpdateEntityBehaviours() {
 		behaviour->Update();
 	}
 }
+

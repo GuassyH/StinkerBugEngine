@@ -8,5 +8,6 @@
 #include "Collider.h"
 #include "RigidBody.h"
 #include "SphereCollider.h"
+#include "Light.h"
 
 #endif
