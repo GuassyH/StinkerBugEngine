@@ -75,7 +75,6 @@ int main(void) {
 		skybox_pass.Draw(camera_component);
 
 
-
 		camera_component.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 
 
