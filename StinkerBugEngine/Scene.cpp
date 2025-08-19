@@ -110,6 +110,11 @@ void Scene::WakeEntityBehaviours() {
 
 
 void Scene::UpdateEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours)
-	{ behaviour->Update(); }	
+	//auto range = Scene_ECS.entity_behaviours.equal_range(1);
+	//for (auto it = range.first; it != range.second; ++it) {
+	//	std::cout << "Key 1 value: " << it->second << "\n";
+	//}
+	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
+		behaviour->Update();
+	}
 }

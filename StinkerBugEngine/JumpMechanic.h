@@ -21,7 +21,8 @@ public:
 		if (glfwGetKey(display.window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 			if (!pressed) {
 				pressed = true;
-				rb->velocity = glm::vec3(0.0, 20, 0.0);
+				rb->velocity.y = 0.0;
+				rb->velocity += glm::vec3(0.0, 10, 0.0);
 			}
 		}
 		else {

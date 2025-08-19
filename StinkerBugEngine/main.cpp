@@ -46,7 +46,7 @@ int main(void) {
 
 	FullScreenPass skybox_pass = FullScreenPass(camera, skybox_mat);
 
-
+	
 	Entity e_plane = scene.CreateEntity();
 	e_plane.GetComponent<Transform>().position = glm::vec3(-5, 0, -5);
 	e_plane.GetComponent<Transform>().scale = glm::vec3(10);
@@ -61,21 +61,20 @@ int main(void) {
 
 	Entity e_globe_2 = scene.CreateEntity();
 	e_globe_2.GetComponent<Transform>().position = glm::vec3(2, 10, 0);
-	e_globe_2.AddComponent<MeshRenderer>(sphere, material);
+	e_globe_2.AddComponent<MeshRenderer>(sphere, red);
 	e_globe_2.AddComponent<RigidBody>();
 	e_globe_2.AddComponent<SphereCollider>().radius = 0.5f;
 	e_globe_2.AddComponent<JumpMechanic>();
 
 
+
 	scene.StartEntityBehaviours();
 	scene.WakeEntityBehaviours();
-	bool shot = false;
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
 		skybox_pass.Draw(camera);
 
-		
-		
+
 
 		camera.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera.Input();
@@ -83,6 +82,7 @@ int main(void) {
 		scene.UpdateEntityBehaviours();
 		scene.UpdatePhysics();
 		scene.DrawMeshes(camera);
+
 
 
 		display.EndFrame();
