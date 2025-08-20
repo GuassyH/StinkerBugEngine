@@ -33,7 +33,7 @@ int main(void) {
 	Material skybox_mat(skybox_shader);
 	Material material; material.Color = Constants::Colors::White;
 	Material red; red.Color = Constants::Colors::Red;
-
+	Material blue; blue.Color = Constants::Colors::Blue;
 
 	Mesh floor = Mesh(Constants::Shapes::Plane());
 	Mesh cube = Mesh(Constants::Shapes::Cube());
@@ -56,21 +56,37 @@ int main(void) {
 	e_plane.AddComponent<MeshRenderer>(floor, material);
 
 	Entity e_globe = scene.CreateEntity();
-	e_globe.GetComponent<Transform>().position = glm::vec3(0, 10, 0);
+	e_globe.GetComponent<Transform>().position = glm::vec3(-1, 10, 0);
 	e_globe.AddComponent<MeshRenderer>(sphere, material);
 	e_globe.AddComponent<RigidBody>();
 	e_globe.AddComponent<SphereCollider>().radius = 0.5f;
 	e_globe.AddComponent<SphereMove>();
 
 	Entity e_globe_2 = scene.CreateEntity();
-	e_globe_2.GetComponent<Transform>().position = glm::vec3(2, 10, 0);
+	e_globe_2.GetComponent<Transform>().position = glm::vec3(1, 10, 0);
 	e_globe_2.AddComponent<MeshRenderer>(sphere, red);
 	e_globe_2.AddComponent<RigidBody>();
 	e_globe_2.AddComponent<SphereCollider>().radius = 0.5f;
 	e_globe_2.AddComponent<JumpMechanic>();
 
-	Camera& camera_component = camera.GetComponent<Camera>();
 
+	for (int i = 0; i < 10; i++)
+	{
+		for (int p = 0; p < 10; p++)
+		{
+			Entity e_big_globe = scene.CreateEntity();
+			e_big_globe.GetComponent<Transform>().position = glm::vec3(i - 5, 5, p - 5);
+			e_big_globe.GetComponent<Transform>().scale = glm::vec3(1.0);
+			e_big_globe.AddComponent<MeshRenderer>(sphere, blue);
+			e_big_globe.AddComponent<RigidBody>().mass = 2;
+			e_big_globe.AddComponent<SphereCollider>().radius = 0.5f;
+		}
+	}
+
+
+
+
+	Camera& camera_component = camera.GetComponent<Camera>();
 
 	scene.StartEntityBehaviours();
 	scene.WakeEntityBehaviours();
@@ -81,6 +97,7 @@ int main(void) {
 
 		camera_component.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera_component.Render(big_Light.GetComponent<Light>(), big_Light.GetComponent<Transform>());
+
 
 		scene.UpdateEntityBehaviours();
 		scene.UpdatePhysics();

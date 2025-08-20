@@ -10,7 +10,7 @@
 	vec4 shadowColor = vec4(0.2, 0.3, 0.8, 1.0)
 #endif
 
-// uniform sampler2D ShadowMap;
+uniform sampler2DShadow ShadowMap;
 
 
 uniform vec3 camPos;

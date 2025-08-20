@@ -26,7 +26,10 @@ public:
 			rb->velocity += glm::vec3(-5.0, 0.0, 0.0) * deltaTime.get();
 		}
 		if (glfwGetKey(display.window, GLFW_KEY_UP) == GLFW_PRESS) {
-			rb->velocity += glm::vec3(0.0, 18.0, 0.0) * deltaTime.get();
+			rb->velocity += glm::vec3(0.0, 0.0, -5.0) * deltaTime.get();
+		}
+		if (glfwGetKey(display.window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+			rb->velocity += glm::vec3(0.0, 0.0, 5.0) * deltaTime.get();
 		}
 
 	}

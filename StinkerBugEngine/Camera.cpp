@@ -64,10 +64,12 @@ void Camera::ShadowPass(MeshRenderer& renderer, Transform& r_transform, Light& l
 	r_mesh.UpdateMatrices(r_transform);
 
 	// Bind the shadow map FrameBuffer for writing
-	// m_shadowMapFBO.BindForWriting();
+	m_shadowMapFBO.BindForWriting();
 
 	// Clear the depth buffer
-	glClear(GL_DEPTH_BUFFER_BIT);
+	// glClear(GL_DEPTH_BUFFER_BIT);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+
 
 	m_shadowMapShader.Use();
 
@@ -96,7 +98,9 @@ void Camera::LightingPass(MeshRenderer& renderer, Transform& r_transform) {
 	r_mesh.UpdateMatrices(r_transform);
 	r_shader.Use();
 
-	// m_shadowMapFBO.BindForReading(GL_TEXTURE_SHADOW);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	m_shadowMapFBO.BindForReading(GL_TEXTURE0);
+
 
 	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.modelMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.rotationMatrix));
@@ -123,7 +127,7 @@ void Camera::Render(Light& light, Transform& l_transform) {
 		auto it = scene->Scene_ECS.transforms.find(id);
 		Transform& t = it->second;
 
-		// ShadowPass(renderer, t, light, l_transform);
+		ShadowPass(renderer, t, light, l_transform);
 		LightingPass(renderer, t);
 	}
 }
