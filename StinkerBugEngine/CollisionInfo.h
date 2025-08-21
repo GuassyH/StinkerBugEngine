@@ -4,9 +4,10 @@
 #include "glm/glm.hpp"
 
 struct CollisionInfo {
-    glm::vec3 collision_pos = glm::vec3(0.0f);
-    glm::vec3 collision_normal = glm::vec3(0.0f);
+    glm::vec3 position = glm::vec3(0.0f);
+    glm::vec3 normal = glm::vec3(0.0f);
     bool did_collide = false;
+    float penetration = 0.0f;
 };
 
 #endif

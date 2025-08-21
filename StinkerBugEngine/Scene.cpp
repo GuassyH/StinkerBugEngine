@@ -5,6 +5,7 @@
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
+// Create the Entity
 Entity& Scene::CreateEntity() {
 	uint32_t entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
@@ -24,10 +25,11 @@ Entity& Scene::CreateEntity(std::string name) {
 	return Scene_ECS.entities[entity_id];
 }
 
-void Scene::ResolveCollision(glm::vec3 collision_normal, RigidBody& rb1, RigidBody&  rb2){
-	if (collision_normal != glm::vec3(0.0)) {
+// Resolve collision (apply forces)
+void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody&  rb2, Transform& t2){
+	if (collision_info.normal != glm::vec3(0.0)) {
 		glm::vec3 relative_velocity = rb1.velocity - rb2.velocity;
-		float vel_along_normal = glm::dot(relative_velocity, collision_normal);
+		float vel_along_normal = glm::dot(relative_velocity, collision_info.normal);
 
 		if (vel_along_normal < 0) return;
 
@@ -37,20 +39,30 @@ void Scene::ResolveCollision(glm::vec3 collision_normal, RigidBody& rb1, RigidBo
 		float j = -(1.0f + ((rb1.bounciness + rb2.bounciness) / 2.0f)) * vel_along_normal;
 		j /= (invMass1 + invMass2);
 
-		glm::vec3 impulse = j * collision_normal;
+		glm::vec3 impulse = j * collision_info.normal;
 		rb1.velocity += impulse * invMass1;
 		rb2.velocity -= impulse * invMass2;
+
+		// positional corrections
+		if (invMass1 + invMass2 > 0) {
+			glm::vec3 correction = collision_info.normal * collision_info.penetration / (invMass1 + invMass2);
+			// t1.position -= correction * invMass1;
+			// t2.position += correction * invMass2;
+		}
 	}
 }
 
+// Check for collisions between all colliders
 void Scene::CheckCollisions(uint32_t id) {
 	if (Scene_ECS.colliders.find(id) != Scene_ECS.colliders.end()) {
 		auto& this_collider = Scene_ECS.colliders[id];
 		for (auto& [id2, other_collider] : Scene_ECS.colliders) {
 			// if both ptrs arent null and arent the same collider
 			if (this_collider != other_collider) {
-				CollisionInfo collision = this_collider->CheckCollisions(*other_collider);
-				ResolveCollision(collision.collision_normal, Scene_ECS.rigidbodies[id], Scene_ECS.rigidbodies[id2]);
+				CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
+				if (collision_info.did_collide) {
+					ResolveCollision(collision_info, Scene_ECS.rigidbodies[id], Scene_ECS.transforms[id], Scene_ECS.rigidbodies[id2], Scene_ECS.transforms[id2]);
+				}
 			}
 		}
 	}
@@ -60,6 +72,7 @@ void Scene::CheckCollisions(uint32_t id) {
 	}
 }
 
+// Update all the RigidBodies
 void Scene::UpdatePhysics() {
 	for (auto& [id, rb] : Scene_ECS.rigidbodies) {
 		if (rb.isKinematic) { continue; }
@@ -68,7 +81,6 @@ void Scene::UpdatePhysics() {
 		CheckCollisions(id);
 
 		rb.velocity -= (rb.velocity * rb.drag) * deltaTime.get();
-
 
 		Transform& transform = Scene_ECS.transforms[id];
 		transform.position += rb.velocity * deltaTime.get();
@@ -79,25 +91,24 @@ void Scene::UpdatePhysics() {
 }
 
 
+
+
+// Call the EntityBehaviours Start
 void Scene::StartEntityBehaviours() {
 	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours){
 		behaviour->Start();
 	}
 }
 
-
+// Call the EntityBehaviours Awake
 void Scene::WakeEntityBehaviours() {
 	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
 		behaviour->Awake();
 	}
 }
 
-
+// Update all the EntityBehaviour scripts
 void Scene::UpdateEntityBehaviours() {
-	//auto range = Scene_ECS.entity_behaviours.equal_range(1);
-	//for (auto it = range.first; it != range.second; ++it) {
-	//	std::cout << "Key 1 value: " << it->second << "\n";
-	//}
 	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
 		behaviour->Update();
 	}

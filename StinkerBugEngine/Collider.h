@@ -15,9 +15,9 @@ class BoxCollider;
 
 class Collider {
 public:
-    int parent_id;
-    Transform* transform;
-    Entity* entity;
+    int parent_id = 0;
+    Transform* transform = nullptr;
+    Entity* entity = nullptr;
 
     float radius = 0.5f;
     glm::vec3 offset = glm::vec3(0.5f);

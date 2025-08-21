@@ -21,7 +21,7 @@
 #include "BoxCollider.h"
 
 
-void DebugVec3(std::string text, glm::vec3 vector) {
+inline void DebugVec3(std::string text, glm::vec3 vector) {
 	std::cout << text << ": " << vector.x << "x " << vector.y << "y " << vector.z << "z\n";
 }
 
@@ -68,7 +68,6 @@ int main(void) {
 	e_globe.AddComponent<RigidBody>();
 	e_globe.AddComponent<SphereCollider>();
 	e_globe.GetComponent<SphereCollider>().radius = 0.5f;
-	e_globe.AddComponent<SphereMove>();
 
 	Entity& e_globe_2 = scene.CreateEntity();
 	e_globe_2.GetComponent<Transform>().position = glm::vec3(1, 10, 0);
@@ -78,21 +77,22 @@ int main(void) {
 	e_globe_2.GetComponent<SphereCollider>().radius = 0.5f;
 	e_globe_2.AddComponent<JumpMechanic>();
 
-	/*
+	
 	Entity& e_cube = scene.CreateEntity();
-	e_cube.GetComponent<Transform>().position = glm::vec3(-4, 5, 0);
-	e_cube.AddComponent<RigidBody>();
-	e_cube.AddComponent<BoxCollider>();
+	e_cube.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
+	e_cube.AddComponent<RigidBody>().mass = 1.0f;
 	e_cube.AddComponent<MeshRenderer>(cube, red);
 	e_cube.AddComponent<SphereMove>();
+	e_cube.AddComponent<BoxCollider>();
 
 	Entity& e_cube_2 = scene.CreateEntity();
-	e_cube_2.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
-	e_cube_2.AddComponent<RigidBody>();
+	e_cube_2.GetComponent<Transform>().position = glm::vec3(-4, 5, 0);
+	e_cube_2.AddComponent<RigidBody>().mass = 1.0f;
+	e_cube_2.AddComponent<MeshRenderer>(cube, blue);
 	e_cube_2.AddComponent<BoxCollider>();
-	e_cube_2.AddComponent<MeshRenderer>(cube, red);
-	*/
-
+	
+	
+	/* 
 	for (int i = 0; i < 10; i++)
 	{
 		for (int p = 0; p < 10; p++)
@@ -106,7 +106,7 @@ int main(void) {
 			e_big_globe.GetComponent<SphereCollider>().radius = 0.5f;
 		}
 	}
-
+	*/
 
 
 
@@ -126,6 +126,7 @@ int main(void) {
 		scene.UpdateEntityBehaviours();
 		scene.UpdatePhysics();
 
+		
 
 		display.EndFrame();
 	}

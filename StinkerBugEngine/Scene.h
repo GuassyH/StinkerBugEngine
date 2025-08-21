@@ -33,7 +33,7 @@ public:
 
 	void DrawMeshes(Camera& camera);
 	void CheckCollisions(uint32_t id);
-	void ResolveCollision(glm::vec3 collision_normal, RigidBody& rb1, RigidBody& rb2);
+	void ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2);
 	void UpdatePhysics();
 
 	void StartEntityBehaviours();

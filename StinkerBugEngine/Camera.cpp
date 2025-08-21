@@ -99,7 +99,7 @@ void Camera::LightingPass(MeshRenderer& renderer, Transform& r_transform) {
 	r_shader.Use();
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	m_shadowMapFBO.BindForReading(GL_TEXTURE0);
+	// m_shadowMapFBO.BindForReading(GL_TEXTURE0);
 
 
 	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.modelMatrix));
@@ -127,7 +127,7 @@ void Camera::Render(Light& light, Transform& l_transform) {
 		auto it = scene->Scene_ECS.transforms.find(id);
 		Transform& t = it->second;
 
-		ShadowPass(renderer, t, light, l_transform);
+		// ShadowPass(renderer, t, light, l_transform);
 		LightingPass(renderer, t);
 	}
 }

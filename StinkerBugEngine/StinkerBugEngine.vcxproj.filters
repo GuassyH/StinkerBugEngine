@@ -96,9 +96,6 @@
     <ClCompile Include="ShadowMapFBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Source Files\Components</Filter>
-    </ClCompile>
     <ClCompile Include="SphereCollider.cpp">
       <Filter>Source Files\Components\Collision</Filter>
     </ClCompile>
@@ -106,6 +103,9 @@
       <Filter>Source Files\Components\Collision</Filter>
     </ClCompile>
     <ClCompile Include="ColliderFunctions.cpp">
+      <Filter>Source Files\Components\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
       <Filter>Source Files\Components\Collision</Filter>
     </ClCompile>
   </ItemGroup>

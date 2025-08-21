@@ -1,8 +1,18 @@
 #include "ColliderFunctions.h"
 
+#include "Constants.h"
 #include "Collider.h"
 #include "SphereCollider.h"
 #include "BoxCollider.h"
+
+#include "Entity.h"
+#include "Vertex.h"
+#include "Mesh.h"
+
+
+void DebugVec3(std::string text, glm::vec3 vector) {
+    std::cout << text << ": " << vector.x << "x " << vector.y << "y " << vector.z << "z\n";
+}
 
 CollisionInfo ColliderFunctions::SphereVsSphere(SphereCollider& this_sphere, SphereCollider& other_sphere) {
 	CollisionInfo collision_info;
@@ -17,8 +27,9 @@ CollisionInfo ColliderFunctions::SphereVsSphere(SphereCollider& this_sphere, Sph
 
 	if (distance_squared <= radius_sum * radius_sum) {
 		// Only normalize if needed for collision normal
-		collision_info.collision_normal = -glm::normalize(delta);
+		collision_info.normal = -glm::normalize(delta);
 		collision_info.did_collide = true;
+		collision_info.penetration = glm::length(delta) - radius_sum;
 	}
 
 	return collision_info;
@@ -36,27 +47,115 @@ CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider
 	return collision_info;
 }
 
-
+// SEPERATING AXIS THEOREM
 CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& other_box) {
-	CollisionInfo collision_info;
-	collision_info.did_collide = false;
+    CollisionInfo collision_info;
+    collision_info.did_collide = true;
 
-	glm::vec3 this_box_pos = this_box.transform->position;
-	glm::vec3 other_box_pos = other_box.transform->position;
+    // --- Transform vertices into world space ---
+    std::vector<glm::vec3> tb_vert_positions;
+    std::vector<glm::vec3> ob_vert_positions;
 
-	bool collides_on_x = (this_box_pos.x + this_box.size.x + this_box.offset.x > other_box_pos.x - other_box.size.x + other_box.offset.x) &&
-		(this_box_pos.x - this_box.size.x + this_box.offset.x < other_box_pos.x + other_box.size.x + other_box.offset.x);
+    Mesh* tb_mesh = this_box.entity->GetComponent<MeshRenderer>().mesh;
+    Mesh* ob_mesh = other_box.entity->GetComponent<MeshRenderer>().mesh;
 
-	bool collides_on_y = (this_box_pos.y + this_box.size.y + this_box.offset.y > other_box_pos.y - other_box.size.y + other_box.offset.y) &&
-		(this_box_pos.y - this_box.size.y + this_box.offset.y < other_box_pos.y + other_box.size.y + other_box.offset.y);
+    for (size_t i = 0; i < 8; i++) {
+        // Center vertices around origin
+        glm::vec3 tb_local = this_box.vert_positions[i].pos - this_box.offset;
+        glm::vec3 ob_local = other_box.vert_positions[i].pos - other_box.offset;
 
-	bool collides_on_z = (this_box_pos.z + this_box.size.z + this_box.offset.z > other_box_pos.z - other_box.size.z + other_box.offset.z) &&
-		(this_box_pos.z - this_box.size.z + this_box.offset.z < other_box_pos.z + other_box.size.z + other_box.offset.z);
+        // DebugVec3("tb_loc " + std::to_string(i), tb_local);
 
-	collision_info.did_collide = collides_on_x && collides_on_y && collides_on_z;
+        tb_vert_positions.push_back(tb_mesh->modelMatrix * glm::vec4(tb_local, 1.0f));
+        ob_vert_positions.push_back(ob_mesh->modelMatrix * glm::vec4(ob_local, 1.0f));
+   
+    }
+
+    // --- Generate axes ---
+    std::vector<glm::vec3> all_axis;
 
 
-	return collision_info;
+    glm::vec3 tb_right      = tb_mesh->modelMatrix[0]; // X
+    glm::vec3 tb_up         = tb_mesh->modelMatrix[1]; // Y
+    glm::vec3 tb_forward    = tb_mesh->modelMatrix[2]; // Z
+
+    //DebugVec3("fwd", tb_forward);
+    //DebugVec3("rght", tb_right);
+    //DebugVec3("up", tb_up);
+
+    glm::vec3 ob_right      = ob_mesh->modelMatrix[0]; // X
+    glm::vec3 ob_up         = ob_mesh->modelMatrix[1]; // Y
+    glm::vec3 ob_forward    = ob_mesh->modelMatrix[2]; // Z
+
+    // Add face axes
+    all_axis.push_back(glm::normalize(tb_right));
+    all_axis.push_back(glm::normalize(tb_up));
+    all_axis.push_back(glm::normalize(tb_forward));
+
+    all_axis.push_back(glm::normalize(ob_right));
+    all_axis.push_back(glm::normalize(ob_up));
+    all_axis.push_back(glm::normalize(ob_forward));
+
+    // Add edge cross-product axes
+    for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 3; j < 6; j++) {
+            glm::vec3 crossAxis = glm::cross(all_axis[i], all_axis[j]);
+            if (glm::length(crossAxis) > 0.001f) {
+                all_axis.push_back(glm::normalize(crossAxis));
+            }
+        }
+    }
+
+    // --- SAT Test ---
+    float min_penetration = FLT_MAX;
+    glm::vec3 sat_normal = glm::vec3(1.0f);
+
+    glm::vec3 this_box_pos = this_box.transform->position;
+    glm::vec3 other_box_pos = other_box.transform->position;
+
+
+    for (auto& axis : all_axis) {
+        if (glm::length(axis) < 0.001f) continue;
+
+        float minA = 20070409.0f, maxA = -20070409.0f;
+        float minB = 20070409.0f, maxB = -20070409.0f;
+
+
+        for (size_t i = 0; i < 8; i++) {
+            // Project A vertex
+            float projA = glm::dot(tb_vert_positions[i], axis);
+            minA = glm::min(minA, projA);
+            maxA = glm::max(maxA, projA);
+
+            // Project B vertex
+            float projB = glm::dot(ob_vert_positions[i], axis);
+            minB = glm::min(minB, projB);
+            maxB = glm::max(maxB, projB);
+        }
+
+        // Check for separation
+        if (minA > maxB + 1e-6f || maxA < minB - 1e-6f) {
+            std::cout << "not colliding\n";
+            collision_info.did_collide = false;
+            return collision_info;
+        }
+
+        // Compute penetration
+        float overlap1 = maxA - minB;
+        float overlap2 = maxB - minA;
+        float penetration = glm::min(overlap1, overlap2);
+
+        if (penetration < min_penetration) {
+            min_penetration = penetration;
+            sat_normal = axis;
+        }
+    }
+
+    // --- Collision info ---
+    collision_info.normal = glm::dot(sat_normal, other_box_pos - this_box_pos) < 0 ? sat_normal : -sat_normal;
+    collision_info.penetration = min_penetration;
+    
+    return collision_info;
 }
 
 
@@ -79,3 +178,32 @@ bool ColliderFunctions::AABB(Collider& first_collider, Collider& second_collider
 
 	return collides_on_x && collides_on_y && collides_on_z;
 }
+
+
+/*
+std::vector<glm::vec3> contactNormals;
+for (size_t j = 0; j < 8; j++) {
+	// Transform Box A corner into Box B local space
+	glm::vec3 localPos = glm::inverse(ob_mesh->modelMatrix) * glm::vec4(tb_vert_positions[j], 1.0f);
+
+	// Clamp to Box B half-sizes
+	glm::vec3 clampedLocal;
+	clampedLocal.x = glm::clamp(localPos.x, -other_box.size.x, other_box.size.x);
+	clampedLocal.y = glm::clamp(localPos.y, -other_box.size.y, other_box.size.y);
+	clampedLocal.z = glm::clamp(localPos.z, -other_box.size.z, other_box.size.z);
+
+	// Transform back to world space
+	glm::vec3 closestPoint = ob_mesh->modelMatrix * glm::vec4(clampedLocal, 1.0f);
+
+	// Compute normal from Box B to Box A corner
+	glm::vec3 contactNormal = glm::normalize(tb_vert_positions[j] - closestPoint);
+	contactNormals.push_back(contactNormal);
+}
+
+glm::vec3 averaged_normal(0.0f);
+for (auto& n : contactNormals) {
+	averaged_normal += n;
+}
+
+averaged_normal = glm::normalize(averaged_normal);
+*/
