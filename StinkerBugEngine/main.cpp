@@ -5,7 +5,6 @@
 
 #include "Display.h"
 #include "Constants.h"
-#include "Scene.h"
 #include "SceneManager.h"
 #include "FullScreenPass.h"
 
@@ -17,6 +16,14 @@
 #include "CameraMovement.h"
 #include "SphereMove.h"
 #include "JumpMechanic.h"
+
+#include "SphereCollider.h"
+#include "BoxCollider.h"
+
+
+void DebugVec3(std::string text, glm::vec3 vector) {
+	std::cout << text << ": " << vector.x << "x " << vector.y << "y " << vector.z << "z\n";
+}
 
 int main(void) {
 	Display& display = Display::getInstance();
@@ -46,40 +53,57 @@ int main(void) {
 
 	FullScreenPass skybox_pass = FullScreenPass(camera.GetComponent<Camera>(), skybox_mat);
 
-	Entity big_Light = scene.CreateEntity();
+	Entity& big_Light = scene.CreateEntity();
 	big_Light.AddComponent<Light>().light_type = LightTypes::Spotlight;
 	big_Light.GetComponent<Light>().color = glm::vec4(0.4f);
 	
-	Entity e_plane = scene.CreateEntity();
+	Entity& e_plane = scene.CreateEntity();
 	e_plane.GetComponent<Transform>().position = glm::vec3(-5, 0, -5);
 	e_plane.GetComponent<Transform>().scale = glm::vec3(10);
 	e_plane.AddComponent<MeshRenderer>(floor, material);
 
-	Entity e_globe = scene.CreateEntity();
+	Entity& e_globe = scene.CreateEntity();
 	e_globe.GetComponent<Transform>().position = glm::vec3(-1, 10, 0);
 	e_globe.AddComponent<MeshRenderer>(sphere, material);
 	e_globe.AddComponent<RigidBody>();
-	e_globe.AddComponent<SphereCollider>().radius = 0.5f;
+	e_globe.AddComponent<SphereCollider>();
+	e_globe.GetComponent<SphereCollider>().radius = 0.5f;
 	e_globe.AddComponent<SphereMove>();
 
-	Entity e_globe_2 = scene.CreateEntity();
+	Entity& e_globe_2 = scene.CreateEntity();
 	e_globe_2.GetComponent<Transform>().position = glm::vec3(1, 10, 0);
 	e_globe_2.AddComponent<MeshRenderer>(sphere, red);
 	e_globe_2.AddComponent<RigidBody>();
-	e_globe_2.AddComponent<SphereCollider>().radius = 0.5f;
+	e_globe_2.AddComponent<SphereCollider>();
+	e_globe_2.GetComponent<SphereCollider>().radius = 0.5f;
 	e_globe_2.AddComponent<JumpMechanic>();
 
+	/*
+	Entity& e_cube = scene.CreateEntity();
+	e_cube.GetComponent<Transform>().position = glm::vec3(-4, 5, 0);
+	e_cube.AddComponent<RigidBody>();
+	e_cube.AddComponent<BoxCollider>();
+	e_cube.AddComponent<MeshRenderer>(cube, red);
+	e_cube.AddComponent<SphereMove>();
+
+	Entity& e_cube_2 = scene.CreateEntity();
+	e_cube_2.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
+	e_cube_2.AddComponent<RigidBody>();
+	e_cube_2.AddComponent<BoxCollider>();
+	e_cube_2.AddComponent<MeshRenderer>(cube, red);
+	*/
 
 	for (int i = 0; i < 10; i++)
 	{
 		for (int p = 0; p < 10; p++)
 		{
-			Entity e_big_globe = scene.CreateEntity();
+			Entity& e_big_globe = scene.CreateEntity();
 			e_big_globe.GetComponent<Transform>().position = glm::vec3(i - 5, 5, p - 5);
 			e_big_globe.GetComponent<Transform>().scale = glm::vec3(1.0);
 			e_big_globe.AddComponent<MeshRenderer>(sphere, blue);
 			e_big_globe.AddComponent<RigidBody>().mass = 2;
-			e_big_globe.AddComponent<SphereCollider>().radius = 0.5f;
+			e_big_globe.AddComponent<SphereCollider>();
+			e_big_globe.GetComponent<SphereCollider>().radius = 0.5f;
 		}
 	}
 

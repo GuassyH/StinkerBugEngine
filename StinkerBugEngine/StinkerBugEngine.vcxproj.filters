@@ -46,6 +46,9 @@
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{40ae57a4-a43c-4048-b964-9eaab8360bd8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Components\Collision">
+      <UniqueIdentifier>{fb783978-e28b-45a3-9fd3-c9f0251540a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -92,6 +95,18 @@
     </ClCompile>
     <ClCompile Include="ShadowMapFBO.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereCollider.cpp">
+      <Filter>Source Files\Components\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Source Files\Components\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="ColliderFunctions.cpp">
+      <Filter>Source Files\Components\Collision</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -178,6 +193,15 @@
     </ClInclude>
     <ClInclude Include="ShadowMapFBO.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionInfo.h">
+      <Filter>Header Files\Components\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Header Files\Components\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="ColliderFunctions.h">
+      <Filter>Header Files\Components\Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

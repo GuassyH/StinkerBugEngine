@@ -13,11 +13,11 @@ public:
 	std::unordered_map<uint32_t, std::string> entity_names;
 	std::unordered_map<uint32_t, Transform> transforms;
 	std::unordered_map<uint32_t, MeshRenderer> mesh_renderers;
-	std::unordered_map<uint32_t, SphereCollider> colliders;
 	std::unordered_map<uint32_t, RigidBody> rigidbodies;
 	std::unordered_map<uint32_t, Camera> cameras;
 	std::unordered_map<uint32_t, Light> lights;
 
+	std::unordered_map<uint32_t, std::unique_ptr<Collider>> colliders;
 	std::unordered_map<uint32_t, std::unique_ptr<EntityBehaviour>> entity_behaviours;
 
 // ALL THE IMPORTANT SHIZZ
@@ -37,9 +37,20 @@ public:
 		entity_behaviours[id]->Init();
 	}
 
+	// For EntityBehaviour
+	template<typename T, typename... Args>
+	std::enable_if_t<std::is_base_of_v<Collider, T>>
+		AddComponent(const uint32_t id, Args&&... args)
+	{
+		colliders[id] = std::make_unique<T>(std::forward<Args>(args)...);
+		colliders[id]->parent_id = id;
+		colliders[id]->Init();
+	}
+
+
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T>, T&>
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
 		AddComponent(const uint32_t id, Args&&... args)
 	{
 		auto& map = GetComponentMap<T>();
@@ -47,7 +58,8 @@ public:
 	}
 
 	template<typename T>
-	T& GetComponent(const uint32_t id) {
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
+		GetComponent(const uint32_t id) {
 		auto& map = GetComponentMap<T>();
 		auto it = map.find(id);
 		if (it != map.end()) {
@@ -57,6 +69,23 @@ public:
 			throw std::runtime_error("Component not found");
 		}
 	}
+
+	template<typename T>
+	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T> || std::is_base_of_v<Collider, T>, T&>
+		GetComponent(uint32_t id) {
+		auto it = colliders.find(id); // or entity_behaviours if that's what you're accessing
+		if (it == colliders.end()) {
+			throw std::runtime_error("Collider not found for entity " + std::to_string(id));
+		}
+
+		T* derived = dynamic_cast<T*>(it->second.get());
+		if (!derived) {
+			throw std::runtime_error("Collider type mismatch for entity " + std::to_string(id));
+		}
+
+		return *derived;
+	}
+
 
 	template<typename T>
 	void RemoveComponent(const uint32_t id) {
@@ -96,15 +125,9 @@ inline std::unordered_map<uint32_t, MeshRenderer>& ECSystem::GetComponentMap<Mes
 }
 
 template<>
-inline std::unordered_map<uint32_t, SphereCollider>& ECSystem::GetComponentMap<SphereCollider>() {
-	return colliders;
-}
-
-template<>
 inline std::unordered_map<uint32_t, RigidBody>& ECSystem::GetComponentMap<RigidBody>() {
 	return rigidbodies;
 }
-
 
 template<>
 inline std::unordered_map<uint32_t, Camera>& ECSystem::GetComponentMap<Camera>() {
@@ -116,6 +139,10 @@ inline std::unordered_map<uint32_t, Light>& ECSystem::GetComponentMap<Light>() {
 	return lights;
 }
 
+template<>
+inline std::unordered_map<uint32_t, std::unique_ptr<Collider>>& ECSystem::GetComponentMap<std::unique_ptr<Collider>>() {
+	return colliders;
+}
 
 template<>
 inline std::unordered_map<uint32_t, std::unique_ptr<EntityBehaviour>>& ECSystem::GetComponentMap<std::unique_ptr<EntityBehaviour>>() {

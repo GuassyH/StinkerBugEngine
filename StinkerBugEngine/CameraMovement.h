@@ -15,8 +15,8 @@ public:
 
 	float sensitivity = 2;
 
-	float horizontal, vertical, elevator;
-	glm::vec3 moveDir;
+	float horizontal, vertical, elevator = 0;
+	glm::vec3 moveDir = glm::vec3(0.0f);
 
 	bool focusMouse = true;
 	Camera* camera = nullptr;

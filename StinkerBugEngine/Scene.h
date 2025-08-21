@@ -17,16 +17,12 @@ class Entity;
 
 class Scene {
 public:
-
-
 	Scene() = default;
 	Entity& CreateEntity();
 	Entity& CreateEntity(std::string name);
 
-
 	// Physics
 	float gravity = -9.82f;
-
 
 	// Environment
 	float ambient = 0.2f;

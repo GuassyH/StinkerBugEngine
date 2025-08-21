@@ -1,7 +1,7 @@
 #include "Scene.h"
 #include "Entity.h"
 #include "DeltaTime.h"
-
+#include "CollisionInfo.h"
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
@@ -48,20 +48,14 @@ void Scene::CheckCollisions(uint32_t id) {
 		auto& this_collider = Scene_ECS.colliders[id];
 		for (auto& [id2, other_collider] : Scene_ECS.colliders) {
 			// if both ptrs arent null and arent the same collider
-			if (&this_collider != &other_collider) {
-
-				SphereCollider* sphereCol = dynamic_cast<SphereCollider*>(&this_collider);
-
-				if (sphereCol) {
-					sphereCol->position = Scene_ECS.transforms[id].position;
-				}
-
-				glm::vec3 collision_normal = this_collider.CheckCollisions(other_collider);
-				ResolveCollision(collision_normal, Scene_ECS.rigidbodies[id], Scene_ECS.rigidbodies[id2]);
+			if (this_collider != other_collider) {
+				CollisionInfo collision = this_collider->CheckCollisions(*other_collider);
+				ResolveCollision(collision.collision_normal, Scene_ECS.rigidbodies[id], Scene_ECS.rigidbodies[id2]);
 			}
 		}
 	}
 	else {
+		std::cout << "This entity (" << id << ") doesnt have a collider\n";
 		return;
 	}
 }

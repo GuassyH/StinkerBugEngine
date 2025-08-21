@@ -19,7 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="ColliderFunctions.cpp" />
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
@@ -31,14 +34,18 @@
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowMapFBO.cpp" />
+    <ClCompile Include="SphereCollider.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMovement.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="ColliderFunctions.h" />
+    <ClInclude Include="CollisionInfo.h" />
     <ClInclude Include="ComponentsList.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DeltaTime.h" />
