@@ -10,6 +10,8 @@ void BoxCollider::CalculateCorners() {
 
 	vert_positions.clear();
 	vert_positions.insert(vert_positions.begin(), mesh->vertices.begin(), mesh->vertices.begin() + 8);
+
+	offset = glm::vec3(0.0f);
 }
 
 CollisionInfo BoxCollider::CollideWithBox(BoxCollider& other_box_collider) {

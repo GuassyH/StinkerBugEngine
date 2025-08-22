@@ -47,6 +47,7 @@ CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider
 	return collision_info;
 }
 
+bool firstFrame = true;
 // SEPERATING AXIS THEOREM
 CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& other_box) {
     CollisionInfo collision_info;
@@ -56,32 +57,28 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
     std::vector<glm::vec3> tb_vert_positions;
     std::vector<glm::vec3> ob_vert_positions;
 
+    // the meshes HAVE to be different or at least the model matrices need to be
+    // Otherwise the collision isnt accurate AT ALL
     Mesh* tb_mesh = this_box.entity->GetComponent<MeshRenderer>().mesh;
     Mesh* ob_mesh = other_box.entity->GetComponent<MeshRenderer>().mesh;
 
     for (size_t i = 0; i < 8; i++) {
         // Center vertices around origin
-        glm::vec3 tb_local = this_box.vert_positions[i].pos - this_box.offset;
-        glm::vec3 ob_local = other_box.vert_positions[i].pos - other_box.offset;
+        glm::vec3 tb_local = this_box.vert_positions[i].pos + this_box.offset;
+        glm::vec3 ob_local = other_box.vert_positions[i].pos + other_box.offset;
 
-        // DebugVec3("tb_loc " + std::to_string(i), tb_local);
 
-        tb_vert_positions.push_back(tb_mesh->modelMatrix * glm::vec4(tb_local, 1.0f));
-        ob_vert_positions.push_back(ob_mesh->modelMatrix * glm::vec4(ob_local, 1.0f));
-   
+        tb_vert_positions.push_back(glm::vec3(tb_mesh->modelMatrix * glm::vec4(tb_local, 1.0f)));
+        ob_vert_positions.push_back(glm::vec3(ob_mesh->modelMatrix * glm::vec4(ob_local, 1.0f)));
+
     }
-
+    firstFrame = false;
     // --- Generate axes ---
     std::vector<glm::vec3> all_axis;
-
 
     glm::vec3 tb_right      = tb_mesh->modelMatrix[0]; // X
     glm::vec3 tb_up         = tb_mesh->modelMatrix[1]; // Y
     glm::vec3 tb_forward    = tb_mesh->modelMatrix[2]; // Z
-
-    //DebugVec3("fwd", tb_forward);
-    //DebugVec3("rght", tb_right);
-    //DebugVec3("up", tb_up);
 
     glm::vec3 ob_right      = ob_mesh->modelMatrix[0]; // X
     glm::vec3 ob_up         = ob_mesh->modelMatrix[1]; // Y
@@ -115,7 +112,7 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
 
 
     for (auto& axis : all_axis) {
-        if (glm::length(axis) < 0.001f) continue;
+        if (glm::length(axis) < 0.001f) { continue; }
 
         float minA = 20070409.0f, maxA = -20070409.0f;
         float minB = 20070409.0f, maxB = -20070409.0f;
@@ -134,7 +131,8 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
         }
 
         // Check for separation
-        if (minA > maxB + 1e-6f || maxA < minB - 1e-6f) {
+        bool is_seperated = (minA > maxB + 1e-6f) || (maxA < minB - 1e-6f);
+        if(is_seperated){ 
             std::cout << "not colliding\n";
             collision_info.did_collide = false;
             return collision_info;
@@ -152,7 +150,7 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
     }
 
     // --- Collision info ---
-    collision_info.normal = glm::dot(sat_normal, other_box_pos - this_box_pos) < 0 ? sat_normal : -sat_normal;
+    collision_info.normal = glm::dot(sat_normal, (other_box_pos - other_box.offset) - (this_box_pos - this_box.offset)) < 0 ? sat_normal : -sat_normal;
     collision_info.penetration = min_penetration;
     
     return collision_info;

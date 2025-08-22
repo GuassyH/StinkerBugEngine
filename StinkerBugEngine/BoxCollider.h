@@ -12,7 +12,6 @@ class BoxCollider : public Collider {
 public:
     std::vector<Vertex> vert_positions;
 
-
     void CalculateCorners();
 
     CollisionInfo CollideWithBox(BoxCollider& other_box_collider) override;

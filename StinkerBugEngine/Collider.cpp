@@ -25,7 +25,6 @@ void Collider::Init() {
         std::cout << "Entity does not have a Transform component!" << std::endl;
         return;
     }
-
     transform = &entity->GetComponent<Transform>();
     std::cout << "Transform component obtained successfully." << std::endl;
 }

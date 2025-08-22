@@ -60,9 +60,6 @@ namespace Constants {
 
                     glm::vec3 pos(x, y, z);
                     glm::vec3 normal = glm::normalize(pos);
-                    pos.x += radius;
-                    pos.y += radius;
-                    pos.z += radius;
                     glm::vec2 texCoord(
                         (float)j / sectorCount,
                         (float)i / stackCount
@@ -120,36 +117,36 @@ namespace Constants {
 
     struct Cube : public Shape {
         static inline const std::vector<Vertex> vertices = {
-            // POSITION     NORMAL     TEXCOORD
-            { {0, 0, 0}, {0, 0, -1}, {1.0f, 0.0f} }, // Left Bottom Back
-            { {0, 1, 0}, {0, 0, -1}, {1.0f, 1.0f} }, // Left Top Back
-            { {1, 0, 0}, {0, 0, -1}, {0.0f, 0.0f} }, // Right Bottom Back
-            { {1, 1, 0}, {0, 0, -1}, {0.0f, 1.0f} }, // Right Top Back
+            // POSITION           NORMAL         TEXCOORD
+           { {-0.5f, -0.5f, -0.5f}, {0, 0, -1}, {1.0f, 0.0f} }, // Left Bottom Back
+           { {-0.5f,  0.5f, -0.5f}, {0, 0, -1}, {1.0f, 1.0f} }, // Left Top Back
+           { { 0.5f, -0.5f, -0.5f}, {0, 0, -1}, {0.0f, 0.0f} }, // Right Bottom Back
+           { { 0.5f,  0.5f, -0.5f}, {0, 0, -1}, {0.0f, 1.0f} }, // Right Top Back
 
-            { {0, 0, 1}, {0, 0, 1}, {0.0f, 0.0f} },  // Left Bottom Front
-            { {1, 0, 1}, {0, 0, 1}, {1.0f, 0.0f} },  // Right Bottom Front
-            { {0, 1, 1}, {0, 0, 1}, {0.0f, 1.0f} },  // Left Top Front
-            { {1, 1, 1}, {0, 0, 1}, {1.0f, 1.0f} },  // Right Top Front
+           { {-0.5f, -0.5f,  0.5f}, {0, 0,  1}, {0.0f, 0.0f} }, // Left Bottom Front
+           { { 0.5f, -0.5f,  0.5f}, {0, 0,  1}, {1.0f, 0.0f} }, // Right Bottom Front
+           { {-0.5f,  0.5f,  0.5f}, {0, 0,  1}, {0.0f, 1.0f} }, // Left Top Front
+           { { 0.5f,  0.5f,  0.5f}, {0, 0,  1}, {1.0f, 1.0f} }, // Right Top Front
 
-            { {0, 1, 0}, {0, 1, 0}, {0.0f, 1.0f} },  // Left Top Back
-            { {0, 1, 1}, {0, 1, 0}, {0.0f, 0.0f} },  // Left Top Front
-            { {1, 1, 0}, {0, 1, 0}, {1.0f, 1.0f} },  // Right Top Back
-            { {1, 1, 1}, {0, 1, 0}, {1.0f, 0.0f} },  // Right Top Front
+           { {-0.5f,  0.5f, -0.5f}, {0, 1,  0}, {0.0f, 1.0f} }, // Left Top Back
+           { {-0.5f,  0.5f,  0.5f}, {0, 1,  0}, {0.0f, 0.0f} }, // Left Top Front
+           { { 0.5f,  0.5f, -0.5f}, {0, 1,  0}, {1.0f, 1.0f} }, // Right Top Back
+           { { 0.5f,  0.5f,  0.5f}, {0, 1,  0}, {1.0f, 0.0f} }, // Right Top Front
 
-            { {0, 0, 0}, {0, -1, 0}, {0.0f, 0.0f} }, // Left Bottom Back
-            { {1, 0, 0}, {0, -1, 0}, {1.0f, 0.0f} }, // Right Bottom Back
-            { {0, 0, 1}, {0, -1, 0}, {0.0f, 1.0f} }, // Left Bottom Front
-            { {1, 0, 1}, {0, -1, 0}, {1.0f, 1.0f} }, // Right Bottom Front
+           { {-0.5f, -0.5f, -0.5f}, {0,-1,  0}, {0.0f, 0.0f} }, // Left Bottom Back
+           { { 0.5f, -0.5f, -0.5f}, {0,-1,  0}, {1.0f, 0.0f} }, // Right Bottom Back
+           { {-0.5f, -0.5f,  0.5f}, {0,-1,  0}, {0.0f, 1.0f} }, // Left Bottom Front
+           { { 0.5f, -0.5f,  0.5f}, {0,-1,  0}, {1.0f, 1.0f} }, // Right Bottom Front
 
-            { {0, 0, 0}, {-1, 0, 0}, {0.0f, 0.0f} }, // Left Bottom Back
-            { {0, 0, 1}, {-1, 0, 0}, {1.0f, 0.0f} }, // Left Bottom Front
-            { {0, 1, 0}, {-1, 0, 0}, {0.0f, 1.0f} }, // Left Top Back
-            { {0, 1, 1}, {-1, 0, 0}, {1.0f, 1.0f} }, // Left Top Front
+           { {-0.5f, -0.5f, -0.5f}, {-1, 0,  0}, {0.0f, 0.0f} }, // Left Bottom Back
+           { {-0.5f, -0.5f,  0.5f}, {-1, 0,  0}, {1.0f, 0.0f} }, // Left Bottom Front
+           { {-0.5f,  0.5f, -0.5f}, {-1, 0,  0}, {0.0f, 1.0f} }, // Left Top Back
+           { {-0.5f,  0.5f,  0.5f}, {-1, 0,  0}, {1.0f, 1.0f} }, // Left Top Front
 
-            { {1, 0, 0}, {1, 0, 0}, {1.0f, 0.0f} },  // Right Bottom Back
-            { {1, 1, 0}, {1, 0, 0}, {1.0f, 1.0f} },  // Right Top Back
-            { {1, 0, 1}, {1, 0, 0}, {0.0f, 0.0f} },  // Right Bottom Front
-            { {1, 1, 1}, {1, 0, 0}, {0.0f, 1.0f} },  // Right Top Front
+           { { 0.5f, -0.5f, -0.5f}, { 1, 0,  0}, {1.0f, 0.0f} }, // Right Bottom Back
+           { { 0.5f,  0.5f, -0.5f}, { 1, 0,  0}, {1.0f, 1.0f} }, // Right Top Back
+           { { 0.5f, -0.5f,  0.5f}, { 1, 0,  0}, {0.0f, 0.0f} }, // Right Bottom Front
+           { { 0.5f,  0.5f,  0.5f}, { 1, 0,  0}, {0.0f, 1.0f} }, // Right Top Front
         };
         static inline const std::vector<GLuint> indices = {
             // Back face

@@ -44,6 +44,7 @@ int main(void) {
 
 	Mesh floor = Mesh(Constants::Shapes::Plane());
 	Mesh cube = Mesh(Constants::Shapes::Cube());
+	Mesh cube2 = Mesh(Constants::Shapes::Cube());
 	Mesh sphere = Mesh(Constants::Shapes::UVSphere());
 
 	Entity camera = scene.CreateEntity();
@@ -82,14 +83,14 @@ int main(void) {
 	e_cube.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
 	e_cube.AddComponent<RigidBody>().mass = 1.0f;
 	e_cube.AddComponent<MeshRenderer>(cube, red);
-	e_cube.AddComponent<SphereMove>();
 	e_cube.AddComponent<BoxCollider>();
 
 	Entity& e_cube_2 = scene.CreateEntity();
 	e_cube_2.GetComponent<Transform>().position = glm::vec3(-4, 5, 0);
 	e_cube_2.AddComponent<RigidBody>().mass = 1.0f;
-	e_cube_2.AddComponent<MeshRenderer>(cube, blue);
+	e_cube_2.AddComponent<MeshRenderer>(cube2, blue);
 	e_cube_2.AddComponent<BoxCollider>();
+	e_cube_2.AddComponent<SphereMove>();
 	
 	
 	/* 
@@ -122,6 +123,7 @@ int main(void) {
 		camera_component.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
 		camera_component.Render(big_Light.GetComponent<Light>(), big_Light.GetComponent<Transform>());
 
+		if (glfwGetKey(display.window, GLFW_KEY_K) == GLFW_PRESS) { e_cube.GetComponent<Transform>().rotation.y += 1; }
 
 		scene.UpdateEntityBehaviours();
 		scene.UpdatePhysics();

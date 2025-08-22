@@ -15,13 +15,13 @@ class BoxCollider;
 
 class Collider {
 public:
-    int parent_id = 0;
+    int parent_id;
     Transform* transform = nullptr;
     Entity* entity = nullptr;
 
     float radius = 0.5f;
-    glm::vec3 offset = glm::vec3(0.5f);
-    glm::vec3 size = glm::vec3(0.5f);
+    glm::vec3 offset = glm::vec3(0.0f);
+    glm::vec3 size = glm::vec3(1.0);
 
     Collider() = default;
     virtual ~Collider() = default; // Always virtual destructor for base classes
