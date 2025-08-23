@@ -35,7 +35,7 @@ CollisionInfo ColliderFunctions::SphereVsSphere(SphereCollider& this_sphere, Sph
 	return collision_info;
 }
 
-// SAT but with sphere?
+// SAT but with sphere? Wont work
 CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider& box) {
 	CollisionInfo collision_info;
 	collision_info.did_collide = false;
@@ -44,6 +44,7 @@ CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider
     std::vector<glm::vec3> box_vert_positions;
     glm::vec3 sphere_closest_pos;
     glm::vec3 sphere_farthest_pos;
+
     glm::vec3 dir = glm::normalize(box.transform->position - sphere.transform->position);
     sphere_closest_pos = sphere.transform->position + (dir * sphere.radius);
     sphere_farthest_pos = sphere.transform->position - (dir * sphere.radius);
@@ -59,6 +60,43 @@ CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider
 
         box_vert_positions.push_back(glm::vec3(box_mesh->modelMatrix * glm::vec4(box_local, 1.0f)));
     }
+
+
+    // --- Generate axes ---
+    std::vector<glm::vec3> all_axis;
+
+    glm::vec3 b_right = box_mesh->modelMatrix[0]; // X
+    glm::vec3 b_up = box_mesh->modelMatrix[1]; // Y
+    glm::vec3 b_forward = box_mesh->modelMatrix[2]; // Z
+
+    glm::vec3 s_right = sphere_mesh->modelMatrix[0]; // X
+    glm::vec3 s_up = sphere_mesh->modelMatrix[1]; // Y
+    glm::vec3 s_forward = sphere_mesh->modelMatrix[2]; // Z
+
+    // Add face axes
+    all_axis.push_back(glm::normalize(b_right));
+    all_axis.push_back(glm::normalize(b_up));
+    all_axis.push_back(glm::normalize(b_forward));
+
+    all_axis.push_back(glm::normalize(s_right));
+    all_axis.push_back(glm::normalize(s_up));
+    all_axis.push_back(glm::normalize(s_forward));
+
+    // Add edge cross-product axes
+    for (size_t i = 0; i < 3; i++) {
+        for (size_t j = 3; j < 6; j++) {
+            glm::vec3 crossAxis = glm::cross(all_axis[i], all_axis[j]);
+            if (glm::length(crossAxis) > 0.001f) {
+                all_axis.push_back(glm::normalize(crossAxis));
+            }
+        }
+    }
+
+    // --- SAT Test ---
+    float min_penetration = FLT_MAX;
+    glm::vec3 sat_normal = glm::vec3(1.0f);
+
+
 
 	return collision_info;
 }
