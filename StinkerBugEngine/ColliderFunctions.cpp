@@ -35,19 +35,34 @@ CollisionInfo ColliderFunctions::SphereVsSphere(SphereCollider& this_sphere, Sph
 	return collision_info;
 }
 
-
+// SAT but with sphere?
 CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider& box) {
 	CollisionInfo collision_info;
 	collision_info.did_collide = false;
 
-	glm::vec3 sphere_pos = sphere.transform->position + sphere.offset;
-	glm::vec3 box_pos = box.transform->position;
+    // --- Transform vertices into world space ---
+    std::vector<glm::vec3> box_vert_positions;
+    glm::vec3 sphere_closest_pos;
+    glm::vec3 sphere_farthest_pos;
+    glm::vec3 dir = glm::normalize(box.transform->position - sphere.transform->position);
+    sphere_closest_pos = sphere.transform->position + (dir * sphere.radius);
+    sphere_farthest_pos = sphere.transform->position - (dir * sphere.radius);
 
+    // the meshes HAVE to be different or at least the model matrices need to be
+    // Otherwise the collision isnt accurate AT ALL
+    Mesh* box_mesh = box.entity->GetComponent<MeshRenderer>().mesh;
+    Mesh* sphere_mesh = sphere.entity->GetComponent<MeshRenderer>().mesh;
+
+    for (size_t i = 0; i < 8; i++) {
+        // Center vertices around origin
+        glm::vec3 box_local = box.vert_positions[i].pos + box.offset;
+
+        box_vert_positions.push_back(glm::vec3(box_mesh->modelMatrix * glm::vec4(box_local, 1.0f)));
+    }
 
 	return collision_info;
 }
 
-bool firstFrame = true;
 // SEPERATING AXIS THEOREM
 CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& other_box) {
     CollisionInfo collision_info;
@@ -67,12 +82,10 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
         glm::vec3 tb_local = this_box.vert_positions[i].pos + this_box.offset;
         glm::vec3 ob_local = other_box.vert_positions[i].pos + other_box.offset;
 
-
         tb_vert_positions.push_back(glm::vec3(tb_mesh->modelMatrix * glm::vec4(tb_local, 1.0f)));
         ob_vert_positions.push_back(glm::vec3(ob_mesh->modelMatrix * glm::vec4(ob_local, 1.0f)));
-
     }
-    firstFrame = false;
+
     // --- Generate axes ---
     std::vector<glm::vec3> all_axis;
 
@@ -133,7 +146,7 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
         // Check for separation
         bool is_seperated = (minA > maxB + 1e-6f) || (maxA < minB - 1e-6f);
         if(is_seperated){ 
-            std::cout << "not colliding\n";
+            // std::cout << "no col\n";
             collision_info.did_collide = false;
             return collision_info;
         }
@@ -164,14 +177,15 @@ bool ColliderFunctions::AABB(Collider& first_collider, Collider& second_collider
 	glm::vec3 this_pos = first_collider.transform->position;
 	glm::vec3 other_pos = second_collider.transform->position;
 
-	bool collides_on_x = (this_pos.x + first_collider.size.x + first_collider.offset.x > other_pos.x - second_collider.size.x + second_collider.offset.x) &&
-		(this_pos.x - first_collider.size.x + first_collider.offset.x < other_pos.x + second_collider.size.x + second_collider.offset.x);
+    // the multiplication is temporary
+	bool collides_on_x = (this_pos.x + (first_collider.size.x * 2) + first_collider.offset.x > other_pos.x - (second_collider.size.x * 2) + second_collider.offset.x) &&
+		(this_pos.x - (first_collider.size.x * 2) + first_collider.offset.x < other_pos.x + (second_collider.size.x * 2) + second_collider.offset.x);
 
-	bool collides_on_y = (this_pos.y + first_collider.size.y + first_collider.offset.y > other_pos.y - second_collider.size.y + second_collider.offset.y) &&
-		(this_pos.y - first_collider.size.y + first_collider.offset.y < other_pos.y + second_collider.size.y + second_collider.offset.y);
+	bool collides_on_y = (this_pos.y + (first_collider.size.y * 2) + first_collider.offset.y > other_pos.y - (second_collider.size.y * 2) + second_collider.offset.y) &&
+		(this_pos.y - (first_collider.size.y * 2) + first_collider.offset.y < other_pos.y + (second_collider.size.y * 2) + second_collider.offset.y);
 
-	bool collides_on_z = (this_pos.z + first_collider.size.z + first_collider.offset.z > other_pos.z - second_collider.size.z + second_collider.offset.z) &&
-		(this_pos.z - first_collider.size.z + first_collider.offset.z < other_pos.z + second_collider.size.z + second_collider.offset.z);
+	bool collides_on_z = (this_pos.z + (first_collider.size.z * 2) + first_collider.offset.z > other_pos.z - (second_collider.size.z * 2) + second_collider.offset.z) &&
+		(this_pos.z - (first_collider.size.z * 2) + first_collider.offset.z < other_pos.z + (second_collider.size.z * 2) + second_collider.offset.z);
 
 
 	return collides_on_x && collides_on_y && collides_on_z;

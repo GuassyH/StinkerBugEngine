@@ -46,13 +46,14 @@ void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Trans
 		// positional corrections
 		if (invMass1 + invMass2 > 0) {
 			glm::vec3 correction = collision_info.normal * collision_info.penetration / (invMass1 + invMass2);
-			// t1.position -= correction * invMass1;
-			// t2.position += correction * invMass2;
+			t1.position -= correction * invMass1;
+			t2.position += correction * invMass2;
 		}
 	}
 }
 
 // Check for collisions between all colliders
+// Add not double checking
 void Scene::CheckCollisions(uint32_t id) {
 	if (Scene_ECS.colliders.find(id) != Scene_ECS.colliders.end()) {
 		auto& this_collider = Scene_ECS.colliders[id];

@@ -18,7 +18,7 @@ public:
     CollisionInfo CollideWithSphere(SphereCollider& other_sphere_collider) override;
 
     CollisionInfo CheckCollisions(Collider& other) override {
-        // if (!ColliderFunctions::AABB(*this, other)) { CollisionInfo info; info.did_collide = false; return info; }
+        if (!ColliderFunctions::AABB(*this, other)) { CollisionInfo info; info.did_collide = false; return info; }
         return other.CollideWithBox(*this);
     }
 };

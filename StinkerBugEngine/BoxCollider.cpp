@@ -1,8 +1,6 @@
 #include "BoxCollider.h"
 #include "Mesh.h"
 #include "Entity.h"
-#include "SceneManager.h"
-#include "Scene.h"
 
 
 void BoxCollider::CalculateCorners() {

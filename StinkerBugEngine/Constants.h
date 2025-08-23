@@ -21,10 +21,10 @@ namespace Constants {
     struct Plane : public Shape {
         static inline const std::vector<Vertex> vertices = {
             // POSITION     NORMAL     TEXCOORD
-            { {0, 0, 0}, {0, 1, 0}, {0, 0} },
-            { {1, 0, 0}, {0, 1, 0}, {1, 0} },
-            { {0, 0, 1}, {0, 1, 0}, {0, 1} },
-            { {1, 0, 1}, {0, 1, 0}, {1, 1} },
+            { {-0.5, 0, -0.5}, {0, 1, 0}, {0, 0} },
+            { {0.5f, 0, -0.5}, {0, 1, 0}, {1, 0} },
+            { {-0.5, 0, 0.5f}, {0, 1, 0}, {0, 1} },
+            { {0.5f, 0, 0.5f}, {0, 1, 0}, {1, 1} },
         };
         static inline const std::vector<GLuint> indices = {
             0, 2, 1,

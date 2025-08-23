@@ -44,7 +44,7 @@ void Camera::UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int win
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
-	// view = lookAt a vec3, projection = perspective I give it
+	// THIS IS WRONG!!! I forgot that rotation is in degrees not a vector, it works but i should change
 	view = glm::lookAt(transform->position, transform->position + transform->rotation, WorldUp);
 	projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 
@@ -54,7 +54,6 @@ void Camera::UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int win
 
 	// std::cout << t.rotation.x << "x " << t.rotation.y << "y " << t.rotation.z << "z\n";
 	CameraMatrix = projection * view;
-
 }
 
 
