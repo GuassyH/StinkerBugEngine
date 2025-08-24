@@ -42,8 +42,8 @@ public:
 	void UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int windowWidth, int windowHeight);
 
 
-	void ShadowPass(MeshRenderer& renderer, Transform& r_transform, Light& light, Transform& l_transform);
-	void LightingPass(MeshRenderer& renderer, Transform& r_transform);
+	void ShadowPass(glm::mat4 light_MVP);
+	void LightingPass(glm::mat4 light_MVP);
 	void Render(Light& light, Transform& l_transform);
 	
 

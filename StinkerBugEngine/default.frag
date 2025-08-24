@@ -6,9 +6,7 @@
 	uniform vec4 lightColor;
 #endif
 
-#ifdef SHADOW
-	vec4 shadowColor = vec4(0.2, 0.3, 0.8, 1.0)
-#endif
+vec4 shadowColor = vec4(0.05, 0.1, 0.2, 1.0);
 
 uniform sampler2DShadow ShadowMap;
 
@@ -22,7 +20,7 @@ in vec3 normal;
 in vec4 vertColor;
 
 out vec4 fragColor;
-
+in vec4 shadowFragPos;
 
 #ifdef LIT
 vec4 directionalLight(){
@@ -48,6 +46,24 @@ vec4 directionalLight(){
 };
 #endif
 
+float ShadowPCF(vec3 projCoords)
+{
+    float shadow = 0.0;
+    float bias = 0.0005;
+    vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
+
+    for(int x = -1; x <= 1; ++x)
+    {
+        for(int y = -1; y <= 1; ++y)
+        {
+            shadow += texture(ShadowMap, vec3(projCoords.xy + vec2(x,y) * texelSize,
+                                             projCoords.z - bias));
+        }
+    }
+    shadow /= 9.0;
+    return shadow;
+}
+
 void main(){
 	vec4 lightVal = vec4(1.0);
 	float depthVal = 1.0;
@@ -59,10 +75,13 @@ void main(){
 
 	#ifdef LIT	
 		lightVal = directionalLight();
-		#ifdef SHADOW
-			// Calculate Shadow 
-		#endif
 	#endif
 
-	fragColor = color * lightVal * depthVal;
+	vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
+	projCoords = projCoords * 0.5 + 0.5;
+	shadowVal = ShadowPCF(projCoords); 
+
+
+	fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
+
 }

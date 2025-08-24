@@ -7,7 +7,9 @@ layout (location = 2) in vec2 aTex;
 uniform mat4 modelMatrix;
 uniform mat4 camMatrix; // proj * view
 uniform mat4 rotationMatrix;
+uniform mat4 light_WVP;
 
+out vec4 shadowFragPos;
 out vec4 vertColor;
 out vec3 normal;
 out vec3 crntPos;
@@ -18,4 +20,5 @@ void main(){
 	vertColor = vec4(vec3(0.8), 1.0);
 
 	gl_Position = camMatrix * vec4(crntPos, 1.0);
+	shadowFragPos = light_WVP * vec4(crntPos, 1.0);
 }

@@ -13,7 +13,7 @@ public:
 	bool Init(unsigned int width, unsigned int height);
 	void BindForWriting();
 	void BindForReading(GLenum TextureUnit);
-private:
+// private:
 	unsigned int m_width = 0;
 	unsigned int m_height = 0;
 	GLuint m_fbo;

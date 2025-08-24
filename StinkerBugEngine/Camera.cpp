@@ -6,9 +6,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 
-#include "MeshRenderer.h"
-#include "Mesh.h"
-#include "Light.h"
+#include "ComponentsList.h"
 #include "Shader.h"
 
 inline glm::vec3 WorldUp = glm::vec3(0.0, 1.0, 0.0);
@@ -25,7 +23,7 @@ Camera::Camera(int width, int height, Transform& t) {
 
 	glfwSetCursorPos(display.window, (width / 2), (height / 2));
 
-	// m_shadowMapFBO.Init(1024, 1024);
+	m_shadowMapFBO.Init(4096, 4096);
 	m_shadowMapShader = Shader("ShadowMapFBO.vert", "ShadowMapFBO.frag");
 	transform = &t;
 }
@@ -56,77 +54,90 @@ void Camera::UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int win
 	CameraMatrix = projection * view;
 }
 
-
-void Camera::ShadowPass(MeshRenderer& renderer, Transform& r_transform, Light& light, Transform& l_transform) {
-	// std::cout << "Shadow Pass\n";
-	Mesh& r_mesh = *renderer.mesh;
-	r_mesh.UpdateMatrices(r_transform);
-
-	// Bind the shadow map FrameBuffer for writing
-	m_shadowMapFBO.BindForWriting();
-
-	// Clear the depth buffer
-	// glClear(GL_DEPTH_BUFFER_BIT);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-
-	m_shadowMapShader.Use();
-
-	// Calculate the lights MVP
-	glm::mat4 lightProj = glm::perspective(glm::radians(40.0f), 1.0f, 0.1f, 100.0f);
-	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + l_transform.rotation, WorldUp);
-	lightView = glm::translate(lightView, l_transform.position);
-	glm::mat4 light_MVP = lightProj * lightView * r_mesh.modelMatrix;
-
-	// Set the shadow maps light world view proj matrix
-	glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_WVP"), 1, GL_FALSE, glm::value_ptr(light_MVP));
-
-	// Render the scene through the light view
-	renderer.mesh->VAO1.Bind();
-	glDrawElements(GL_TRIANGLES, renderer.mesh->indices.size(), GL_UNSIGNED_INT, 0);
-
-}
-
-void Camera::LightingPass(MeshRenderer& renderer, Transform& r_transform) {
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glViewport(0, 0, width, height);
-
-	Shader& r_shader = renderer.material->shader;
-	Mesh& r_mesh = *renderer.mesh;
-	r_mesh.UpdateMatrices(r_transform);
-	r_shader.Use();
-
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	// m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-
-
-	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.modelMatrix));
-	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.rotationMatrix));
-	glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(CameraMatrix));
-	glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), transform->position.x, transform->position.y, transform->position.z);
-	glUniform4f(glGetUniformLocation(r_shader.ID, "color"), renderer.material->Color.r, renderer.material->Color.g, renderer.material->Color.b, renderer.material->Color.a);
-
-	if (renderer.material->Lit && SceneManager::getInstance().GetActiveScene()) {
-		glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene()->light_direction;
-		glm::vec3 l_col = SceneManager::getInstance().GetActiveScene()->light_color;
-		glUniform3f(glGetUniformLocation(r_shader.ID, "lightDir"), l_dir.x, l_dir.y, l_dir.z);
-		glUniform4f(glGetUniformLocation(r_shader.ID, "lightColor"), l_col.r, l_col.g, l_col.b, 1.0f);
-		glUniform1f(glGetUniformLocation(r_shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene()->ambient);
-	}
-
-	renderer.mesh->VAO1.Bind();
-	glDrawElements(GL_TRIANGLES, renderer.mesh->indices.size(), GL_UNSIGNED_INT, 0);
-}
-
-void Camera::Render(Light& light, Transform& l_transform) {
+void Camera::ShadowPass(glm::mat4 light_MVP) {
 	Scene* scene = SceneManager::getInstance().GetActiveScene();
 
 	for (auto& [id, renderer] : scene->Scene_ECS.mesh_renderers) {
 		auto it = scene->Scene_ECS.transforms.find(id);
-		Transform& t = it->second;
+		Transform& r_transform = it->second;
+		// std::cout << "Shadow Pass\n";
+		Mesh& r_mesh = *renderer.mesh;
+		r_mesh.UpdateMatrices(r_transform);
 
-		// ShadowPass(renderer, t, light, l_transform);
-		LightingPass(renderer, t);
+		m_shadowMapShader.Use();
+
+
+		// Set the shadow maps light world view proj matrix
+		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_WVP"), 1, GL_FALSE, glm::value_ptr(light_MVP));
+		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(renderer.mesh->modelMatrix));
+
+		// Render the scene through the light view
+		renderer.mesh->VAO1.Bind();
+		glDrawElements(GL_TRIANGLES, renderer.mesh->indices.size(), GL_UNSIGNED_INT, 0);
 	}
+
+}
+
+
+void Camera::LightingPass(glm::mat4 light_MVP) {
+	Scene* scene = SceneManager::getInstance().GetActiveScene();
+	
+	for (auto& [id, renderer] : scene->Scene_ECS.mesh_renderers) {
+		auto it = scene->Scene_ECS.transforms.find(id);
+		Transform& r_transform = it->second;
+
+
+		Shader& r_shader = renderer.material->shader;
+		Mesh& r_mesh = *renderer.mesh;
+		r_mesh.UpdateMatrices(r_transform);
+		r_shader.Use();
+
+		glUniform1i(glGetUniformLocation(r_shader.ID, "ShadowMap"), 0);
+		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "light_WVP"), 1, GL_FALSE, glm::value_ptr(light_MVP));
+		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.modelMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.rotationMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(CameraMatrix));
+		glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), transform->position.x, transform->position.y, transform->position.z);
+		glUniform4f(glGetUniformLocation(r_shader.ID, "color"), renderer.material->Color.r, renderer.material->Color.g, renderer.material->Color.b, renderer.material->Color.a);
+
+
+		if (renderer.material->Lit && SceneManager::getInstance().GetActiveScene()) {
+			glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene()->light_direction;
+			glm::vec3 l_col = SceneManager::getInstance().GetActiveScene()->light_color;
+			glUniform3f(glGetUniformLocation(r_shader.ID, "lightDir"), l_dir.x, l_dir.y, l_dir.z);
+			glUniform4f(glGetUniformLocation(r_shader.ID, "lightColor"), l_col.r, l_col.g, l_col.b, 1.0f);
+			glUniform1f(glGetUniformLocation(r_shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene()->ambient);
+		}
+
+		renderer.mesh->VAO1.Bind();
+		glDrawElements(GL_TRIANGLES, renderer.mesh->indices.size(), GL_UNSIGNED_INT, 0);
+	}
+}
+
+void Camera::Render(Light& light, Transform& l_transform) {
+	float pitch = glm::radians(l_transform.rotation.x);
+	float yaw = glm::radians(l_transform.rotation.y);
+
+	glm::vec3 direction;
+	direction.x = cos(pitch) * cos(yaw);
+	direction.y = sin(pitch);
+	direction.z = cos(pitch) * sin(yaw);
+	glm::vec3 lightViewDir = l_transform.rotation;
+
+	glm::mat4 lightProj = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 50.0f);
+	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + lightViewDir, WorldUp);
+	glm::mat4 light_MVP = lightProj * lightView;
+
+	// std::cout << "Light rot : " << ": " << lightViewDir.x << "x " << lightViewDir.y << "y " << lightViewDir.z << "z\n";
+	
+	m_shadowMapFBO.BindForWriting();    
+	ShadowPass(light_MVP);              
+	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+
+	glViewport(0, 0, width, height);         
+	m_shadowMapFBO.BindForReading(GL_TEXTURE0); 
+
+	LightingPass(light_MVP);                 
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);   
+
 }
