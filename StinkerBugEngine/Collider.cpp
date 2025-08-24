@@ -26,5 +26,5 @@ void Collider::Init() {
         return;
     }
     transform = &entity->GetComponent<Transform>();
-    std::cout << "Transform component obtained successfully." << std::endl;
+    std::cout << "Transform component obtained successfully. " << std::to_string(parent_id) << std::endl;
 }

@@ -69,9 +69,7 @@ void Scene::CheckCollisions(uint32_t id) {
 
 		// Temporary Plane collision
 		Transform& transform = Scene_ECS.transforms[id];
-		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f && 
-			transform.position.x > -5.5 && transform.position.x < 5.5 && 
-			transform.position.z > -5.5 && transform.position.z < 5.5)
+		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f)
 		{ transform.position.y = (this_collider->size.y / 2.0f); Scene_ECS.rigidbodies[id].velocity.y = 0.0f; }
 	}
 	else {

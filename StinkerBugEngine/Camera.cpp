@@ -124,8 +124,8 @@ void Camera::Render(Light& light, Transform& l_transform) {
 	direction.z = cos(pitch) * sin(yaw);
 	glm::vec3 lightViewDir = l_transform.rotation;
 
-	glm::mat4 lightProj = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 50.0f);
-	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + lightViewDir, WorldUp);
+	glm::mat4 lightProj = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 0.1f, 250.0f);
+	glm::mat4 lightView = glm::lookAt(transform->position + l_transform.position, transform->position + l_transform.position + lightViewDir, WorldUp);
 	glm::mat4 light_MVP = lightProj * lightView;
 
 	// std::cout << "Light rot : " << ": " << lightViewDir.x << "x " << lightViewDir.y << "y " << lightViewDir.z << "z\n";

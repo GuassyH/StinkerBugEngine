@@ -51,15 +51,16 @@ int main(void) {
 	Mesh cube = Mesh(Constants::Shapes::Cube());
 	Mesh cube2 = Mesh(Constants::Shapes::Cube());
 	Mesh cube3 = Mesh(Constants::Shapes::Cube());
+	Mesh cube4 = Mesh(Constants::Shapes::Cube());
 
 	Entity& big_Light = scene.CreateEntity();
 	big_Light.AddComponent<Light>().light_type = LightTypes::Spotlight;
 	big_Light.GetComponent<Light>().color = glm::vec4(0.4f);
-	big_Light.GetComponent<Transform>().position = glm::vec3(0,10,0);
 	big_Light.GetComponent<Transform>().rotation = -glm::normalize(glm::vec3(1));
+	big_Light.GetComponent<Transform>().position = -big_Light.GetComponent<Transform>().rotation * glm::vec3(100);
 	
 	Entity& e_plane = scene.CreateEntity();
-	e_plane.GetComponent<Transform>().scale = glm::vec3(10);
+	e_plane.GetComponent<Transform>().scale = glm::vec3(250);
 	e_plane.AddComponent<MeshRenderer>(floor, material);
 
 	/*
@@ -69,15 +70,8 @@ int main(void) {
 	e_globe.AddComponent<RigidBody>();
 	e_globe.AddComponent<SphereCollider>();
 	e_globe.GetComponent<SphereCollider>().radius = 0.5f;
-
-	Entity& e_globe_2 = scene.CreateEntity();
-	e_globe_2.GetComponent<Transform>().position = glm::vec3(1, 10, 0);
-	e_globe_2.AddComponent<MeshRenderer>(sphere, red);
-	e_globe_2.AddComponent<RigidBody>();
-	e_globe_2.AddComponent<SphereCollider>();
-	e_globe_2.GetComponent<SphereCollider>().radius = 0.5f;
-	e_globe_2.AddComponent<JumpMechanic>();
 	*/
+
 
 	Entity& e_cube = scene.CreateEntity();
 	e_cube.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
@@ -92,13 +86,15 @@ int main(void) {
 	e_cube_2.AddComponent<MeshRenderer>(cube2, blue);
 	e_cube_2.AddComponent<BoxCollider>();
 	e_cube_2.AddComponent<SphereMove>();
-	
+
 	Entity& e_cube_3 = scene.CreateEntity();
 	e_cube_3.GetComponent<Transform>().position = glm::vec3(2, 5, 0);
 	e_cube_3.GetComponent<Transform>().rotation = glm::vec3(0, 25, 0);
 	e_cube_3.AddComponent<RigidBody>().mass = 10.0f;
 	e_cube_3.AddComponent<MeshRenderer>(cube3, blue);
 	e_cube_3.AddComponent<BoxCollider>();
+
+
 
 
 	Camera& camera_component = camera.GetComponent<Camera>();

@@ -70,7 +70,7 @@ void main(){
 	float shadowVal = 1.0;
 
 	#ifdef DEPTH
-		depthVal = 1.0 - (min(length(camPos - crntPos), 100.0) / 100.0); // Seperates object a bit, temporaray
+		depthVal = 1.0 - (min(length(camPos - crntPos), 1000.0) / 1000.0); // Seperates object a bit, temporaray
 	#endif
 
 	#ifdef LIT	
