@@ -196,13 +196,15 @@ namespace Constants {
     };
 }
     namespace Colors {
-        static inline glm::vec4 Red = glm::vec4(1.0, 0.0, 0.0, 1.0);
-        static inline glm::vec4 Green = glm::vec4(0.0, 1.0, 0.0, 1.0);
-        static inline glm::vec4 Blue = glm::vec4(0.0, 0.0, 1.0, 1.0);
+        static inline glm::vec4 Red = glm::vec4(0.8, 0.1, 0.1, 1.0);
+        static inline glm::vec4 Green = glm::vec4(0.1, 0.8, 0.1, 1.0);
+        static inline glm::vec4 Blue = glm::vec4(0.1, 0.1, 0.8, 1.0);
 
         static inline glm::vec4 Purple = glm::vec4(0.6, 0.0, 0.7, 1.0);
 
+
         static inline glm::vec4 White = glm::vec4(1.0);
+        static inline glm::vec4 Gray = glm::vec4(0.8, 0.8, 0.8, 1.0);
         static inline glm::vec4 Black = glm::vec4(0.0, 0.0, 0.0, 1.0);
     }
     namespace Dirs {

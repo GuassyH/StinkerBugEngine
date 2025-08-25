@@ -10,7 +10,8 @@
 
 class BoxCollider : public Collider {
 public:
-    std::vector<Vertex> vert_positions;
+    std::vector<Vertex> vertices;
+    std::vector<glm::vec3> vert_positions;
 
     void CalculateCorners();
 
@@ -21,6 +22,10 @@ public:
         if (!ColliderFunctions::AABB(*this, other)) { CollisionInfo info; info.did_collide = false; return info; }
         return other.CollideWithBox(*this);
     }
+private:
+    bool init = true;
+    glm::vec3 last_rotation = glm::vec3(0);
+    glm::vec3 last_position = glm::vec3(0);
 };
 
 

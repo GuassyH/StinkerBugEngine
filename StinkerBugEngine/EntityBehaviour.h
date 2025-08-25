@@ -25,6 +25,7 @@ public:
 	virtual void Awake() {}
 	virtual void Update() {}
 	virtual void PhysicsUpdate() {}
+	virtual void OnCollisionEnter(Collider& other) {}
 };
 
 

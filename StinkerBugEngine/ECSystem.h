@@ -27,24 +27,61 @@ public:
 	template<typename T>
 	std::unordered_map<uint32_t, T>& GetComponentMap();
 
+
+	
+	template<typename T>
+	std::enable_if_t<std::is_base_of_v<Collider, T>, T&>
+		GetComponent(uint32_t id) {
+		auto it = colliders.find(id); // or entity_behaviours if that's what you're accessing
+		if (it == colliders.end()) {
+			throw std::runtime_error("Collider / Behaviour not found for entity " + std::to_string(id));
+		}
+
+		T* derived = static_cast<T*>(it->second.get());
+		if (!derived) {
+			throw std::runtime_error("Collider / Behaviour type mismatch for entity " + std::to_string(id));
+		}
+
+		return *derived;
+	}
+
+	template<typename T>
+	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T>, T&>
+		GetComponent(uint32_t id) {
+		auto it = entity_behaviours.find(id); // or entity_behaviours if that's what you're accessing
+		if (it == entity_behaviours.end()) {
+			throw std::runtime_error("Collider / Behaviour not found for entity " + std::to_string(id));
+		}
+
+		T* derived = static_cast<T*>(it->second.get());
+		if (!derived) {
+			throw std::runtime_error("Collider / Behaviour type mismatch for entity " + std::to_string(id));
+		}
+
+		return *derived;
+	}
+
+
 	// For EntityBehaviour
 	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T>>
+	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T>, T&>
 		AddComponent(const uint32_t id, Args&&... args)
 	{
 		entity_behaviours[id] = std::make_unique<T>(std::forward<Args>(args)...);
 		entity_behaviours[id]->parent_id = id;
 		entity_behaviours[id]->Init();
+		return GetComponent<T>(id);
 	}
 
 	// For EntityBehaviour
 	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<Collider, T>>
+	std::enable_if_t<std::is_base_of_v<Collider, T>, T&>
 		AddComponent(const uint32_t id, Args&&... args)
 	{
 		colliders[id] = std::make_unique<T>(std::forward<Args>(args)...);
 		colliders[id]->parent_id = id;
 		colliders[id]->Init();
+		return GetComponent<T>(id);
 	}
 
 
@@ -70,21 +107,6 @@ public:
 		}
 	}
 
-	template<typename T>
-	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T> || std::is_base_of_v<Collider, T>, T&>
-		GetComponent(uint32_t id) {
-		auto it = colliders.find(id); // or entity_behaviours if that's what you're accessing
-		if (it == colliders.end()) {
-			throw std::runtime_error("Collider not found for entity " + std::to_string(id));
-		}
-
-		T* derived = dynamic_cast<T*>(it->second.get());
-		if (!derived) {
-			throw std::runtime_error("Collider type mismatch for entity " + std::to_string(id));
-		}
-
-		return *derived;
-	}
 
 
 	template<typename T>

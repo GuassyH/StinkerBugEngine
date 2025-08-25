@@ -71,23 +71,13 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
     CollisionInfo collision_info;
     collision_info.did_collide = true;
 
-    // --- Transform vertices into world space ---
-    std::vector<glm::vec3> tb_vert_positions;
-    std::vector<glm::vec3> ob_vert_positions;
-
-    // the meshes HAVE to be different or at least the model matrices need to be
-    // Otherwise the collision isnt accurate AT ALL
     Mesh* tb_mesh = this_box.entity->GetComponent<MeshRenderer>().mesh;
     Mesh* ob_mesh = other_box.entity->GetComponent<MeshRenderer>().mesh;
 
-    for (size_t i = 0; i < 8; i++) {
-        // Center vertices around origin
-        glm::vec3 tb_local = this_box.vert_positions[i].pos + this_box.offset;
-        glm::vec3 ob_local = other_box.vert_positions[i].pos + other_box.offset;
+    // --- Transform vertices into world space ---
+    std::vector<glm::vec3> tb_vert_positions = this_box.vert_positions;
+    std::vector<glm::vec3> ob_vert_positions = other_box.vert_positions;
 
-        tb_vert_positions.push_back(glm::vec3(tb_mesh->modelMatrix * glm::vec4(tb_local, 1.0f)));
-        ob_vert_positions.push_back(glm::vec3(ob_mesh->modelMatrix * glm::vec4(ob_local, 1.0f)));
-    }
 
     // --- Generate axes ---
     std::vector<glm::vec3> all_axis;

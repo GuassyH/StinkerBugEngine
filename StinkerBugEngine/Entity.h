@@ -15,24 +15,13 @@ public:
 	Entity() = default;
 	Entity(uint32_t id, Scene* scene) : id(id), scene(scene) {}
 
-	
-	// For EntityBehaviour
-	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T>, T&>
-		AddComponent(Args&&... args)
-	{
-		scene->Scene_ECS.AddComponent<T>(id, std::forward<Args>(args)...);
-		return static_cast<T&>(*scene->Scene_ECS.entity_behaviours[id]);
-	}
-	
 
-	// For Colliders
+	// For components that derive from other classes (Collider, EntityBehaviour)
 	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<Collider, T>, T&>
+	std::enable_if_t<std::is_base_of_v<Collider, T> || std::is_base_of_v<EntityBehaviour, T>, T&>
 		AddComponent(Args&&... args)
 	{
-		scene->Scene_ECS.AddComponent<T>(id, std::forward<Args>(args)...);
-		return static_cast<T&>(*scene->Scene_ECS.colliders[id]);
+		return scene->Scene_ECS.AddComponent<T>(id, std::forward<Args>(args)...);
 	}
 
 	// For normal components

@@ -2,16 +2,28 @@
 #include "Mesh.h"
 #include "Entity.h"
 
-glm::vec3 last_rotation;
 void BoxCollider::CalculateCorners() {
-	//if (transform->rotation != last_rotation) {
-		Mesh* mesh = entity->GetComponent<MeshRenderer>().mesh;
+	if (init) {
+		Mesh* v_mesh = entity->GetComponent<MeshRenderer>().mesh;
+		vertices.clear();
+		vertices.insert(vertices.begin(), v_mesh->vertices.begin(), v_mesh->vertices.begin() + 8);
+	}
 
-		vert_positions.clear();
-		vert_positions.insert(vert_positions.begin(), mesh->vertices.begin(), mesh->vertices.begin() + 8);
+	if (transform->rotation != last_rotation || transform->position != last_position || init) {
+		Mesh* m_mesh = entity->GetComponent<MeshRenderer>().mesh;
 
 		last_rotation = transform->rotation;
-	//}
+		last_position = transform->position;
+		vert_positions.clear();
+
+		for (size_t i = 0; i < 8; i++)
+		{
+			glm::vec3 tb_local = vertices[i].pos + offset;
+			vert_positions.push_back(glm::vec3(m_mesh->modelMatrix * glm::vec4(tb_local, 1.0f)));
+		}
+	}
+
+	if (init) { init = false; }
 }
 
 CollisionInfo BoxCollider::CollideWithBox(BoxCollider& other_box_collider) {

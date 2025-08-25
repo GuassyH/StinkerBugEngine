@@ -48,6 +48,7 @@ Shader::Shader(const char* vertexShaderFile, const char* fragmentShaderFile) {
 	
 	defStr << "#define LIT" << "\n";
 	defStr << "#define DEPTH" << "\n";
+	defStr << "#define SHADOW" << "\n";
 
 	std::string fragCode = defStr.str() + "\n//" + fragBaseCode;
 	// std::cout << fragCode << std::endl;
