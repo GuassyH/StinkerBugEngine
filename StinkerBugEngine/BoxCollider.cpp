@@ -4,14 +4,14 @@
 
 glm::vec3 last_rotation;
 void BoxCollider::CalculateCorners() {
-	if (transform->rotation != last_rotation) {
+	//if (transform->rotation != last_rotation) {
 		Mesh* mesh = entity->GetComponent<MeshRenderer>().mesh;
 
 		vert_positions.clear();
 		vert_positions.insert(vert_positions.begin(), mesh->vertices.begin(), mesh->vertices.begin() + 8);
 
 		last_rotation = transform->rotation;
-	}
+	//}
 }
 
 CollisionInfo BoxCollider::CollideWithBox(BoxCollider& other_box_collider) {

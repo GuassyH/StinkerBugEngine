@@ -49,7 +49,7 @@ vec4 directionalLight(){
 float ShadowPCF(vec3 projCoords)
 {
     float shadow = 0.0;
-    float bias = 0.0005;
+    float bias = 0.0001;
     vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
 
     for(int x = -1; x <= 1; ++x)

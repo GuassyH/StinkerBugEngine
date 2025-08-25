@@ -39,7 +39,7 @@ CollisionInfo ColliderFunctions::SphereVsSphere(SphereCollider& this_sphere, Sph
 CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider& box) {
 	CollisionInfo collision_info;
 	collision_info.did_collide = false;
-
+/*
     // --- Transform vertices into world space ---
     std::vector<glm::vec3> box_vert_positions;
     glm::vec3 sphere_closest_pos;
@@ -60,6 +60,7 @@ CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider
 
         box_vert_positions.push_back(glm::vec3(box_mesh->modelMatrix * glm::vec4(box_local, 1.0f)));
     }
+*/
 
 
 	return collision_info;

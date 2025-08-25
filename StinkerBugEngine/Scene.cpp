@@ -40,14 +40,14 @@ void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Trans
 		j /= (invMass1 + invMass2);
 
 		glm::vec3 impulse = j * collision_info.normal;
-		rb1.velocity += impulse * invMass1;
-		rb2.velocity -= impulse * invMass2;
+		if (!rb1.isKinematic) { rb1.velocity += impulse * invMass1; }
+		if (!rb2.isKinematic) { rb2.velocity -= impulse * invMass2; }
 
 		// positional corrections
 		if (invMass1 + invMass2 > 0) {
 			glm::vec3 correction = collision_info.normal * collision_info.penetration / (invMass1 + invMass2);
-			t1.position -= correction * invMass1;
-			t2.position += correction * invMass2;
+			if (!rb1.isKinematic) { t1.position -= correction * invMass1; }
+			if (!rb2.isKinematic) { t2.position += correction * invMass2; }
 		}
 	}
 }
@@ -60,9 +60,11 @@ void Scene::CheckCollisions(uint32_t id) {
 		for (auto& [id2, other_collider] : Scene_ECS.colliders) {
 			// if both ptrs arent null and arent the same collider
 			if (this_collider != other_collider) {
-				CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
-				if (collision_info.did_collide) {
-					ResolveCollision(collision_info, Scene_ECS.rigidbodies[id], Scene_ECS.transforms[id], Scene_ECS.rigidbodies[id2], Scene_ECS.transforms[id2]);
+				if (Scene_ECS.rigidbodies.find(id2) != Scene_ECS.rigidbodies.end()) {
+					CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
+					if (collision_info.did_collide) {
+						ResolveCollision(collision_info, Scene_ECS.rigidbodies[id], Scene_ECS.transforms[id], Scene_ECS.rigidbodies[id2], Scene_ECS.transforms[id2]);
+					}
 				}
 			}
 		}
@@ -70,7 +72,7 @@ void Scene::CheckCollisions(uint32_t id) {
 		// Temporary Plane collision
 		Transform& transform = Scene_ECS.transforms[id];
 		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f)
-		{ transform.position.y = (this_collider->size.y / 2.0f); Scene_ECS.rigidbodies[id].velocity.y = 0.0f; }
+		{ transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; Scene_ECS.rigidbodies[id].velocity.y = 0.0f; }
 	}
 	else {
 		std::cout << "This entity (" << id << ") doesnt have a collider\n";
@@ -81,11 +83,11 @@ void Scene::CheckCollisions(uint32_t id) {
 // Update all the RigidBodies
 void Scene::UpdatePhysics() {
 	for (auto& [id, rb] : Scene_ECS.rigidbodies) {
-		if (rb.isKinematic) { continue; }
-		if (rb.useGravity) { rb.velocity.y += gravity * deltaTime.get(); }
+		if (!rb.isKinematic && rb.useGravity) { rb.velocity.y += gravity * deltaTime.get(); }
 		
 		CheckCollisions(id);
 
+		if (rb.isKinematic) { continue; }
 		rb.velocity -= (rb.velocity * rb.drag) * deltaTime.get();
 
 		Transform& transform = Scene_ECS.transforms[id];

@@ -37,7 +37,9 @@ void main(){
 
 	vec3 skyColor = mix(SkyBoxLightColor, SkyBoxDarkColor, pow(1.0 - rayDir.y, 2.0));
 
-	if(dot(rayDir, -sunDir) > 0.9999){ fragColor = sunColor; return; }
+	vec4 bloom = vec4(0.0);
+	if(dot(rayDir, -sunDir) > 0.999){ bloom = pow(max(0, dot(rayDir, -sunDir)), 4000) * sunColor; }
+	// if(dot(rayDir, -sunDir) > 0.999){ fragColor = sunColor; return; }
 
-	fragColor = vec4(skyColor, 1.0);
+	fragColor = vec4(skyColor, 1.0) + bloom;
 }

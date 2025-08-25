@@ -23,7 +23,7 @@ Camera::Camera(int width, int height, Transform& t) {
 
 	glfwSetCursorPos(display.window, (width / 2), (height / 2));
 
-	m_shadowMapFBO.Init(4096, 4096);
+	m_shadowMapFBO.Init(8192, 8192);
 	m_shadowMapShader = Shader("ShadowMapFBO.vert", "ShadowMapFBO.frag");
 	transform = &t;
 }
@@ -124,7 +124,7 @@ void Camera::Render(Light& light, Transform& l_transform) {
 	direction.z = cos(pitch) * sin(yaw);
 	glm::vec3 lightViewDir = l_transform.rotation;
 
-	glm::mat4 lightProj = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, 0.1f, 250.0f);
+	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 200.0f);
 	glm::mat4 lightView = glm::lookAt(transform->position + l_transform.position, transform->position + l_transform.position + lightViewDir, WorldUp);
 	glm::mat4 light_MVP = lightProj * lightView;
 
