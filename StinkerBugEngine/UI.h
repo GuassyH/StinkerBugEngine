@@ -11,6 +11,8 @@ class Scene;
 
 class UI {
 private:
+	uint32_t selected_entity = 0;
+
 	UI() = default;
 	Display& display = Display::getInstance();
 
@@ -24,6 +26,9 @@ public:
 	void imgui_init();
 	void imgui_render(CameraMovement& camera_move, Scene& scene);
 	void imgui_shutdown();
+
+	void Hierarchy(CameraMovement& camera_move, Scene& scene);
+	void EntityInspector(CameraMovement& camera_move, Scene& scene);
 };
 
 

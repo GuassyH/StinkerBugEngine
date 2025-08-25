@@ -9,11 +9,12 @@ void BoxCollider::CalculateCorners() {
 		vertices.insert(vertices.begin(), v_mesh->vertices.begin(), v_mesh->vertices.begin() + 8);
 	}
 
-	if (transform->rotation != last_rotation || transform->position != last_position || init) {
+	if (transform->rotation != last_rotation || transform->position != last_position || transform->scale != last_scale || init) {
 		Mesh* m_mesh = entity->GetComponent<MeshRenderer>().mesh;
 
 		last_rotation = transform->rotation;
 		last_position = transform->position;
+		last_scale = transform->scale;
 		vert_positions.clear();
 
 		for (size_t i = 0; i < 8; i++)

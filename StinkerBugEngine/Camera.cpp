@@ -29,7 +29,7 @@ Camera::Camera(int width, int height, Transform& t) {
 }
 
 
-void Camera::UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int windowWidth, int windowHeight) {
+void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 	// set the width to the windowWidth etc, helps for setting glm::perspective if window size changes
 	Camera::width = windowWidth;
 	Camera::height = windowHeight;

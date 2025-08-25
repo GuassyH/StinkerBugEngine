@@ -26,6 +26,7 @@ private:
     bool init = true;
     glm::vec3 last_rotation = glm::vec3(0);
     glm::vec3 last_position = glm::vec3(0);
+    glm::vec3 last_scale = glm::vec3(1);
 };
 
 

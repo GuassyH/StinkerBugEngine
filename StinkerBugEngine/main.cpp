@@ -123,7 +123,7 @@ int main(void) {
 		e_test_cube.GetComponent<Transform>().rotation.y += 0.1f;
 		e_test_cube.GetComponent<Transform>().rotation.x += 0.1f;
 
-		camera_component.UpdateMatrix(75.0f, 0.1f, 1000.0f, display.windowWidth, display.windowHeight);
+		camera_component.UpdateMatrix(display.windowWidth, display.windowHeight);
 		camera_component.Render(big_Light.GetComponent<Light>(), light_t);
 
 		if (glfwGetKey(display.window, GLFW_KEY_K) == GLFW_PRESS) { e_cube.GetComponent<Transform>().rotation.y += 0.1f; }
@@ -131,12 +131,12 @@ int main(void) {
 		active_scene->UpdateEntityBehaviours();
 		active_scene->UpdatePhysics();
 
-
 		ui.imgui_render(camera_movement, *active_scene);
 		display.EndFrame();
 	}
 
 	sceneManager.UnloadScene(scene);
+	skybox_pass.~FullScreenPass();
 	ui.imgui_shutdown();
 	display.~Display();
 

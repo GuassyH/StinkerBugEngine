@@ -39,7 +39,7 @@ public:
 
 	Camera() = default;
 	Camera(int width, int height, Transform& t);
-	void UpdateMatrix(float FOVdeg, float nearPlane, float farPlane, int windowWidth, int windowHeight);
+	void UpdateMatrix(int windowWidth, int windowHeight);
 
 
 	void ShadowPass(glm::mat4 light_MVP);

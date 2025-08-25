@@ -26,31 +26,36 @@ public:
 		Display& display = Display::getInstance();
 		GLFWwindow* window = display.window;
 
+
+
 		vertical = 0.0;
 		horizontal = 0.0;
 		elevator = 0.0;
 
-		// Horizontal and Lateral Movement
-		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { vertical += 1.0; }
-		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { vertical -= 1.0; }
-		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { horizontal -= 1.0; }
-		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { horizontal += 1.0; }
+		if (focusMouse) {
+			// Horizontal and Lateral Movement
+			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { vertical += 1.0; }
+			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { vertical -= 1.0; }
+			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { horizontal -= 1.0; }
+			if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { horizontal += 1.0; }
 
-		glm::vec3 proj_forward = glm::normalize(camera->forward * glm::vec3(1, 0, 1));
+			glm::vec3 proj_forward = glm::normalize(camera->forward * glm::vec3(1, 0, 1));
 
-		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { speedMul = 2.0f; }
-		else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) { speedMul = 0.5f; }
-		else { speedMul = 1.0f; }
+			if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { speedMul = 2.0f; }
+			else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) { speedMul = 0.5f; }
+			else { speedMul = 1.0f; }
 
-		// Up & Down
-		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { elevator += 1; }
-		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { elevator -= 1; }
+			// Up & Down
+			if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { elevator += 1; }
+			if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { elevator -= 1; }
 
-		glm::vec3 dir = vertical * proj_forward + horizontal * camera->right + elevator * Constants::Dirs::Up;
-		if (glm::length(dir) > 0) { moveDir = glm::normalize(dir); }
-		else { moveDir = glm::vec3(0.0); }
+			glm::vec3 dir = vertical * proj_forward + horizontal * camera->right + elevator * Constants::Dirs::Up;
+			if (glm::length(dir) > 0) { moveDir = glm::normalize(dir); }
+			else { moveDir = glm::vec3(0.0); }
 
-		this->transform->position += moveDir * moveSpeed * speedMul * deltaTime;
+			this->transform->position += moveDir * moveSpeed * speedMul * deltaTime;
+
+		}
 	}
 
 	bool firstClick = false;
