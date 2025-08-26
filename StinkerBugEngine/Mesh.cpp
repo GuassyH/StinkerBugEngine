@@ -45,22 +45,6 @@ void Mesh::RecalculateMesh() {
 	EBO1.Unbind();
 }
 
-void Mesh::UpdateMatrices(Transform& r_transform) {
-	glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), r_transform.scale);
-
-	// Construct rotation quat (Y > X > Z)
-	glm::quat rotY = glm::angleAxis(glm::radians(r_transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::quat rotX = glm::angleAxis(glm::radians(r_transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-	glm::quat rotZ = glm::angleAxis(glm::radians(r_transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-	glm::quat rotationQuat = rotY * rotX * rotZ; // Apply Z rotation first, then X, then Y
-
-	rotationMatrix = glm::mat4_cast(rotationQuat);
-	glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), r_transform.position);
-
-	// Combine to get model matrix: translate * rotate * scale
-	modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
-}
-
 
 Mesh::~Mesh() { 
 	VAO1.Delete();

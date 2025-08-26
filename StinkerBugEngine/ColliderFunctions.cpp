@@ -71,8 +71,8 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
     CollisionInfo collision_info;
     collision_info.did_collide = true;
 
-    Mesh* tb_mesh = this_box.entity->GetComponent<MeshRenderer>().mesh;
-    Mesh* ob_mesh = other_box.entity->GetComponent<MeshRenderer>().mesh;
+    Transform& tb_transform = this_box.entity->GetComponent<Transform>();
+    Transform& ob_transform = other_box.entity->GetComponent<Transform>();
 
     // --- Transform vertices into world space ---
     std::vector<glm::vec3> tb_vert_positions = this_box.vert_positions;
@@ -82,13 +82,13 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
     // --- Generate axes ---
     std::vector<glm::vec3> all_axis;
 
-    glm::vec3 tb_right      = tb_mesh->modelMatrix[0]; // X
-    glm::vec3 tb_up         = tb_mesh->modelMatrix[1]; // Y
-    glm::vec3 tb_forward    = tb_mesh->modelMatrix[2]; // Z
+    glm::vec3 tb_right      = tb_transform.GetModelMatrix()[0]; // X
+    glm::vec3 tb_up         = tb_transform.GetModelMatrix()[1]; // Y
+    glm::vec3 tb_forward    = tb_transform.GetModelMatrix()[2]; // Z
 
-    glm::vec3 ob_right      = ob_mesh->modelMatrix[0]; // X
-    glm::vec3 ob_up         = ob_mesh->modelMatrix[1]; // Y
-    glm::vec3 ob_forward    = ob_mesh->modelMatrix[2]; // Z
+    glm::vec3 ob_right      = ob_transform.GetModelMatrix()[0]; // X
+    glm::vec3 ob_up         = ob_transform.GetModelMatrix()[1]; // Y
+    glm::vec3 ob_forward    = ob_transform.GetModelMatrix()[2]; // Z
 
     // Add face axes
     all_axis.push_back(glm::normalize(tb_right));

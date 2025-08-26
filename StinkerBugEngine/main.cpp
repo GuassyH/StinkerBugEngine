@@ -45,10 +45,7 @@ int main(void) {
 	
 	Mesh floor = Mesh(Constants::Shapes::Plane());
 	Mesh sphere = Mesh(Constants::Shapes::UVSphere());
-	Mesh cube = Mesh(Constants::Shapes::Cube());
-	Mesh cube2 = Mesh(Constants::Shapes::Cube());
-	Mesh cube3 = Mesh(Constants::Shapes::Cube());
-	Mesh test_cube = Mesh(Constants::Shapes::Cube());
+	Mesh cube = Mesh(Constants::Shapes::Cube()); cube.name = "Cube";
 
 	Entity& camera = scene.CreateEntity("Camera");
 	camera.GetComponent<Transform>().position = glm::vec3(0.0, 2.0, 10);
@@ -86,7 +83,7 @@ int main(void) {
 	e_cube_2.GetComponent<Transform>().position = glm::vec3(-4, 5, 0);
 	e_cube_2.GetComponent<Transform>().rotation = glm::vec3(0, 45, 0);
 	e_cube_2.AddComponent<RigidBody>().mass = 1.0f;
-	e_cube_2.AddComponent<MeshRenderer>(cube2, blue);
+	e_cube_2.AddComponent<MeshRenderer>(cube, blue);
 	e_cube_2.AddComponent<BoxCollider>();
 	e_cube_2.AddComponent<SphereMove>();
 
@@ -95,11 +92,11 @@ int main(void) {
 	e_cube_3.GetComponent<Transform>().rotation = glm::vec3(0, 25, 0);
 	e_cube_3.GetComponent<Transform>().scale = glm::vec3(2);
 	e_cube_3.AddComponent<RigidBody>().mass = 2.0f;
-	e_cube_3.AddComponent<MeshRenderer>(cube3, blue);
+	e_cube_3.AddComponent<MeshRenderer>(cube, blue);
 	e_cube_3.AddComponent<BoxCollider>().size = glm::vec3(2);
 
 	Entity& e_test_cube = scene.CreateEntity("Test Cube");
-	e_test_cube.AddComponent<MeshRenderer>(test_cube, test_mat);
+	e_test_cube.AddComponent<MeshRenderer>(cube, test_mat);
 	e_test_cube.GetComponent<Transform>().rotation = glm::vec3(15, 0, 0);
 	e_test_cube.GetComponent<Transform>().position = glm::vec3(0, 2, -7);
 	e_test_cube.GetComponent<Transform>().scale = glm::vec3(2, 3, 2);

@@ -263,6 +263,9 @@
     <ClInclude Include="UI.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

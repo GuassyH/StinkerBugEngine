@@ -92,12 +92,14 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 
 	std::ostringstream ss; ss << scene.Scene_ECS.entity_names[selected_entity];
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - ImGui::CalcTextSize(ss.str().c_str()).x * 0.5f);
-	ImGui::Text(ss.str().c_str());
 
-	ImGui::SetNextItemWidth(ImGui::CalcTextSize("XXXX XXXX XXXX XXXX").x);
-	if (ImGui::InputText("NEW NAME", buff, sizeof(buff))) {
+	
+	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 180 * 0.5f);
+	ImGui::SetNextItemWidth(180);
+	if (ImGui::InputTextWithHint(" ", ss.str().c_str(), buff, sizeof(buff), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoHorizontalScroll)) {
 		scene.Scene_ECS.entity_names[selected_entity] = buff;
 	}
+
 
 	if (ImGui::CollapsingHeader("Transform")) {
 		ImGui::DragFloat3("Position", &scene.Scene_ECS.transforms[selected_entity].position.x, 0.1f);
@@ -121,6 +123,17 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 	if (scene.Scene_ECS.HasComponent<Light>(selected_entity)) {
 		if (ImGui::CollapsingHeader("Light NOT WORKING")) {
 			ImGui::ColorPicker4("Color", &scene.Scene_ECS.lights[selected_entity].color.r);
+		}
+	}
+	if (scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
+		if (ImGui::CollapsingHeader("Mesh Renderer")) {
+			ImGui::Text("Mesh: "); ImGui::SameLine();
+			if (scene.Scene_ECS.mesh_renderers[selected_entity].mesh) {
+				ImGui::Text(scene.Scene_ECS.mesh_renderers[selected_entity].mesh->name);
+			}
+			else {
+				ImGui::Text("None");
+			}
 		}
 	}
 

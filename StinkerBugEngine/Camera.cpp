@@ -62,14 +62,14 @@ void Camera::ShadowPass(glm::mat4 light_MVP) {
 		Transform& r_transform = it->second;
 		// std::cout << "Shadow Pass\n";
 		Mesh& r_mesh = *renderer.mesh;
-		r_mesh.UpdateMatrices(r_transform);
+		r_transform.UpdateMatrix();
 
 		m_shadowMapShader.Use();
 
 
 		// Set the shadow maps light world view proj matrix
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_WVP"), 1, GL_FALSE, glm::value_ptr(light_MVP));
-		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(renderer.mesh->modelMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
 
 		// Render the scene through the light view
 		renderer.mesh->VAO1.Bind();
@@ -89,13 +89,13 @@ void Camera::LightingPass(glm::mat4 light_MVP) {
 
 		Shader& r_shader = renderer.material->shader;
 		Mesh& r_mesh = *renderer.mesh;
-		r_mesh.UpdateMatrices(r_transform);
+		r_transform.UpdateMatrix();
 		r_shader.Use();
 
 		glUniform1i(glGetUniformLocation(r_shader.ID, "ShadowMap"), 0);
 		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "light_WVP"), 1, GL_FALSE, glm::value_ptr(light_MVP));
-		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.modelMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(r_mesh.rotationMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
+		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetRotationMatrix()));
 		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(CameraMatrix));
 		glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), transform->position.x, transform->position.y, transform->position.z);
 		glUniform4f(glGetUniformLocation(r_shader.ID, "color"), renderer.material->Color.r, renderer.material->Color.g, renderer.material->Color.b, renderer.material->Color.a);

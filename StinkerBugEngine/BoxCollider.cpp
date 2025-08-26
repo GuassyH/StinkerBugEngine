@@ -10,7 +10,6 @@ void BoxCollider::CalculateCorners() {
 	}
 
 	if (transform->rotation != last_rotation || transform->position != last_position || transform->scale != last_scale || init) {
-		Mesh* m_mesh = entity->GetComponent<MeshRenderer>().mesh;
 
 		last_rotation = transform->rotation;
 		last_position = transform->position;
@@ -20,7 +19,7 @@ void BoxCollider::CalculateCorners() {
 		for (size_t i = 0; i < 8; i++)
 		{
 			glm::vec3 tb_local = vertices[i].pos + offset;
-			vert_positions.push_back(glm::vec3(m_mesh->modelMatrix * glm::vec4(tb_local, 1.0f)));
+			vert_positions.push_back(glm::vec3(transform->GetModelMatrix() * glm::vec4(tb_local, 1.0f)));
 		}
 	}
 
