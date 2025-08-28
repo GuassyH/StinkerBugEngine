@@ -1,10 +1,10 @@
 #include "BoxCollider.h"
 #include "Mesh.h"
-#include "Entity.h"
+#include "EntityHelper.h"
 
 void BoxCollider::CalculateCorners() {
 	if (init) {
-		Mesh* v_mesh = entity->GetComponent<MeshRenderer>().mesh;
+		Mesh* v_mesh = entityHelper->GetComponent<MeshRenderer>().mesh;
 		vertices.clear();
 		vertices.insert(vertices.begin(), v_mesh->vertices.begin(), v_mesh->vertices.begin() + 8);
 	}

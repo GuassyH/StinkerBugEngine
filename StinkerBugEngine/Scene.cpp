@@ -1,28 +1,26 @@
 #include "Scene.h"
-#include "Entity.h"
 #include "DeltaTime.h"
 #include "CollisionInfo.h"
+#include "EntityBehaviour.h"
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
 // Create the Entity
 Entity& Scene::CreateEntity() {
-	uint32_t entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
+	Entity entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
 	Scene_ECS.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
-	Entity new_entity(entity_id, this);
-	Scene_ECS.entities[entity_id] = new_entity;
-	return Scene_ECS.entities[entity_id];
+	Scene_ECS.entities.insert(entity_id);
+	return entity_id;
 }
 
 
 Entity& Scene::CreateEntity(std::string name) {
-	uint32_t entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
+	Entity entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
 	Scene_ECS.entity_names[entity_id] = name;
-	Entity new_entity(entity_id, this);
-	Scene_ECS.entities[entity_id] = new_entity;
-	return Scene_ECS.entities[entity_id];
+	Scene_ECS.entities.insert(entity_id);
+	return entity_id;
 }
 
 // Resolve collision (apply forces)

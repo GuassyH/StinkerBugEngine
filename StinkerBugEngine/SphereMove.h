@@ -14,7 +14,7 @@ public:
 	SphereMove() = default;
 
 	inline void Start() override {
-		rb = &entity->GetComponent<RigidBody>();
+		rb = &entityHelper->GetComponent<RigidBody>();
 	}
 
 	inline void Update() override {

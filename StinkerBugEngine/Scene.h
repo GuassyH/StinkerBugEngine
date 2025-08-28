@@ -10,10 +10,8 @@
 
 #include "ComponentsList.h"
 
-#include "EntityBehaviour.h"
 #include "ECSystem.h"
-
-class Entity;
+#include "Entity.h"
 
 class Scene {
 public:

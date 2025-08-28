@@ -8,9 +8,13 @@
 #include "SceneManager.h"
 #include "FullScreenPass.h"
 
+#include "Scene.h"
+
 #include "ComponentsList.h"
 #include "Entity.h"
+#include "EntityHelper.h"
 #include "EntityBehaviour.h"
+#include "ECSystem.h"
 
 #include "CameraMovement.h"
 #include "SphereMove.h"
@@ -47,7 +51,7 @@ int main(void) {
 	Mesh sphere = Mesh(Constants::Shapes::UVSphere());
 	Mesh cube = Mesh(Constants::Shapes::Cube()); cube.name = "Cube";
 
-	Entity& camera = scene.CreateEntity("Camera");
+	EntityHelper camera = EntityHelper(scene.CreateEntity("Camera"), &scene.Scene_ECS);
 	camera.GetComponent<Transform>().position = glm::vec3(0.0, 2.0, 10);
 	camera.AddComponent<Camera>(display.windowWidth, display.windowHeight, camera.GetComponent<Transform>()).main = true;
 	camera.AddComponent<CameraMovement>();
@@ -55,24 +59,25 @@ int main(void) {
 	FullScreenPass skybox_pass = FullScreenPass(camera.GetComponent<Camera>(), skybox_mat);
 
 	// ALL ENTITIES
-	Entity& big_Light = scene.CreateEntity("Sun Light");
+	EntityHelper big_Light = EntityHelper(scene.CreateEntity("Sun Light"), &scene.Scene_ECS);
 	big_Light.AddComponent<Light>().light_type = LightTypes::Directional;
 	big_Light.GetComponent<Light>().color = glm::vec4(0.4f);
 	big_Light.GetComponent<Transform>().rotation = scene.light_direction;
 	big_Light.GetComponent<Transform>().position = -big_Light.GetComponent<Transform>().rotation * glm::vec3(100);
-	
-	Entity& e_plane = scene.CreateEntity("Floor");
+
+	EntityHelper e_plane = EntityHelper(scene.CreateEntity("Floor"), &scene.Scene_ECS);
 	e_plane.GetComponent<Transform>().scale = glm::vec3(250);
 	e_plane.AddComponent<MeshRenderer>(floor, material);
 	
-	Entity& e_cube = scene.CreateEntity("Jumpable Cube");
+	
+	EntityHelper e_cube = EntityHelper(scene.CreateEntity("Jumpable Cube"), &scene.Scene_ECS);
 	e_cube.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
 	e_cube.AddComponent<RigidBody>().mass = 1.0f;
 	e_cube.AddComponent<MeshRenderer>(cube, red);
 	e_cube.AddComponent<BoxCollider>();
 	e_cube.AddComponent<JumpMechanic>();
 
-	Entity& e_cube_2 = scene.CreateEntity("Movable Cube");
+	EntityHelper e_cube_2 = EntityHelper(scene.CreateEntity("Movable Cube"), &scene.Scene_ECS);
 	e_cube_2.GetComponent<Transform>().position = glm::vec3(-4, 5, 0);
 	e_cube_2.GetComponent<Transform>().rotation = glm::vec3(0, 45, 0);
 	e_cube_2.AddComponent<RigidBody>().mass = 1.0f;
@@ -80,7 +85,7 @@ int main(void) {
 	e_cube_2.AddComponent<BoxCollider>();
 	e_cube_2.AddComponent<SphereMove>();
 
-	Entity& e_cube_3 = scene.CreateEntity("Cube");
+	EntityHelper e_cube_3 = EntityHelper(scene.CreateEntity("Cube"), &scene.Scene_ECS);
 	e_cube_3.GetComponent<Transform>().position = glm::vec3(2, 5, -.5);
 	e_cube_3.GetComponent<Transform>().rotation = glm::vec3(0, 25, 0);
 	e_cube_3.GetComponent<Transform>().scale = glm::vec3(2);
@@ -88,7 +93,7 @@ int main(void) {
 	e_cube_3.AddComponent<MeshRenderer>(cube, blue);
 	e_cube_3.AddComponent<BoxCollider>().size = glm::vec3(2);
 
-	Entity& e_test_cube = scene.CreateEntity("Test Cube");
+	EntityHelper e_test_cube = EntityHelper(scene.CreateEntity("Test Cube"), &scene.Scene_ECS);
 	e_test_cube.AddComponent<MeshRenderer>(cube, test_mat);
 	e_test_cube.GetComponent<Transform>().rotation = glm::vec3(15, 0, 0);
 	e_test_cube.GetComponent<Transform>().position = glm::vec3(0, 2, -7);
@@ -96,6 +101,7 @@ int main(void) {
 	e_test_cube.AddComponent<RigidBody>().isKinematic = true;
 	e_test_cube.AddComponent<BoxCollider>().size = glm::vec3(2, 3, 2);
 
+	
 	Camera& camera_component = camera.GetComponent<Camera>();
 	CameraMovement& camera_movement = camera.GetComponent<CameraMovement>();
 

@@ -8,6 +8,7 @@
 #include "Entity.h"
 #include "Vertex.h"
 #include "Mesh.h"
+#include "EntityHelper.h"
 
 
 void DebugVec3(std::string text, glm::vec3 vector) {
@@ -71,8 +72,8 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
     CollisionInfo collision_info;
     collision_info.did_collide = true;
 
-    Transform& tb_transform = this_box.entity->GetComponent<Transform>();
-    Transform& ob_transform = other_box.entity->GetComponent<Transform>();
+    Transform& tb_transform = this_box.entityHelper->GetComponent<Transform>();
+    Transform& ob_transform = other_box.entityHelper->GetComponent<Transform>();
 
     // --- Transform vertices into world space ---
     std::vector<glm::vec3> tb_vert_positions = this_box.vert_positions;

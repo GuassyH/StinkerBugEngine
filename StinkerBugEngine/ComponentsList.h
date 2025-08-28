@@ -6,9 +6,9 @@
 #include "MeshRenderer.h"
 #include "RigidBody.h"
 #include "Light.h"
-#include "Collider.h"
 #include "Mesh.h"
 
+#include "Collider.h"
 #ifdef COLLIDER_COMPONENT_H
 #include "SphereCollider.h"
 #include "BoxCollider.h"

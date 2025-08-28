@@ -63,6 +63,7 @@
     <ClInclude Include="ECSystem.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityBehaviour.h" />
+    <ClInclude Include="EntityHelper.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />

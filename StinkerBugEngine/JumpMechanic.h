@@ -13,7 +13,7 @@ public:
 	JumpMechanic() = default;
 
 	inline void Start() override {
-		rb = &entity->GetComponent<RigidBody>();
+		rb = &entityHelper->GetComponent<RigidBody>();
 	}
 
 	bool pressed = false;

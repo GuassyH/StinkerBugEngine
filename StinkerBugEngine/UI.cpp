@@ -59,7 +59,7 @@ void UI::Hierarchy(CameraMovement& camera_move, Scene& scene) {
 
 	ImGui::DragFloat("Gravity", &scene.gravity, 0.1f, -50.0f, 50.0f);
 	ImGui::Text("Entities");
-	for (uint32_t i = 0; i < scene.Scene_ECS.entities.size(); i++)
+	for (uint32_t i = 0; i < scene.Scene_ECS.entity_names.size(); i++)
 	{
 		std::ostringstream ss; ss << scene.Scene_ECS.entity_names[i];
 		if (ImGui::Button(ss.str().c_str(), ImVec2(330, 20))) {

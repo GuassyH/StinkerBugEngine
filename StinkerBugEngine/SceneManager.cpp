@@ -25,9 +25,6 @@ void SceneManager::UnloadScene() {
 		renderer.mesh->~Mesh();
 	}
 
-	for (auto& [id, entity] : scene.Scene_ECS.entities) {
-		entity.~Entity();
-	}
 }
 
 void SceneManager::UnloadScene(Scene& scene) {
@@ -35,7 +32,4 @@ void SceneManager::UnloadScene(Scene& scene) {
 		renderer.mesh->~Mesh();
 	}
 
-	for (auto& [id, entity] : scene.Scene_ECS.entities) {
-		entity.~Entity();
-	}
 }

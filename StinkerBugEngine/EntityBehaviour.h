@@ -9,14 +9,16 @@
 #include "DeltaTime.h"
 
 #include "ComponentsList.h"
+#include "Entity.h"
 
-class Entity;
+
+class EntityHelper;
 
 class EntityBehaviour {
 public:
-	uint32_t parent_id;
-	Entity* entity;
-	Transform* transform;
+	Entity entity;
+	EntityHelper* entityHelper = nullptr;
+	Transform* transform = nullptr;
 
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;

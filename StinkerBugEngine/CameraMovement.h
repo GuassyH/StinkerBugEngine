@@ -3,6 +3,8 @@
 #include "EntityBehaviour.h"
 #include "Entity.h"
 #include "Display.h"
+#include "Camera.h"
+#include "EntityHelper.h"
 
 class CameraMovement : public EntityBehaviour {
 public:
@@ -94,7 +96,9 @@ public:
 	}
 
 	void Start() override {
-		camera = &entity->GetComponent<Camera>();
+		// camera = &entityHelper->GetComponent<Camera>();
+		camera = &entityHelper->GetComponent<Camera>();
+		
 		Display& display = Display::getInstance();
 		glfwSetCursorPos(display.window, (camera->width / 2.0f), (camera->height / 2.0f));
 		this->transform->rotation = glm::vec3(0.0, 0.0, -1.0f);

@@ -7,17 +7,17 @@
 #include "glm/glm.hpp"
 #include "Transform.h"
 #include "CollisionInfo.h"
+#include "Entity.h"
 
-class Entity;
-
+class EntityHelper;
 class SphereCollider;
 class BoxCollider;
 
 class Collider {
 public:
-    int parent_id;
+    Entity entity;
+	EntityHelper* entityHelper = nullptr;
     Transform* transform = nullptr;
-    Entity* entity = nullptr;
 
     float radius = 0.5f;
     glm::vec3 offset = glm::vec3(0.0f);
