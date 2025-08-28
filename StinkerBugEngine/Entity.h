@@ -4,9 +4,7 @@
 #include <cstdint>
 #include <utility>
 
-#include "ECSystem.h"
 #include "Scene.h"
-
 
 class Entity {
 public:

@@ -2,6 +2,8 @@
 #define TRANSFORM_COMPONENT_H
 #define GLM_ENABLE_EXPERIMENTAL
 
+#include "Component.h"
+
 #include <glm/glm.hpp>
 #include "glm/matrix.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,10 +14,12 @@
 
 
 
-class Transform {
+class Transform : public Component {
+private:
+	glm::mat4 modelMatrix = glm::mat4(1.0);
+	glm::mat4 rotationMatrix = glm::mat4(1.0);
 public:
 	Transform() = default;
-
 	Transform(const glm::vec3& pos, const glm::vec3& rot, const glm::vec3& scl)
 		: position(pos), rotation(rot), scale(scl),
 		modelMatrix(1.0f), rotationMatrix(1.0f) {
@@ -44,9 +48,13 @@ public:
 	const glm::mat4& GetModelMatrix() const { return modelMatrix; }
 	const glm::mat4& GetRotationMatrix() const { return rotationMatrix; }
 
-private:
-	glm::mat4 modelMatrix = glm::mat4(1.0);
-	glm::mat4 rotationMatrix = glm::mat4(1.0);
+	virtual void DrawInInspector() override {
+		if (ImGui::CollapsingHeader("Transform")) {
+			if (ImGui::DragFloat3("Position", &position.x, 0.1f)) { UpdateMatrix(); }
+			if (ImGui::DragFloat3("Rotation", &rotation.x, 0.1f)) { UpdateMatrix(); }
+			if (ImGui::DragFloat3("Scale", &scale.x, 0.1f, 0.01f)) { UpdateMatrix(); }
+		}
+	}
 };
 
 

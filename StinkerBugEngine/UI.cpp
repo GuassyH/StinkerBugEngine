@@ -100,41 +100,19 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 		scene.Scene_ECS.entity_names[selected_entity] = buff;
 	}
 
+	scene.Scene_ECS.GetComponent<Transform>(selected_entity).DrawInInspector();
 
-	if (ImGui::CollapsingHeader("Transform")) {
-		ImGui::DragFloat3("Position", &scene.Scene_ECS.transforms[selected_entity].position.x, 0.1f);
-		ImGui::DragFloat3("Rotation", &scene.Scene_ECS.transforms[selected_entity].rotation.x, 0.1f);
-		ImGui::DragFloat3("Scale", &scene.Scene_ECS.transforms[selected_entity].scale.x, 0.1f);
-	}
 	if (scene.Scene_ECS.HasComponent<RigidBody>(selected_entity)) {
-		if (ImGui::CollapsingHeader("RigidBody")) {
-			ImGui::DragFloat("Mass", &scene.Scene_ECS.rigidbodies[selected_entity].mass, 0.1f, 0.0f, 100.0f);
-			ImGui::DragFloat("Bounciness", &scene.Scene_ECS.rigidbodies[selected_entity].bounciness, 0.1f, 0.0f, 1);
-			ImGui::DragFloat("Drag", &scene.Scene_ECS.rigidbodies[selected_entity].drag, 0.1f, 0.0f, 1);
-		}
+		scene.Scene_ECS.GetComponent<RigidBody>(selected_entity).DrawInInspector();
 	}
 	if (scene.Scene_ECS.HasComponent<Camera>(selected_entity)) {
-		if (ImGui::CollapsingHeader("Camera")) {
-			ImGui::DragFloat("FOV", &scene.Scene_ECS.cameras[selected_entity].FOVdeg, 0.1f, 0.0f, 120.0f);
-			ImGui::DragFloat("Near Plane", &scene.Scene_ECS.cameras[selected_entity].nearPlane, 0.1f, 0.1f, 2000);
-			ImGui::DragFloat("Far Plane", &scene.Scene_ECS.cameras[selected_entity].farPlane, 0.1f, 0.1f, 2000);
-		}
+		scene.Scene_ECS.GetComponent<Camera>(selected_entity).DrawInInspector();
 	}
 	if (scene.Scene_ECS.HasComponent<Light>(selected_entity)) {
-		if (ImGui::CollapsingHeader("Light NOT WORKING")) {
-			ImGui::ColorPicker4("Color", &scene.Scene_ECS.lights[selected_entity].color.r);
-		}
+		scene.Scene_ECS.GetComponent<Light>(selected_entity).DrawInInspector();
 	}
 	if (scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
-		if (ImGui::CollapsingHeader("Mesh Renderer")) {
-			ImGui::Text("Mesh: "); ImGui::SameLine();
-			if (scene.Scene_ECS.mesh_renderers[selected_entity].mesh) {
-				ImGui::Text(scene.Scene_ECS.mesh_renderers[selected_entity].mesh->name);
-			}
-			else {
-				ImGui::Text("None");
-			}
-		}
+		scene.Scene_ECS.GetComponent<MeshRenderer>(selected_entity).DrawInInspector();
 	}
 
 

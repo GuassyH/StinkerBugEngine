@@ -1,9 +1,11 @@
 #ifndef RIGIDBODY_COMPONENT_H
 #define RIGIDBODY_COMPONENT_H
 
+#include "Component.h"
 #include "glm/glm.hpp"
 
-struct RigidBody {
+struct RigidBody : public Component {
+public:
 	bool useGravity;
 	bool isKinematic;
 
@@ -28,6 +30,14 @@ struct RigidBody {
 		angular_drag(0.05f),
 		bounciness(1.0f)
 	{}
+
+	virtual void DrawInInspector() override {
+		if (ImGui::CollapsingHeader("Rigid Body")) {
+			ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 100.0f);
+			ImGui::DragFloat("Bounciness", &bounciness, 0.1f, 0.0f, 1);
+			ImGui::DragFloat("Drag", &drag, 0.1f, 0.0f, 1);
+		}
+	}
 };
 
 #endif

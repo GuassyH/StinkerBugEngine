@@ -17,7 +17,7 @@ public:
 
 	
 	void SetActiveScene(Scene& scene);	// Set active scene to given scene, and deloads previous scene
-	Scene* GetActiveScene();			// Try to get the active scene, if you cant dont
+	Scene& GetActiveScene();			// Try to get the active scene, if you cant dont
 
 	void UnloadScene();
 	void UnloadScene(Scene& scene);

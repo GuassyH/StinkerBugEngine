@@ -55,8 +55,8 @@ int main(void) {
 	FullScreenPass skybox_pass = FullScreenPass(camera.GetComponent<Camera>(), skybox_mat);
 
 	// ALL ENTITIES
-	Entity& big_Light = scene.CreateEntity("Light");
-	big_Light.AddComponent<Light>().light_type = LightTypes::Spotlight;
+	Entity& big_Light = scene.CreateEntity("Sun Light");
+	big_Light.AddComponent<Light>().light_type = LightTypes::Directional;
 	big_Light.GetComponent<Light>().color = glm::vec4(0.4f);
 	big_Light.GetComponent<Transform>().rotation = scene.light_direction;
 	big_Light.GetComponent<Transform>().position = -big_Light.GetComponent<Transform>().rotation * glm::vec3(100);
@@ -65,13 +65,6 @@ int main(void) {
 	e_plane.GetComponent<Transform>().scale = glm::vec3(250);
 	e_plane.AddComponent<MeshRenderer>(floor, material);
 	
-	Entity& e_globe = scene.CreateEntity("Globe");
-	e_globe.GetComponent<Transform>().position = glm::vec3(0, 5, 0);
-	e_globe.AddComponent<MeshRenderer>(sphere, white);
-	e_globe.AddComponent<RigidBody>();
-	e_globe.AddComponent<SphereCollider>();
-	e_globe.GetComponent<SphereCollider>().radius = 0.5f;
-
 	Entity& e_cube = scene.CreateEntity("Jumpable Cube");
 	e_cube.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
 	e_cube.AddComponent<RigidBody>().mass = 1.0f;
@@ -106,14 +99,13 @@ int main(void) {
 	Camera& camera_component = camera.GetComponent<Camera>();
 	CameraMovement& camera_movement = camera.GetComponent<CameraMovement>();
 
-	Scene* active_scene = sceneManager.GetActiveScene();
-	active_scene->StartEntityBehaviours();
-	active_scene->WakeEntityBehaviours();
+	Scene& active_scene = sceneManager.GetActiveScene();
+	active_scene.StartEntityBehaviours();
+	active_scene.WakeEntityBehaviours();
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
 		skybox_pass.Draw(camera_component);
 
-		big_Light.GetComponent<Transform>().rotation = scene.light_direction;
 		big_Light.GetComponent<Transform>().position = -big_Light.GetComponent<Transform>().rotation * glm::vec3(100);
 
 		Transform& light_t = big_Light.GetComponent<Transform>();
@@ -123,12 +115,11 @@ int main(void) {
 		camera_component.UpdateMatrix(display.windowWidth, display.windowHeight);
 		camera_component.Render(big_Light.GetComponent<Light>(), light_t);
 
-		if (glfwGetKey(display.window, GLFW_KEY_K) == GLFW_PRESS) { e_cube.GetComponent<Transform>().rotation.y += 0.1f; }
 
-		active_scene->UpdateEntityBehaviours();
-		active_scene->UpdatePhysics();
+		active_scene.UpdateEntityBehaviours();
+		active_scene.UpdatePhysics();
 
-		ui.imgui_render(camera_movement, *active_scene);
+		ui.imgui_render(camera_movement, active_scene);
 		display.EndFrame();
 	}
 

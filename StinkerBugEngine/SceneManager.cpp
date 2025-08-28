@@ -12,20 +12,20 @@ void SceneManager::SetActiveScene(Scene& scene) {
 }
 
 // Try to get the active scene, if you cant dont
-Scene* SceneManager::GetActiveScene() {
+Scene& SceneManager::GetActiveScene() {
 	if (!activeScene) {
 		throw std::runtime_error("No active scene loaded.");
 	}
-	return activeScene;
+	return *activeScene;
 }
 
 void SceneManager::UnloadScene() {
-	Scene* scene = GetActiveScene();
-	for (auto& [id, renderer] : scene->Scene_ECS.mesh_renderers) {
+	Scene& scene = GetActiveScene();
+	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
 		renderer.mesh->~Mesh();
 	}
 
-	for (auto& [id, entity] : scene->Scene_ECS.entities) {
+	for (auto& [id, entity] : scene.Scene_ECS.entities) {
 		entity.~Entity();
 	}
 }

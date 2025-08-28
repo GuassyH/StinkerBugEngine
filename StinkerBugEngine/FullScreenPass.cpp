@@ -47,8 +47,8 @@ void FullScreenPass::Draw(Camera& camera) {
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camNearPlane"), camera.nearPlane);
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camFarPlane"), camera.farPlane);
 
-	glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene()->light_direction;
-	glm::vec3 l_col = SceneManager::getInstance().GetActiveScene()->light_color;
+	glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene().light_direction;
+	glm::vec3 l_col = SceneManager::getInstance().GetActiveScene().light_color;
 	glUniform3f(glGetUniformLocation(material->shader.ID, "sunDir"), l_dir.x, l_dir.y, l_dir.z);
 	glUniform4f(glGetUniformLocation(material->shader.ID, "sunColor"), l_col.r, l_col.g, l_col.b, 1.0f);
 

@@ -11,14 +11,15 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 
-#include "Transform.h"
 #include "ShadowMapFBO.h"
+#include "Component.h"
 
+class Transform;
 class MeshRenderer;
 class Shader;
 class Light;
 
-class Camera {
+class Camera : public Component {
 public:
 	Transform* transform = nullptr;
 	bool main = false;
@@ -45,9 +46,16 @@ public:
 	void ShadowPass(glm::mat4 light_MVP);
 	void LightingPass(glm::mat4 light_MVP);
 	void Render(Light& light, Transform& l_transform);
-	
 
 	ShadowMapFBO m_shadowMapFBO;
+
+	virtual void DrawInInspector() override {
+		if (ImGui::CollapsingHeader("Camera")) {
+			ImGui::DragFloat("FOV", &FOVdeg, 0.1f, 0.0f, 120.0f);
+			ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.1f, 2000);
+			ImGui::DragFloat("Far Plane", &farPlane, 0.1f, 0.1f, 2000);
+		}
+	}
 };
 
 

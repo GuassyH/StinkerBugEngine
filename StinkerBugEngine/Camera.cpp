@@ -55,10 +55,10 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 }
 
 void Camera::ShadowPass(glm::mat4 light_MVP) {
-	Scene* scene = SceneManager::getInstance().GetActiveScene();
+	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
-	for (auto& [id, renderer] : scene->Scene_ECS.mesh_renderers) {
-		auto it = scene->Scene_ECS.transforms.find(id);
+	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
+		auto it = scene.Scene_ECS.transforms.find(id);
 		Transform& r_transform = it->second;
 		// std::cout << "Shadow Pass\n";
 		Mesh& r_mesh = *renderer.mesh;
@@ -80,10 +80,10 @@ void Camera::ShadowPass(glm::mat4 light_MVP) {
 
 
 void Camera::LightingPass(glm::mat4 light_MVP) {
-	Scene* scene = SceneManager::getInstance().GetActiveScene();
+	Scene& scene = SceneManager::getInstance().GetActiveScene();
 	
-	for (auto& [id, renderer] : scene->Scene_ECS.mesh_renderers) {
-		auto it = scene->Scene_ECS.transforms.find(id);
+	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
+		auto it = scene.Scene_ECS.transforms.find(id);
 		Transform& r_transform = it->second;
 
 
@@ -101,12 +101,12 @@ void Camera::LightingPass(glm::mat4 light_MVP) {
 		glUniform4f(glGetUniformLocation(r_shader.ID, "color"), renderer.material->Color.r, renderer.material->Color.g, renderer.material->Color.b, renderer.material->Color.a);
 
 
-		if (renderer.material->Lit && SceneManager::getInstance().GetActiveScene()) {
-			glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene()->light_direction;
-			glm::vec3 l_col = SceneManager::getInstance().GetActiveScene()->light_color;
+		if (renderer.material->Lit) {
+			glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene().light_direction;
+			glm::vec3 l_col = SceneManager::getInstance().GetActiveScene().light_color;
 			glUniform3f(glGetUniformLocation(r_shader.ID, "lightDir"), l_dir.x, l_dir.y, l_dir.z);
 			glUniform4f(glGetUniformLocation(r_shader.ID, "lightColor"), l_col.r, l_col.g, l_col.b, 1.0f);
-			glUniform1f(glGetUniformLocation(r_shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene()->ambient);
+			glUniform1f(glGetUniformLocation(r_shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene().ambient);
 		}
 
 		renderer.mesh->VAO1.Bind();
