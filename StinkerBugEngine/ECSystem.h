@@ -30,7 +30,6 @@ public:
 	std::unordered_map<Entity, T>& GetComponentMap();
 
 
-	
 	template<typename T>
 	std::enable_if_t<std::is_base_of_v<Collider, T>, T&>
 		GetComponent(Entity id) {
@@ -63,7 +62,6 @@ public:
 		return *derived;
 	}
 
-
 	// For EntityBehaviour
 	template<typename T, typename... Args>
 	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T>, T&>
@@ -93,7 +91,9 @@ public:
 		AddComponent(const Entity id, Args&&... args)
 	{
 		auto& map = GetComponentMap<T>();
-		return map[id] = T(std::forward<Args>(args)...);
+		map[id] = T(std::forward<Args>(args)...);
+		map[id].entity = id;
+		return map[id];
 	}
 
 	template<typename T>

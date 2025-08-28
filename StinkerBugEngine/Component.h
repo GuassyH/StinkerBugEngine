@@ -4,9 +4,12 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "Entity.h"
 
 class Component {
 public:	
+	Entity entity;
+
 	Component() = default;
 	virtual ~Component() = default;
 	virtual void DrawInInspector() {}

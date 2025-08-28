@@ -8,6 +8,8 @@
 
 class CameraMovement;
 class Scene;
+struct Mesh;
+struct Material;
 
 class UI {
 private:
@@ -24,11 +26,11 @@ public:
 	static UI& getInstance() { static UI instance; return instance; }
 
 	void imgui_init();
-	void imgui_render(CameraMovement& camera_move, Scene& scene);
+	void imgui_render(CameraMovement& camera_move, Scene& scene, Mesh& cube, Material& mat);
 	void imgui_shutdown();
 
 	void Hierarchy(CameraMovement& camera_move, Scene& scene);
-	void EntityInspector(CameraMovement& camera_move, Scene& scene);
+	void EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, Material& mat);
 };
 
 

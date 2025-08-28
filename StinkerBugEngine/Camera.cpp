@@ -58,6 +58,7 @@ void Camera::ShadowPass(glm::mat4 light_MVP) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
 	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
+		if (!renderer.mesh) { continue; }	// If there isnt a mesh then skip
 		auto it = scene.Scene_ECS.transforms.find(id);
 		Transform& r_transform = it->second;
 		// std::cout << "Shadow Pass\n";
@@ -83,6 +84,7 @@ void Camera::LightingPass(glm::mat4 light_MVP) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 	
 	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
+		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
 		auto it = scene.Scene_ECS.transforms.find(id);
 		Transform& r_transform = it->second;
 

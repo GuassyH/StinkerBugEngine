@@ -2,7 +2,10 @@
 #include "Mesh.h"
 #include "EntityHelper.h"
 
-void BoxCollider::CalculateCorners() {
+bool BoxCollider::CalculateCorners() {
+	// If the box collider isnt setup correctly (doesnt have a mesh) then return false
+	if (!entityHelper->GetComponent<MeshRenderer>().mesh) { return false; }
+
 	if (init) {
 		Mesh* v_mesh = entityHelper->GetComponent<MeshRenderer>().mesh;
 		vertices.clear();
@@ -24,11 +27,15 @@ void BoxCollider::CalculateCorners() {
 	}
 
 	if (init) { init = false; }
+	return true;
 }
 
 CollisionInfo BoxCollider::CollideWithBox(BoxCollider& other_box_collider) {
-	CalculateCorners();
-	other_box_collider.CalculateCorners();
+	bool a = CalculateCorners();
+	bool b = other_box_collider.CalculateCorners();
+
+	if (!a || !b) { CollisionInfo info; info.did_collide = false; return info; }
+
 	return ColliderFunctions::BoxVsBox(*this, other_box_collider);
 }
 

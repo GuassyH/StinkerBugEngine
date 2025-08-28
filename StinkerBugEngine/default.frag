@@ -32,6 +32,7 @@ vec4 directionalLight(){
 	
 	// diffuse lighting
 	lightDirection = normalize(lightDirection);
+	float diffuse = max(dot(normal, lightDirection), ambient);
 
 	// specular lighting
 	float specularLight = 0.5;
@@ -41,7 +42,7 @@ vec4 directionalLight(){
 	float specular = specAmount * specularLight;
 
 	// return texture(diffuse0, texCoord) * vec4(vertColor, 1.0f) * lightColor * (diffuse + ambient) + (texture(specular0, texCoord).r * specular);
-	vec4 finalCol = lightColor + specular;
+	vec4 finalCol = (lightColor * diffuse) + specular;
 	finalCol.a = 1.0;
 	return finalCol;
 };
@@ -88,12 +89,12 @@ void main(){
 		#ifdef SHADOW
 			vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
 			projCoords = projCoords * 0.5 + 0.5;
-			shadowVal = max(ShadowPCF(projCoords), 0.5); 
+			shadowVal = max(ShadowPCF(projCoords), 0.3); 
 		#endif
 	#endif
 
 	// fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
-	fragColor = color * lightVal * shadowVal * depthVal;
+	fragColor = color * min(lightVal, shadowVal) * depthVal;
 
 	#ifdef LIT
 		#ifdef SHADOW

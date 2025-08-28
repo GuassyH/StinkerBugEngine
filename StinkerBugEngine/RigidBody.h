@@ -36,6 +36,14 @@ public:
 			ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 100.0f);
 			ImGui::DragFloat("Bounciness", &bounciness, 0.1f, 0.0f, 1);
 			ImGui::DragFloat("Drag", &drag, 0.1f, 0.0f, 1);
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::Checkbox("Use Gravity", &useGravity);
+			ImGui::Checkbox("Kinematic", &isKinematic);
+			ImGui::Spacing();
+			ImGui::Spacing();
+			ImGui::DragFloat3("Velocity", &velocity.x, 0.1f, ImGuiSliderFlags_NoInput);
+			ImGui::DragFloat3("Angular Velocity", &angular_velocity.x, 0.1f, ImGuiSliderFlags_NoInput);
 		}
 	}
 };

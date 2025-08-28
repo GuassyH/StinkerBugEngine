@@ -41,7 +41,7 @@ int main(void) {
 
 	Shader skybox_shader("skybox.vert", "skybox.frag");
 	Material skybox_mat(skybox_shader);
-	Material material; material.Color = Constants::Colors::Gray;
+	Material material; material.Color = Constants::Colors::White;
 	Material red; red.Color = Constants::Colors::Red;
 	Material blue; blue.Color = Constants::Colors::Blue;
 	Material white; white.Color = Constants::Colors::White;
@@ -69,7 +69,6 @@ int main(void) {
 	e_plane.GetComponent<Transform>().scale = glm::vec3(250);
 	e_plane.AddComponent<MeshRenderer>(floor, material);
 	
-	
 	EntityHelper e_cube = EntityHelper(scene.CreateEntity("Jumpable Cube"), &scene.Scene_ECS);
 	e_cube.GetComponent<Transform>().position = glm::vec3(-2, 5, 0);
 	e_cube.AddComponent<RigidBody>().mass = 1.0f;
@@ -85,7 +84,7 @@ int main(void) {
 	e_cube_2.AddComponent<BoxCollider>();
 	e_cube_2.AddComponent<SphereMove>();
 
-	EntityHelper e_cube_3 = EntityHelper(scene.CreateEntity("Cube"), &scene.Scene_ECS);
+	EntityHelper e_cube_3 = EntityHelper(scene.CreateEntity("Cube 3"), &scene.Scene_ECS);
 	e_cube_3.GetComponent<Transform>().position = glm::vec3(2, 5, -.5);
 	e_cube_3.GetComponent<Transform>().rotation = glm::vec3(0, 25, 0);
 	e_cube_3.GetComponent<Transform>().scale = glm::vec3(2);
@@ -100,7 +99,6 @@ int main(void) {
 	e_test_cube.GetComponent<Transform>().scale = glm::vec3(2, 3, 2);
 	e_test_cube.AddComponent<RigidBody>().isKinematic = true;
 	e_test_cube.AddComponent<BoxCollider>().size = glm::vec3(2, 3, 2);
-
 	
 	Camera& camera_component = camera.GetComponent<Camera>();
 	CameraMovement& camera_movement = camera.GetComponent<CameraMovement>();
@@ -125,7 +123,7 @@ int main(void) {
 		active_scene.UpdateEntityBehaviours();
 		active_scene.UpdatePhysics();
 
-		ui.imgui_render(camera_movement, active_scene);
+		ui.imgui_render(camera_movement, active_scene, cube, material);
 		display.EndFrame();
 	}
 

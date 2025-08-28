@@ -4,18 +4,17 @@
 #include <iostream>
 #include <memory>
 
+#include "Component.h"
 #include "glm/glm.hpp"
 #include "Transform.h"
 #include "CollisionInfo.h"
-#include "Entity.h"
 
 class EntityHelper;
 class SphereCollider;
 class BoxCollider;
 
-class Collider {
+class Collider : public Component {
 public:
-    Entity entity;
 	EntityHelper* entityHelper = nullptr;
     Transform* transform = nullptr;
 

@@ -1,8 +1,9 @@
 #include "UI.h"
 #include "Camera.h"
 #include "CameraMovement.h"
+#include "ComponentsList.h"
 #include "Scene.h"
-
+#include "Material.h"
 
 void UI::imgui_init() {
 	IMGUI_CHECKVERSION();
@@ -20,7 +21,7 @@ void UI::imgui_init() {
 }
 
 
-void UI::imgui_render(CameraMovement& camera_move, Scene& scene) {
+void UI::imgui_render(CameraMovement& camera_move, Scene& scene, Mesh& cube, Material& mat) {
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -34,7 +35,7 @@ void UI::imgui_render(CameraMovement& camera_move, Scene& scene) {
 
 	if (!camera_move.focusMouse) {
 		Hierarchy(camera_move, scene);
-		EntityInspector(camera_move, scene);
+		EntityInspector(camera_move, scene, cube, mat);
 	}
 
 	ImGui::Render();
@@ -84,7 +85,7 @@ void UI::Hierarchy(CameraMovement& camera_move, Scene& scene) {
 
 char buff[255];
 char* new_name;
-void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
+void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, Material& mat) {
 
 	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 360, 10));
 	ImGui::SetNextWindowSize(ImVec2(350, 1060));
@@ -116,9 +117,41 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 	}
 
 
+	// Center button
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 125);
 	ImGui::SetCursorPosY(ImGui::GetWindowHeight() - 50);
-	ImGui::Button("Add Component", ImVec2(250, 25));
+
+	if (ImGui::Button("Add Component", ImVec2(250, 25))) {
+		ImGui::OpenPopup("AddComponent");
+	}
+
+	// Setup popup
+	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 285, display.windowHeight-360), ImGuiCond_Once); // simplified
+
+	if (ImGui::BeginPopup("AddComponent")) {
+		ImGui::Text("Add Component");
+		ImGui::Separator();
+		ImGui::Text("Select a component to add:");
+		ImGui::Separator();
+
+		// I mean it works but its not efficient. Should be a loop for each component type add component
+		if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
+			if (ImGui::Button("Mesh Renderer", ImVec2(180, 20))) {
+				scene.Scene_ECS.AddComponent<MeshRenderer>(selected_entity);
+				ImGui::CloseCurrentPopup();
+			}
+		}
+		if (!scene.Scene_ECS.HasComponent<RigidBody>(selected_entity)) {
+			if (ImGui::Button("Rigidbody", ImVec2(180, 20))) {
+				scene.Scene_ECS.AddComponent<RigidBody>(selected_entity);
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+
+		ImGui::EndPopup();
+	}
 
 	ImGui::End();
 }

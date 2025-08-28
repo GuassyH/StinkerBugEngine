@@ -22,14 +22,16 @@ Scene& SceneManager::GetActiveScene() {
 void SceneManager::UnloadScene() {
 	Scene& scene = GetActiveScene();
 	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
-		renderer.mesh->~Mesh();
+		if (renderer.mesh)
+			renderer.mesh->~Mesh();
 	}
 
 }
 
 void SceneManager::UnloadScene(Scene& scene) {
 	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
-		renderer.mesh->~Mesh();
+		if (renderer.mesh)
+			renderer.mesh->~Mesh();
 	}
 
 }

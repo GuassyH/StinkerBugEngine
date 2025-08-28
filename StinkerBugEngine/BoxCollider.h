@@ -13,7 +13,7 @@ public:
     std::vector<Vertex> vertices;
     std::vector<glm::vec3> vert_positions;
 
-    void CalculateCorners();
+    bool CalculateCorners();
 
     CollisionInfo CollideWithBox(BoxCollider& other_box_collider) override;
     CollisionInfo CollideWithSphere(SphereCollider& other_sphere_collider) override;
