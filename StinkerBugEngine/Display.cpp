@@ -1,6 +1,5 @@
 #include "Display.h"
 
-
 double currentTime;
 double lastTime;
 int nbFrames;
@@ -63,7 +62,7 @@ int Display::init(unsigned int windowWidth, unsigned int windowHeight, const cha
 
 	Display::SetSize(windowWidth, windowHeight);
 
-
+	std::cout << "Display / GLFW initialized\n";
 
 	return 0;
 }
@@ -100,6 +99,7 @@ void Display::SetSize(unsigned int width, unsigned int height) {
 }
 
 Display::~Display() {
+	std::cout << "Display Shutdown\n";
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }

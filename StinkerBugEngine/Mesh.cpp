@@ -27,6 +27,28 @@ Mesh::Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, N
 	RecalculateMesh();
 }
 
+Mesh::Mesh(Model& model) {
+
+	// Lazy implementation, should check if the model is valid
+	
+
+	if (model.LoadModel()) {
+		name = model.name;
+
+		vertices.insert(vertices.begin(), model.getVertices().begin(), model.getVertices().end());
+		indices.insert(indices.begin(), model.getIndices().begin(), model.getIndices().end());
+
+		RecalculateMesh();
+	}
+	else {
+		std::cout << "Model mesh not valid, creating an empty mesh.\n";
+		vertices = {};
+		indices = {};
+		name = "empty_mesh";
+	}
+}	// Constructor for Model
+
+
 void Mesh::RecalculateMesh() {
     VAO1 = VAO();
     VBO1 = VBO();
@@ -50,6 +72,4 @@ Mesh::~Mesh() {
 	VAO1.Delete();
 	VBO1.Delete();
 	EBO1.Delete();
-
-	// Yay
 }

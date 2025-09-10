@@ -14,11 +14,12 @@ public:
 	SphereMove() = default;
 
 	inline void Start() override {
+		if (!entityHelper->HasComponent<RigidBody>()) { return; }
 		rb = &entityHelper->GetComponent<RigidBody>();
 	}
 
 	inline void Update() override {
-
+		if (rb == nullptr) { return; }
 		if (glfwGetKey(display.window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
 			rb->velocity += glm::vec3(5.0, 0.0, 0.0) * deltaTime.get();
 		}

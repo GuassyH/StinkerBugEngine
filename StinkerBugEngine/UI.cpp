@@ -17,8 +17,9 @@ void UI::imgui_init() {
 	r_windowWidth = display.windowWidth - 680;
 	r_windowHeight = display.windowHeight - 340;
 
-	std::cout << "ImGui / UI initialized\n";
+	std::cout << "ImGui / UI initialized\n\n";
 }
+
 
 
 void UI::imgui_render(CameraMovement& camera_move, Scene& scene, Mesh& cube, Material& mat) {
@@ -43,13 +44,13 @@ void UI::imgui_render(CameraMovement& camera_move, Scene& scene, Mesh& cube, Mat
 }
 
 
+
 void UI::imgui_shutdown() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 	std::cout << "UI shutdown\n";
 }
-
 
 
 
@@ -79,7 +80,6 @@ void UI::Hierarchy(CameraMovement& camera_move, Scene& scene) {
 
 	ImGui::End();
 
-
 }
 
 
@@ -97,8 +97,9 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 	
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 180 * 0.5f);
 	ImGui::SetNextItemWidth(180);
-	if (ImGui::InputTextWithHint(" ", ss.str().c_str(), buff, sizeof(buff), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoHorizontalScroll)) {
+	if (ImGui::InputTextWithHint(" ", ss.str().c_str(), buff, sizeof(buff), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoHorizontalScroll | ImGuiInputTextFlags_AutoSelectAll)) {
 		scene.Scene_ECS.entity_names[selected_entity] = buff;
+		memset(buff, 0, 255);
 	}
 
 	scene.Scene_ECS.GetComponent<Transform>(selected_entity).DrawInInspector();
@@ -122,7 +123,7 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 	ImGui::SetCursorPosY(ImGui::GetWindowHeight() - 50);
 
 	if (ImGui::Button("Add Component", ImVec2(250, 25))) {
-		ImGui::OpenPopup("AddComponent");
+		ImGui::OpenPopup("Add Component");
 	}
 
 	// Setup popup
@@ -138,7 +139,7 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 		// I mean it works but its not efficient. Should be a loop for each component type add component
 		if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 			if (ImGui::Button("Mesh Renderer", ImVec2(180, 20))) {
-				scene.Scene_ECS.AddComponent<MeshRenderer>(selected_entity);
+				scene.Scene_ECS.AddComponent<MeshRenderer>(selected_entity, cube, mat);
 				ImGui::CloseCurrentPopup();
 			}
 		}
@@ -155,4 +156,3 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 
 	ImGui::End();
 }
-

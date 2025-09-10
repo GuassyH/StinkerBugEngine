@@ -73,7 +73,7 @@ void Scene::CheckCollisions(uint32_t id) {
 		{ transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; Scene_ECS.rigidbodies[id].velocity.y = 0.0f; }
 	}
 	else {
-		std::cout << "This entity (" << id << ") doesnt have a collider\n";
+		// std::cout << "This entity (" << id << ") doesnt have a collider\n";
 		return;
 	}
 }

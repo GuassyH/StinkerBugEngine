@@ -30,8 +30,13 @@ void SceneManager::UnloadScene() {
 
 void SceneManager::UnloadScene(Scene& scene) {
 	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
-		if (renderer.mesh)
+		if (renderer.mesh) {
 			renderer.mesh->~Mesh();
+		}
+		if (renderer.material) {
+			glDeleteProgram(renderer.material->shader.ID);
+			renderer.material->~Material();
+		}
 	}
 
 }

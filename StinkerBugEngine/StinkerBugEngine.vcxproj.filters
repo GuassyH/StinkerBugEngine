@@ -55,6 +55,9 @@
     <Filter Include="Header Files\imgui">
       <UniqueIdentifier>{f0ad46fc-0c57-48e6-89ff-5254cf03d812}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\PostProcess">
+      <UniqueIdentifier>{4228cdea-0a75-4347-ba62-b6e71aed4413}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -137,6 +140,9 @@
     </ClCompile>
     <ClCompile Include="UI.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +275,9 @@
     <ClInclude Include="EntityHelper.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -278,16 +287,16 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="skybox.vert">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
     <None Include="skybox.frag">
-      <Filter>Resource Files\Shaders</Filter>
-    </None>
-    <None Include="ShadowMapFBO.vert">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
     <None Include="ShadowMapFBO.frag">
-      <Filter>Resource Files\Shaders</Filter>
+      <Filter>Resource Files\Shaders\PostProcess</Filter>
+    </None>
+    <None Include="ShadowMapFBO.vert">
+      <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
   </ItemGroup>
 </Project>

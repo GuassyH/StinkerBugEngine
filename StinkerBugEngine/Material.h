@@ -18,6 +18,7 @@ public:
 
 	Material() : shader(Shader("default.vert", "default.frag")) {}
 	Material(Shader& shader) : shader(shader) {}
+	~Material() = default;
 };
 
 
