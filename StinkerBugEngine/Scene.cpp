@@ -23,6 +23,20 @@ Entity& Scene::CreateEntity(std::string name) {
 	return entity_id;
 }
 
+void Scene::DeleteEntity(Entity id) {
+	// Remove from all component maps
+	Scene_ECS.transforms.erase(id);
+	Scene_ECS.mesh_renderers.erase(id);
+	Scene_ECS.rigidbodies.erase(id);
+	Scene_ECS.cameras.erase(id);
+	Scene_ECS.lights.erase(id);
+	Scene_ECS.colliders.erase(id);
+	Scene_ECS.entity_behaviours.erase(id);
+	// Remove from entity names and entities set
+	Scene_ECS.entity_names.erase(id);
+	Scene_ECS.entities.erase(id);
+}
+
 // Resolve collision (apply forces)
 void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody&  rb2, Transform& t2){
 	if (collision_info.normal != glm::vec3(0.0)) {

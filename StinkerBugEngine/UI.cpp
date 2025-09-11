@@ -17,12 +17,12 @@ void UI::imgui_init() {
 	r_windowWidth = display.windowWidth - 680;
 	r_windowHeight = display.windowHeight - 340;
 
-	std::cout << "ImGui / UI initialized\n\n";
+	std::cout << "\nImGui / UI initialized\n\n";
 }
 
 
 
-void UI::imgui_render(CameraMovement& camera_move, Scene& scene, Mesh& cube, Material& mat) {
+void UI::imgui_render(CameraMovement& camera_move, Scene& scene) {
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -36,7 +36,7 @@ void UI::imgui_render(CameraMovement& camera_move, Scene& scene, Mesh& cube, Mat
 
 	if (!camera_move.focusMouse) {
 		Hierarchy(camera_move, scene);
-		EntityInspector(camera_move, scene, cube, mat);
+		EntityInspector(camera_move, scene);
 	}
 
 	ImGui::Render();
@@ -71,11 +71,55 @@ void UI::Hierarchy(CameraMovement& camera_move, Scene& scene) {
 	}
 
 
-	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 125);
-	ImGui::SetCursorPosY(ImGui::GetWindowHeight() - 50);
-	if (ImGui::Button("Add Entity", ImVec2(250, 25))) {
-		scene.CreateEntity();
-		std::cout << "Created new entity\n";
+	if (glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS && ImGui::IsWindowHovered()) {
+		if (!ImGui::IsAnyItemHovered()) {
+			ImGui::OpenPopup("Create Object");
+		}
+		else if (ImGui::IsAnyItemHovered()) {
+			ImGui::OpenPopup("Change Object");
+		}
+	}
+
+	double m_x, m_y;
+	glfwGetCursorPos(display.window, &m_x, &m_y);
+
+	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(m_x, m_y), ImGuiCond_Once); // simplified
+	if (ImGui::BeginPopup("Create Object")) {
+		ImGui::Text("Create Object");
+		if (ImGui::Button("Create Empty Entity", ImVec2(180, 20))) {
+			scene.CreateEntity();
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
+			EntityHelper new_ntt(scene.CreateEntity("Cube"), &scene.Scene_ECS);
+			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Cube());
+			new_ntt.GetComponent<MeshRenderer>().material = new Material();
+			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			new_ntt.~EntityHelper();
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::Button("Create Sphere", ImVec2(180, 20))) {
+			EntityHelper new_ntt(scene.CreateEntity("Sphere"), &scene.Scene_ECS);
+			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::UVSphere());
+			new_ntt.GetComponent<MeshRenderer>().material = new Material();
+			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			new_ntt.~EntityHelper();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
+
+	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(m_x, m_y), ImGuiCond_Once); // simplified
+	if (ImGui::BeginPopup("Change Object")) {
+		ImGui::Text("Change Object");
+		if (ImGui::Button("Delete Entity", ImVec2(180, 20))) {
+			// scene.DeleteEntity();
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
 	}
 
 	ImGui::End();
@@ -85,7 +129,7 @@ void UI::Hierarchy(CameraMovement& camera_move, Scene& scene) {
 
 char buff[255];
 char* new_name;
-void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, Material& mat) {
+void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 
 	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 360, 10));
 	ImGui::SetNextWindowSize(ImVec2(350, 1060));
@@ -93,7 +137,6 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 
 	std::ostringstream ss; ss << scene.Scene_ECS.entity_names[selected_entity];
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - ImGui::CalcTextSize(ss.str().c_str()).x * 0.5f);
-
 	
 	ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 180 * 0.5f);
 	ImGui::SetNextItemWidth(180);
@@ -130,7 +173,7 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
 	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 285, display.windowHeight-360), ImGuiCond_Once); // simplified
 
-	if (ImGui::BeginPopup("AddComponent")) {
+	if (ImGui::BeginPopup("Add Component")) {
 		ImGui::Text("Add Component");
 		ImGui::Separator();
 		ImGui::Text("Select a component to add:");
@@ -139,8 +182,12 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 		// I mean it works but its not efficient. Should be a loop for each component type add component
 		if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 			if (ImGui::Button("Mesh Renderer", ImVec2(180, 20))) {
-				scene.Scene_ECS.AddComponent<MeshRenderer>(selected_entity, cube, mat);
+				EntityHelper new_ntt(selected_entity, & scene.Scene_ECS);
+				new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Cube());
+				new_ntt.GetComponent<MeshRenderer>().material = new Material();
+				new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 				ImGui::CloseCurrentPopup();
+				new_ntt.~EntityHelper();
 			}
 		}
 		if (!scene.Scene_ECS.HasComponent<RigidBody>(selected_entity)) {
@@ -153,6 +200,8 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene, Mesh& cube, 
 
 		ImGui::EndPopup();
 	}
+
+
 
 	ImGui::End();
 }

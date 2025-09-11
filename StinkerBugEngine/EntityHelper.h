@@ -12,7 +12,7 @@ public:
 
 	EntityHelper() = default;
 	EntityHelper(const Entity& id, ECSystem* ecs) : id(id), ecs(ecs) {}
-
+	~EntityHelper() = default;
 
 	// For normal components
 	template<typename T, typename... Args>

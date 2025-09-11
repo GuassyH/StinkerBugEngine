@@ -18,6 +18,7 @@ public:
 	Scene() = default;
 	Entity& CreateEntity();
 	Entity& CreateEntity(std::string name);
+	void DeleteEntity(Entity id);
 
 	// Physics
 	float gravity = -9.82f;

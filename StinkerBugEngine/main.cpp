@@ -97,7 +97,7 @@ int main(void) {
 		active_scene.UpdateEntityBehaviours();
 		active_scene.UpdatePhysics();
 
-		ui.imgui_render(camera_movement, active_scene, cube, material);
+		ui.imgui_render(camera_movement, active_scene);
 		display.EndFrame();
 	}
 
@@ -106,5 +106,11 @@ int main(void) {
 	ui.imgui_shutdown();
 	display.~Display();
 
+	e_model_test.~EntityHelper();
+	e_plane.~EntityHelper();
+	camera.~EntityHelper();
+	big_Light.~EntityHelper();
+
+	
 	return 0;
 }
