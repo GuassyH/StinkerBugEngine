@@ -43,7 +43,7 @@ void Scene::DeleteEntity(Entity id) {
 }
 
 // Resolve collision (apply forces)
-void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody&  rb2, Transform& t2){
+void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2) {
 	if (collision_info.normal != glm::vec3(0.0)) {
 		glm::vec3 relative_velocity = rb1.velocity - rb2.velocity;
 		float vel_along_normal = glm::dot(relative_velocity, collision_info.normal);
@@ -89,7 +89,9 @@ void Scene::CheckCollisions(uint32_t id) {
 		// Temporary Plane collision
 		Transform& transform = Scene_ECS.GetComponent<Transform>(id);
 		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f)
-		{ transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; Scene_ECS.GetComponent<RigidBody>(id).velocity.y = 0.0f; }
+		{
+			transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; Scene_ECS.GetComponent<RigidBody>(id).velocity.y = 0.0f;
+		}
 	}
 	else {
 		// std::cout << "This entity (" << id << ") doesnt have a collider\n";
@@ -102,7 +104,7 @@ void Scene::UpdatePhysics() {
 	for (auto& [id, components_rb] : Scene_ECS.GetComponentMap<RigidBody>()) {
 		RigidBody& rb = *std::static_pointer_cast<RigidBody>(components_rb);
 		if (!rb.isKinematic && rb.useGravity) { rb.velocity.y += gravity * deltaTime.get(); }
-		
+
 		CheckCollisions(id);
 
 		if (rb.isKinematic) { continue; }
@@ -118,7 +120,7 @@ void Scene::UpdatePhysics() {
 
 // Call the EntityBehaviours Start
 void Scene::StartEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours){
+	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
 		behaviour->Start();
 	}
 }
@@ -136,4 +138,3 @@ void Scene::UpdateEntityBehaviours() {
 		behaviour->Update();
 	}
 }
-

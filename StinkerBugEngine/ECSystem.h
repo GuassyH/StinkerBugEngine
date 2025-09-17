@@ -30,7 +30,7 @@ public:
 	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<void>>> components;
 
 
-// ALL THE IMPORTANT SHIZZ
+	// ALL THE IMPORTANT SHIZZ
 	ECSystem() = default;
 
 
@@ -146,7 +146,7 @@ public:
 	{
 		auto& map = GetComponentMap<T>();
 		if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return *std::static_pointer_cast<T>(map.find(id)->second); }
-		
+
 		AddComponentBit(ComponentBit<T>(), id);
 		std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 
