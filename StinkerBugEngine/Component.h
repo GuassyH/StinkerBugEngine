@@ -9,7 +9,6 @@
 class Component {
 public:	
 	Entity entity;
-	uint32_t component_id;
 
 	Component() = default;
 	virtual ~Component() = default;

@@ -8,8 +8,9 @@ DeltaTime& deltaTime = DeltaTime::getInstance();
 // Create the Entity
 Entity& Scene::CreateEntity() {
 	Entity entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
-	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
+	Scene_ECS.component_bits[entity_id] = 0b0;
 	Scene_ECS.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
+	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
 	Scene_ECS.entities.insert(entity_id);
 	return entity_id;
 }
@@ -17,8 +18,9 @@ Entity& Scene::CreateEntity() {
 
 Entity& Scene::CreateEntity(std::string name) {
 	Entity entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
-	Scene_ECS.transforms[entity_id] = { glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0) };
+	Scene_ECS.component_bits[entity_id] = 0b0;
 	Scene_ECS.entity_names[entity_id] = name;
+	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
 	Scene_ECS.entities.insert(entity_id);
 	return entity_id;
 }

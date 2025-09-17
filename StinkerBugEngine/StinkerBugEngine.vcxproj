@@ -26,6 +26,7 @@
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
+    <ClCompile Include="ECSystem.cpp" />
     <ClCompile Include="EntityBehaviour.cpp" />
     <ClCompile Include="FullScreenPass.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SphereMove.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="TypeID.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
