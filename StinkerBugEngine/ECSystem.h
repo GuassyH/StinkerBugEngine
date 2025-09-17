@@ -6,6 +6,8 @@
 #include <bitset>
 #include <string>
 #include <iostream>
+#include <typeindex>
+#include <typeinfo>
 
 #include "ComponentsList.h"
 #include "Entity.h"
@@ -17,17 +19,14 @@ public:
 	Entity nextEntity = 0;
 	std::unordered_set<Entity> entities;
 	std::unordered_map<Entity, std::string> entity_names;
-	std::unordered_map<Entity, Transform> transforms;
-	std::unordered_map<Entity, MeshRenderer> mesh_renderers;
-	std::unordered_map<Entity, RigidBody> rigidbodies;
-	std::unordered_map<Entity, Camera> cameras;
-	std::unordered_map<Entity, Light> lights;
+
 
 	std::unordered_map<Entity, std::unique_ptr<Collider>> colliders;
 	std::unordered_map<Entity, std::unique_ptr<EntityBehaviour>> entity_behaviours;
 
 	// Save 32 bit unsigned ints to store info on if a component is held
 	std::unordered_map<Entity, uint32_t> component_bits;
+	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<void>>> components;
 
 
 // ALL THE IMPORTANT SHIZZ
@@ -107,9 +106,9 @@ public:
 	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
 		GetComponent(const Entity id) {
 		if (HasComponent<T>(id)) {
-			auto& map = GetComponentMap<T>();
+			auto& map = components[typeid(T)];
 			auto it = map.find(id);
-			return it->second;
+			return *std::static_pointer_cast<T>(it->second);
 		}
 		else {
 			throw std::runtime_error("Component not found");
@@ -144,24 +143,22 @@ public:
 	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
 		AddComponent(const Entity id, Args&&... args)
 	{
-		auto& map = GetComponentMap<T>();
-		if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return map[id]; }
+		auto& map = components[typeid(T)];
+		if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return *std::static_pointer_cast<T>(map.find(id)->second); }
 		
 		AddComponentBit(ComponentBit<T>(), id);
 		std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 
-		map[id] = T(std::forward<Args>(args)...);
-		map[id].entity = id;
-		return map[id];
+		map[id] = std::make_shared<T>(std::forward<Args>(args)...);
+		return *std::static_pointer_cast<T>(map.find(id)->second);
 	}
 
 
 	template<typename T>
 	void RemoveComponent(const Entity id) {
 		if (HasComponent<T>(id)) {
-			auto& map = GetComponentMap<T>();
-			auto& it = map.find(id);
-			map.erase(it);
+			auto& map = components[typeid(T)];
+			map.erase(id);
 
 			RemoveComponentBit(ComponentBit<T>(), id);
 			std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
@@ -173,32 +170,6 @@ public:
 
 };
 
-
-// Specialize the template for each component type
-template<>
-inline std::unordered_map<uint32_t, Transform>& ECSystem::GetComponentMap<Transform>() {
-	return transforms;
-}
-
-template<>
-inline std::unordered_map<Entity, MeshRenderer>& ECSystem::GetComponentMap<MeshRenderer>() {
-	return mesh_renderers;
-}
-
-template<>
-inline std::unordered_map<Entity, RigidBody>& ECSystem::GetComponentMap<RigidBody>() {
-	return rigidbodies;
-}
-
-template<>
-inline std::unordered_map<Entity, Camera>& ECSystem::GetComponentMap<Camera>() {
-	return cameras;
-}
-
-template<>
-inline std::unordered_map<Entity, Light>& ECSystem::GetComponentMap<Light>() {
-	return lights;
-}
 
 template<>
 inline std::unordered_map<Entity, std::unique_ptr<Collider>>& ECSystem::GetComponentMap<std::unique_ptr<Collider>>() {

@@ -57,10 +57,10 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 void Camera::ShadowPass(glm::mat4 light_MVP) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
-	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
-		if (!renderer.mesh) { continue; }	// If there isnt a mesh then skip
-		auto it = scene.Scene_ECS.transforms.find(id);
-		Transform& r_transform = it->second;
+	for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
+		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
+		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
+		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 		// std::cout << "Shadow Pass\n";
 		Mesh& r_mesh = *renderer.mesh;
 		r_transform.UpdateMatrix();
@@ -83,10 +83,10 @@ void Camera::ShadowPass(glm::mat4 light_MVP) {
 void Camera::LightingPass(glm::mat4 light_MVP) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 	
-	for (auto& [id, renderer] : scene.Scene_ECS.mesh_renderers) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
+		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
-		auto it = scene.Scene_ECS.transforms.find(id);
-		Transform& r_transform = it->second;
+		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 
 
 		Shader& r_shader = renderer.material->shader;

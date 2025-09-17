@@ -27,6 +27,7 @@ Entity& Scene::CreateEntity(std::string name) {
 
 void Scene::DeleteEntity(Entity id) {
 	// Remove from all component maps
+	/*
 	Scene_ECS.transforms.erase(id);
 	Scene_ECS.mesh_renderers.erase(id);
 	Scene_ECS.rigidbodies.erase(id);
@@ -37,6 +38,8 @@ void Scene::DeleteEntity(Entity id) {
 	// Remove from entity names and entities set
 	Scene_ECS.entity_names.erase(id);
 	Scene_ECS.entities.erase(id);
+	*/
+
 }
 
 // Resolve collision (apply forces)
@@ -74,19 +77,19 @@ void Scene::CheckCollisions(uint32_t id) {
 		for (auto& [id2, other_collider] : Scene_ECS.colliders) {
 			// if both ptrs arent null and arent the same collider
 			if (this_collider != other_collider) {
-				if (Scene_ECS.rigidbodies.find(id2) != Scene_ECS.rigidbodies.end()) {
+				if (Scene_ECS.components[typeid(RigidBody)].find(id2) != Scene_ECS.components[typeid(RigidBody)].end()) {
 					CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
 					if (collision_info.did_collide) {
-						ResolveCollision(collision_info, Scene_ECS.rigidbodies[id], Scene_ECS.transforms[id], Scene_ECS.rigidbodies[id2], Scene_ECS.transforms[id2]);
+						ResolveCollision(collision_info, Scene_ECS.GetComponent<RigidBody>(id), Scene_ECS.GetComponent<Transform>(id), Scene_ECS.GetComponent<RigidBody>(id2), Scene_ECS.GetComponent<Transform>(id2));
 					}
 				}
 			}
 		}
 
 		// Temporary Plane collision
-		Transform& transform = Scene_ECS.transforms[id];
+		Transform& transform = Scene_ECS.GetComponent<Transform>(id);
 		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f)
-		{ transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; Scene_ECS.rigidbodies[id].velocity.y = 0.0f; }
+		{ transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; Scene_ECS.GetComponent<RigidBody>(id).velocity.y = 0.0f; }
 	}
 	else {
 		// std::cout << "This entity (" << id << ") doesnt have a collider\n";
@@ -96,7 +99,8 @@ void Scene::CheckCollisions(uint32_t id) {
 
 // Update all the RigidBodies
 void Scene::UpdatePhysics() {
-	for (auto& [id, rb] : Scene_ECS.rigidbodies) {
+	for (auto& [id, components_rb] : Scene_ECS.components[typeid(RigidBody)]) {
+		RigidBody& rb = *std::static_pointer_cast<RigidBody>(components_rb);
 		if (!rb.isKinematic && rb.useGravity) { rb.velocity.y += gravity * deltaTime.get(); }
 		
 		CheckCollisions(id);
@@ -104,7 +108,7 @@ void Scene::UpdatePhysics() {
 		if (rb.isKinematic) { continue; }
 		rb.velocity -= (rb.velocity * rb.drag) * deltaTime.get();
 
-		Transform& transform = Scene_ECS.transforms[id];
+		Transform& transform = Scene_ECS.GetComponent<Transform>(id);
 		transform.position += rb.velocity * deltaTime.get();
 	}
 }
