@@ -93,6 +93,12 @@ public:
 		return *derived;
 	}
 
+	template<typename T>
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, bool>
+		HasComponent(const Entity id) {
+		return HasComponentBit(ComponentBit<T>(), id);
+	}
+
 	// Helper for static_assert in unreachable branch
 	template<class>
 	static inline constexpr bool always_false = false;
@@ -100,9 +106,9 @@ public:
 	template<typename T>
 	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
 		GetComponent(const Entity id) {
-		auto& map = GetComponentMap<T>();
-		auto it = map.find(id);
-		if (it != map.end()) {
+		if (HasComponent<T>(id)) {
+			auto& map = GetComponentMap<T>();
+			auto it = map.find(id);
 			return it->second;
 		}
 		else {
@@ -139,7 +145,7 @@ public:
 		AddComponent(const Entity id, Args&&... args)
 	{
 		auto& map = GetComponentMap<T>();
-		if (HasComponentBit(ComponentBit<T>(), id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return map[id]; }
+		if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return map[id]; }
 		
 		AddComponentBit(ComponentBit<T>(), id);
 		std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
@@ -149,16 +155,11 @@ public:
 		return map[id];
 	}
 
-	template<typename T>
-	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, bool>
-		HasComponent(const Entity id){
-		return HasComponentBit(ComponentBit<T>(), id);
-	}
 
 	template<typename T>
 	void RemoveComponent(const Entity id) {
-		auto& map = GetComponentMap<T>();
 		if (HasComponent<T>(id)) {
+			auto& map = GetComponentMap<T>();
 			auto& it = map.find(id);
 			map.erase(it);
 
