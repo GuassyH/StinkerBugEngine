@@ -9,10 +9,11 @@
 #include <typeindex>
 #include <typeinfo>
 
-#include "ComponentsList.h"
-#include "Entity.h"
 #include "EntityBehaviour.h"
-#include "TypeID.h"
+#include "Collider.h"
+
+#include "Entity.h"
+#include "ComponentTypeID.h"
 
 class ECSystem {
 public:
@@ -55,10 +56,10 @@ public:
 		return compare_bits == id;
 	}
 
-	// Specializations for each component type
 	template<typename T>
-	std::unordered_map<Entity, T>& GetComponentMap();
-
+	std::unordered_map<Entity, std::shared_ptr<void>>& GetComponentMap() {
+		return components[typeid(T)];
+	}
 
 	template<typename T>
 	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T> || std::is_base_of_v<Collider, T>, T&>
@@ -106,7 +107,7 @@ public:
 	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
 		GetComponent(const Entity id) {
 		if (HasComponent<T>(id)) {
-			auto& map = components[typeid(T)];
+			auto& map = GetComponentMap<T>();
 			auto it = map.find(id);
 			return *std::static_pointer_cast<T>(it->second);
 		}
@@ -143,21 +144,21 @@ public:
 	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
 		AddComponent(const Entity id, Args&&... args)
 	{
-		auto& map = components[typeid(T)];
+		auto& map = GetComponentMap<T>();
 		if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return *std::static_pointer_cast<T>(map.find(id)->second); }
 		
 		AddComponentBit(ComponentBit<T>(), id);
 		std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 
 		map[id] = std::make_shared<T>(std::forward<Args>(args)...);
-		return *std::static_pointer_cast<T>(map.find(id)->second);
+		return GetComponent<T>(id);
 	}
 
 
 	template<typename T>
 	void RemoveComponent(const Entity id) {
 		if (HasComponent<T>(id)) {
-			auto& map = components[typeid(T)];
+			auto& map = GetComponentMap<T>();
 			map.erase(id);
 
 			RemoveComponentBit(ComponentBit<T>(), id);
@@ -170,16 +171,6 @@ public:
 
 };
 
-
-template<>
-inline std::unordered_map<Entity, std::unique_ptr<Collider>>& ECSystem::GetComponentMap<std::unique_ptr<Collider>>() {
-	return colliders;
-}
-
-template<>
-inline std::unordered_map<Entity, std::unique_ptr<EntityBehaviour>>& ECSystem::GetComponentMap<std::unique_ptr<EntityBehaviour>>() {
-	return entity_behaviours;
-}
 
 
 

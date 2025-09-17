@@ -77,7 +77,7 @@ void Scene::CheckCollisions(uint32_t id) {
 		for (auto& [id2, other_collider] : Scene_ECS.colliders) {
 			// if both ptrs arent null and arent the same collider
 			if (this_collider != other_collider) {
-				if (Scene_ECS.components[typeid(RigidBody)].find(id2) != Scene_ECS.components[typeid(RigidBody)].end()) {
+				if (Scene_ECS.GetComponentMap<RigidBody>().find(id2) != Scene_ECS.GetComponentMap<RigidBody>().end()) {
 					CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
 					if (collision_info.did_collide) {
 						ResolveCollision(collision_info, Scene_ECS.GetComponent<RigidBody>(id), Scene_ECS.GetComponent<Transform>(id), Scene_ECS.GetComponent<RigidBody>(id2), Scene_ECS.GetComponent<Transform>(id2));
@@ -99,7 +99,7 @@ void Scene::CheckCollisions(uint32_t id) {
 
 // Update all the RigidBodies
 void Scene::UpdatePhysics() {
-	for (auto& [id, components_rb] : Scene_ECS.components[typeid(RigidBody)]) {
+	for (auto& [id, components_rb] : Scene_ECS.GetComponentMap<RigidBody>()) {
 		RigidBody& rb = *std::static_pointer_cast<RigidBody>(components_rb);
 		if (!rb.isKinematic && rb.useGravity) { rb.velocity.y += gravity * deltaTime.get(); }
 		

@@ -90,7 +90,7 @@
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SphereMove.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="TypeID.h" />
+    <ClInclude Include="ComponentTypeID.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />

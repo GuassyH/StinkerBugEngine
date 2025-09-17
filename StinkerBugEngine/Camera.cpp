@@ -57,7 +57,7 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 void Camera::ShadowPass(glm::mat4 light_MVP) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
-	for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
@@ -83,7 +83,7 @@ void Camera::ShadowPass(glm::mat4 light_MVP) {
 void Camera::LightingPass(glm::mat4 light_MVP) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 	
-	for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);

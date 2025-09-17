@@ -281,7 +281,7 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TypeID.h">
+    <ClInclude Include="ComponentTypeID.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
   </ItemGroup>
