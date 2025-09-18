@@ -145,20 +145,17 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 		memset(buff, 0, 255);
 	}
 
-	scene.Scene_ECS.GetComponent<Transform>(selected_entity).DrawInInspector();
 
-	if (scene.Scene_ECS.HasComponent<RigidBody>(selected_entity)) {
-		scene.Scene_ECS.GetComponent<RigidBody>(selected_entity).DrawInInspector();
+	// Foreach type, get all the components and draw in inspector
+	// WORKS!!!
+	for (auto& [type, map] : scene.Scene_ECS.components){
+		auto compPtr = map.find(selected_entity);
+		if (compPtr != map.end() && compPtr->second) { 
+			Component* c = dynamic_cast<Component*>(compPtr->second.get());
+			c->DrawInInspector();
+		}
 	}
-	if (scene.Scene_ECS.HasComponent<Camera>(selected_entity)) {
-		scene.Scene_ECS.GetComponent<Camera>(selected_entity).DrawInInspector();
-	}
-	if (scene.Scene_ECS.HasComponent<Light>(selected_entity)) {
-		scene.Scene_ECS.GetComponent<Light>(selected_entity).DrawInInspector();
-	}
-	if (scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
-		scene.Scene_ECS.GetComponent<MeshRenderer>(selected_entity).DrawInInspector();
-	}
+
 
 
 	// Center button
@@ -170,9 +167,9 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 	}
 
 	// Setup popup
+
 	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
 	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 285, display.windowHeight-360), ImGuiCond_Once); // simplified
-
 	if (ImGui::BeginPopup("Add Component")) {
 		ImGui::Text("Add Component");
 		ImGui::Separator();
@@ -196,7 +193,12 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 				ImGui::CloseCurrentPopup();
 			}
 		}
-
+		if (!scene.Scene_ECS.HasComponent<TestComponent>(selected_entity)) {
+			if (ImGui::Button("TestComponent", ImVec2(180, 20))) {
+				scene.Scene_ECS.AddComponent<TestComponent>(selected_entity);
+				ImGui::CloseCurrentPopup();
+			}
+		}
 
 		ImGui::EndPopup();
 	}

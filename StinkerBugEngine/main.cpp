@@ -75,7 +75,6 @@ int main(void) {
 	e_model_test.AddComponent<MeshRenderer>(test_model_mesh, blue);
 	e_model_test.GetComponent<Transform>().position = glm::vec3(0, 0.5, 0);
 
-
 	Camera& camera_component = camera.GetComponent<Camera>();
 	CameraMovement& camera_movement = camera.GetComponent<CameraMovement>();
 

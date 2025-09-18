@@ -284,6 +284,9 @@
     <ClInclude Include="ComponentTypeID.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="TestComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

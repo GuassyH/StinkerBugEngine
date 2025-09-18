@@ -27,18 +27,18 @@ Entity& Scene::CreateEntity(std::string name) {
 
 void Scene::DeleteEntity(Entity id) {
 	// Remove from all component maps
-	/*
-	Scene_ECS.transforms.erase(id);
-	Scene_ECS.mesh_renderers.erase(id);
-	Scene_ECS.rigidbodies.erase(id);
-	Scene_ECS.cameras.erase(id);
-	Scene_ECS.lights.erase(id);
+	
+	Scene_ECS.RemoveComponent<Transform>(id);
+	Scene_ECS.RemoveComponent<RigidBody>(id);
+	Scene_ECS.RemoveComponent<Camera>(id);
+	Scene_ECS.RemoveComponent<Light>(id);
+	Scene_ECS.RemoveComponent<MeshRenderer>(id);
+
 	Scene_ECS.colliders.erase(id);
 	Scene_ECS.entity_behaviours.erase(id);
 	// Remove from entity names and entities set
 	Scene_ECS.entity_names.erase(id);
 	Scene_ECS.entities.erase(id);
-	*/
 
 }
 

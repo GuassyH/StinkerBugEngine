@@ -7,6 +7,7 @@
 #include "RigidBody.h"
 #include "Light.h"
 #include "Mesh.h"
+#include "TestComponent.h"
 
 #include "Collider.h"
 #ifdef COLLIDER_COMPONENT_H

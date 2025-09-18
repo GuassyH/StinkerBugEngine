@@ -27,7 +27,7 @@ public:
 
 	// Save 32 bit unsigned ints to store info on if a component is held
 	std::unordered_map<Entity, uint32_t> component_bits;
-	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<void>>> components;
+	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components;
 
 
 	// ALL THE IMPORTANT SHIZZ
@@ -57,7 +57,7 @@ public:
 	}
 
 	template<typename T>
-	std::unordered_map<Entity, std::shared_ptr<void>>& GetComponentMap() {
+	std::unordered_map<Entity, std::shared_ptr<Component>>& GetComponentMap() {
 		return components[typeid(T)];
 	}
 
