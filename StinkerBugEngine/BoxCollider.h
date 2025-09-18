@@ -22,8 +22,18 @@ public:
         if (!ColliderFunctions::AABB(*this, other)) { CollisionInfo info; info.did_collide = false; return info; }
         return other.CollideWithBox(*this);
     }
+
+    virtual void DrawOnInspector() override {
+        if (ImGui::CollapsingHeader("Box Collider")) {
+
+        }
+    }
+
+    // TODO: Make check if autoCalculate is on. If not use a PRE DEFINED SIZE
+    bool autoCalculate = true;
 private:
     bool init = true;
+    
     glm::vec3 last_rotation = glm::vec3(0);
     glm::vec3 last_position = glm::vec3(0);
     glm::vec3 last_scale = glm::vec3(1);

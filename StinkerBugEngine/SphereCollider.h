@@ -15,6 +15,12 @@ public:
         if (!ColliderFunctions::AABB(*this, other)) { CollisionInfo info; info.did_collide = false; return info; }
         return other.CollideWithSphere(*this);
 	}
+
+    virtual void DrawOnInspector() override {
+        if (ImGui::CollapsingHeader("Sphere Collider")) {
+
+        }
+    }
 };
 
 

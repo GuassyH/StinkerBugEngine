@@ -12,7 +12,14 @@ void UI::imgui_init() {
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsClassic();
+	
+	ImGuiStyle* custom_style = &ImGui::GetStyle();
+	custom_style->Colors[ImGuiCol_WindowBg] = ImVec4(0.1, 0.1, 0.13, 1.0);
+	custom_style->Colors[ImGuiCol_Header] = custom_style->Colors[ImGuiCol_Button];
+	custom_style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.8, 0.8, 0.8, 1.0);
+	custom_style->Colors[ImGuiCol_TitleBgActive] = custom_style->Colors[ImGuiCol_TitleBg];
+
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
@@ -66,13 +73,14 @@ void UI::Hierarchy(Scene& scene) {
 	ImGui::Separator();
 
 	ImGui::Text("Entities");
-	for (uint32_t i = 0; i < scene.Scene_ECS.entity_names.size(); i++)
-	{
-		std::ostringstream ss; ss << scene.Scene_ECS.entity_names[i];
+
+
+	for (auto [id, name] : scene.Scene_ECS.entity_names) {
+		std::ostringstream ss; ss << name;
 		if (ImGui::Button(ss.str().c_str(), ImVec2(330, 20))) {
-			selected_entity = i;
+			selected_entity = id;
 			is_entity_selected = true;
-			std::cout << "Selected: " << scene.Scene_ECS.entity_names[selected_entity] << "\n";
+			std::cout << "Selected: " << name << "\n";
 		}
 	}
 
@@ -118,18 +126,22 @@ void UI::Hierarchy(Scene& scene) {
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
+		if (ImGui::Button("Create Plane", ImVec2(180, 20))) {
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Plane());
+			new_ntt.GetComponent<MeshRenderer>().material = new Material();
+			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			new_ntt.~EntityHelper();
+			ImGui::CloseCurrentPopup();
+		}
 		ImGui::EndPopup();
 	}
 
 
-	ImGui::SetNextWindowSize(ImVec2(200, 300));
-	ImGui::SetNextWindowPos(ImVec2(m_x, m_y)); // simplified
+	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
+	ImGui::SetNextWindowPos(ImVec2(m_x, m_y), ImGuiCond_Once); // simplified
 	if (ImGui::BeginPopup("Change Object")) {
 		ImGui::Text("Change Object");
-		if (ImGui::Button("Delete Entity", ImVec2(180, 20))) {
-			// scene.Scene_ECS.DeleteEntity(entity);
-			ImGui::CloseCurrentPopup();
-		}
 		ImGui::EndPopup();
 	}
 
@@ -169,16 +181,22 @@ void UI::EntityInspector(Scene& scene) {
 		goto BreakInspector;
 	}
 
-
+	
 	// Foreach type, get all the components and draw in inspector
+	// Collapsing component in one entity collapses the same component in ALL entities
+	// Probably because the CollapsingHeader name is the same so ID is the same
 	scene.Scene_ECS.GetComponent<Transform>(selected_entity).DrawOnInspector();
+	ImGui::Separator();
 	for (auto& [type, map] : scene.Scene_ECS.components){
 		auto compPtr = map.find(selected_entity);
 		if (compPtr != map.end() && compPtr->second && type != typeid(Transform)) { 
 			Component* c = dynamic_cast<Component*>(compPtr->second.get());
 			c->DrawOnInspector();
+			ImGui::Separator();
 		}
 	}
+	if (scene.Scene_ECS.HasComponent<Collider>(selected_entity)) 
+	{ scene.Scene_ECS.GetComponent<Collider>(selected_entity).DrawOnInspector(); ImGui::Separator(); }
 
 
 
@@ -222,6 +240,20 @@ void UI::EntityInspector(Scene& scene) {
 		if (!scene.Scene_ECS.HasComponent<TestComponent>(selected_entity)) {
 			if (ImGui::Button("TestComponent", ImVec2(235, 20))) {
 				scene.Scene_ECS.AddComponent<TestComponent>(selected_entity);
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!scene.Scene_ECS.HasComponent<BoxCollider>(selected_entity) && !scene.Scene_ECS.HasComponent<Collider>(selected_entity)) {
+			if (ImGui::Button("BoxCollider", ImVec2(235, 20))) {
+				scene.Scene_ECS.AddComponent<BoxCollider>(selected_entity);
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
+		if (!scene.Scene_ECS.HasComponent<SphereCollider>(selected_entity) && !scene.Scene_ECS.HasComponent<Collider>(selected_entity)) {
+			if (ImGui::Button("SphereCollider", ImVec2(235, 20))) {
+				scene.Scene_ECS.AddComponent<SphereCollider>(selected_entity);
 				ImGui::CloseCurrentPopup();
 			}
 		}

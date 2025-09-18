@@ -73,6 +73,18 @@ public:
 		return HasComponentBit(ComponentBit<T>(), id);
 	}
 
+	template<typename T>
+	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T> || std::is_base_of_v<Collider, T>, bool>
+		HasComponent(const Entity id) {
+		if constexpr (std::is_base_of_v<Collider, T>) {
+			auto it = colliders.find(id);
+			return (it != colliders.end());
+		}
+		else {
+			auto it = entity_behaviours.find(id);
+			return (it != entity_behaviours.end());
+		}
+	}
 
 	template<typename T>
 	std::unordered_map<Entity, std::shared_ptr<Component>>& GetComponentMap() {
