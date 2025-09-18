@@ -6,7 +6,7 @@
 #include "imgui_impl_opengl3.h"
 #include "Display.h"
 #include "ConsoleCapture.h"
-
+#include "Entity.h"
 
 class CameraMovement;
 class Scene;
@@ -15,7 +15,8 @@ struct Material;
 
 class UI {
 private:
-	uint32_t selected_entity = 0;
+	Entity selected_entity = 10;
+	bool is_entity_selected = false;
 
 	UI() = default;
 	Display& display = Display::getInstance();
@@ -32,7 +33,7 @@ public:
 	void imgui_render(CameraMovement& camera_move, Scene& scene);
 	void imgui_shutdown();
 
-	void Hierarchy(CameraMovement& camera_move, Scene& scene);
+	void Hierarchy(Scene& scene);
 	void EntityInspector(Scene& scene);
 	void Console();
 };

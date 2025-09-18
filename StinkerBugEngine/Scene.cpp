@@ -26,35 +26,6 @@ Entity& Scene::CreateEntity(std::string name) {
 	return entity_id;
 }
 
-void Scene::DeleteEntity(Entity id) {
-	// Remove from all component maps
-	
-	Scene_ECS.RemoveComponent<Transform>(id);
-	Scene_ECS.RemoveComponent<RigidBody>(id);
-	Scene_ECS.RemoveComponent<Camera>(id);
-	Scene_ECS.RemoveComponent<Light>(id);
-	Scene_ECS.RemoveComponent<MeshRenderer>(id);
-
-	/*
-	something like this per component
-	for (auto& [type, map] : Scene_ECS.components) {
-		auto compPtr = map.find(id);
-		if (compPtr != map.end() && compPtr->second) {
-			
-			Component* c = dynamic_cast<Component*>(compPtr->second.get());
-			Scene_ECS.RemoveComponent<c>(id);
-		}
-	}
-	*/
-
-
-	Scene_ECS.colliders.erase(id);
-	Scene_ECS.entity_behaviours.erase(id);
-	// Remove from entity names and entities set
-	Scene_ECS.entity_names.erase(id);
-	Scene_ECS.entities.erase(id);
-
-}
 
 // Resolve collision (apply forces)
 void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2) {
