@@ -12,7 +12,7 @@ public:
 
 	Component() = default;
 	virtual ~Component() = default;
-	virtual void DrawInInspector() {}
+	virtual void DrawOnInspector() {}
 	
 };
 

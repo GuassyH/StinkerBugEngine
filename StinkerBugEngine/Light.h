@@ -18,7 +18,7 @@ public:
 	LightTypes light_type = LightTypes::Spotlight;
 	glm::vec4 color = glm::vec4(1.0);
 
-	virtual void DrawInInspector() override {
+	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Light NOT WORKING")) {
 			const char* items[] = { "Spotlight", "Directional", "Point", "Area" };
 			int current_item = static_cast<int>(light_type);

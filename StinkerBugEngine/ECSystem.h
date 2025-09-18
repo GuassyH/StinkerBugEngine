@@ -21,7 +21,6 @@ public:
 	std::unordered_set<Entity> entities;
 	std::unordered_map<Entity, std::string> entity_names;
 
-
 	std::unordered_map<Entity, std::unique_ptr<Collider>> colliders;
 	std::unordered_map<Entity, std::unique_ptr<EntityBehaviour>> entity_behaviours;
 
@@ -30,8 +29,9 @@ public:
 	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components;
 
 
-	// ALL THE IMPORTANT SHIZZ
+
 	ECSystem() = default;
+	~ECSystem() = default;
 
 
 
@@ -55,6 +55,13 @@ public:
 		uint32_t compare_bits = original_bits & id;
 		return compare_bits == id;
 	}
+
+	template<typename T>
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, bool>
+		HasComponent(const Entity id) {
+		return HasComponentBit(ComponentBit<T>(), id);
+	}
+
 
 	template<typename T>
 	std::unordered_map<Entity, std::shared_ptr<Component>>& GetComponentMap() {
@@ -93,16 +100,9 @@ public:
 		return *derived;
 	}
 
-	template<typename T>
-	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, bool>
-		HasComponent(const Entity id) {
-		return HasComponentBit(ComponentBit<T>(), id);
-	}
-
 	// Helper for static_assert in unreachable branch
 	template<class>
 	static inline constexpr bool always_false = false;
-
 	template<typename T>
 	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
 		GetComponent(const Entity id) {
@@ -116,32 +116,33 @@ public:
 		}
 	}
 
-	// For EntityBehaviour
-	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T>, T&>
-		AddComponent(const Entity id, Args&&... args)
-	{
-		entity_behaviours[id] = std::make_unique<T>(std::forward<Args>(args)...);
-		entity_behaviours[id]->entity = id;
-		entity_behaviours[id]->Init();
-		return GetComponent<T>(id);
-	}
 
-	// For EntityBehaviour
-	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<Collider, T>, T&>
-		AddComponent(const Entity id, Args&&... args)
-	{
-		colliders[id] = std::make_unique<T>(std::forward<Args>(args)...);
-		colliders[id]->entity = id;
-		colliders[id]->Init();
-		return GetComponent<T>(id);
-	}
 
+	// In case its an entity behaviour collider (since they are polymorphic)
+	template<typename T, typename... Args>
+	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T> || std::is_base_of_v<Collider, T>, T&>
+		AddComponent(const Entity id, Args&&... args){
+		// Pointer to the container we'll use
+		if constexpr (std::is_base_of_v<Collider, T>) {
+			colliders[id] = std::make_unique<T>(std::forward<Args>(args)...);
+			colliders[id]->entity = id;
+			colliders[id]->Init();
+			return GetComponent<T>(id);
+		}
+		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) {
+			entity_behaviours[id] = std::make_unique<T>(std::forward<Args>(args)...);
+			entity_behaviours[id]->entity = id;
+			entity_behaviours[id]->Init();
+			return GetComponent<T>(id);
+		}
+		else {
+			static_assert(always_false<T>, "T must be derived from Collider or EntityBehaviour");
+		}
+	}
 
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>, T&>
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T> && std::is_base_of_v<Component, T>, T&>
 		AddComponent(const Entity id, Args&&... args)
 	{
 		auto& map = GetComponentMap<T>();
@@ -155,8 +156,12 @@ public:
 	}
 
 
+
 	template<typename T>
 	void RemoveComponent(const Entity id) {
+		if constexpr (std::is_base_of_v<Collider, T>) { colliders.erase(id); return; }
+		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) { entity_behaviours.erase(id); return; }
+
 		if (HasComponent<T>(id)) {
 			auto& map = GetComponentMap<T>();
 			map.erase(id);

@@ -5,6 +5,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "Display.h"
+#include "ConsoleCapture.h"
+
 
 class CameraMovement;
 class Scene;
@@ -22,6 +24,7 @@ private:
 	unsigned int r_windowHeight;
 	bool opened = true;
 	bool closed = false;
+	ConsoleCapture consoleCapture;
 public:
 	static UI& getInstance() { static UI instance; return instance; }
 
@@ -30,7 +33,8 @@ public:
 	void imgui_shutdown();
 
 	void Hierarchy(CameraMovement& camera_move, Scene& scene);
-	void EntityInspector(CameraMovement& camera_move, Scene& scene);
+	void EntityInspector(Scene& scene);
+	void Console();
 };
 
 

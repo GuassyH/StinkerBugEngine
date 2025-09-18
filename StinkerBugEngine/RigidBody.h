@@ -31,7 +31,7 @@ public:
 		bounciness(1.0f)
 	{}
 
-	virtual void DrawInInspector() override {
+	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Rigid Body")) {
 			ImGui::DragFloat("Mass", &mass, 0.1f, 0.0f, 100.0f);
 			ImGui::DragFloat("Bounciness", &bounciness, 0.1f, 0.0f, 1);

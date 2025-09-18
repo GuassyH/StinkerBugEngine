@@ -5,6 +5,8 @@
 #include "Scene.h"
 #include "Material.h"
 
+/// INITIALIZATION
+
 void UI::imgui_init() {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -36,7 +38,8 @@ void UI::imgui_render(CameraMovement& camera_move, Scene& scene) {
 
 	if (!camera_move.focusMouse) {
 		Hierarchy(camera_move, scene);
-		EntityInspector(camera_move, scene);
+		EntityInspector(scene);
+		Console();
 	}
 
 	ImGui::Render();
@@ -54,9 +57,12 @@ void UI::imgui_shutdown() {
 
 
 
+
+
+/// THIS IS THE HIERARCHY
 void UI::Hierarchy(CameraMovement& camera_move, Scene& scene) {
-	ImGui::SetNextWindowPos(ImVec2(10, 10));
-	ImGui::SetNextWindowSize(ImVec2(350, 1060));
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight));
 	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 	ImGui::DragFloat("Gravity", &scene.gravity, 0.1f, -50.0f, 50.0f);
@@ -127,12 +133,15 @@ void UI::Hierarchy(CameraMovement& camera_move, Scene& scene) {
 }
 
 
+
+
+/// THIS IS THE ENTITY INSPECTOR
 char buff[255];
 char* new_name;
-void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
+void UI::EntityInspector(Scene& scene) {
 
-	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 360, 10));
-	ImGui::SetNextWindowSize(ImVec2(350, 1060));
+	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 350, 0));
+	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight));
 	ImGui::Begin("Entity Inspector", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 	std::ostringstream ss; ss << scene.Scene_ECS.entity_names[selected_entity];
@@ -148,11 +157,12 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 
 	// Foreach type, get all the components and draw in inspector
 	// WORKS!!!
+	scene.Scene_ECS.GetComponent<Transform>(selected_entity).DrawOnInspector();
 	for (auto& [type, map] : scene.Scene_ECS.components){
 		auto compPtr = map.find(selected_entity);
-		if (compPtr != map.end() && compPtr->second) { 
+		if (compPtr != map.end() && compPtr->second && type != typeid(Transform)) { 
 			Component* c = dynamic_cast<Component*>(compPtr->second.get());
-			c->DrawInInspector();
+			c->DrawOnInspector();
 		}
 	}
 
@@ -176,7 +186,8 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 		ImGui::Text("Select a component to add:");
 		ImGui::Separator();
 
-		// I mean it works but its not efficient. Should be a loop for each component type add component
+
+		// I mean it works but its not efficient. Should be a loop for each component type add component like with the DrawOnInspector
 		if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 			if (ImGui::Button("Mesh Renderer", ImVec2(180, 20))) {
 				EntityHelper new_ntt(selected_entity, & scene.Scene_ECS);
@@ -203,6 +214,28 @@ void UI::EntityInspector(CameraMovement& camera_move, Scene& scene) {
 		ImGui::EndPopup();
 	}
 
+
+
+	ImGui::End();
+}
+
+
+
+
+
+
+/// CONSOLE OUTPUT
+void UI::Console() {
+	ImGui::SetNextWindowPos(ImVec2(350, display.windowHeight - 340));
+	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, 340));
+	ImGui::Begin("Console", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+
+	const auto& lines = consoleCapture.GetLines();
+	for (const auto& line : lines) {
+		ImGui::TextUnformatted(line.c_str());
+	}
+	if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
+		ImGui::SetScrollHereY(1.0f);
 
 
 	ImGui::End();

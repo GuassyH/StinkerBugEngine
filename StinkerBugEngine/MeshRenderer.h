@@ -23,7 +23,7 @@ public:
 	MeshRenderer(Mesh& m, Material& mat) : mesh(&m), material(&mat) {}
 	MeshRenderer() = default; // still allow default construction
 
-	virtual void DrawInInspector() override {
+	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Mesh Renderer")) {
 			if (mesh) {
 				ImGui::Text("Mesh: %s", mesh->name);

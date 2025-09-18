@@ -15,5 +15,10 @@
 #include "BoxCollider.h"
 #endif
 
+// #include <unordered_map>
+// #include <typeindex>
+
+// std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components_list_components;
+
 
 #endif

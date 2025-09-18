@@ -58,6 +58,7 @@
     <ClInclude Include="CollisionInfo.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentsList.h" />
+    <ClInclude Include="ConsoleCapture.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="Display.h" />

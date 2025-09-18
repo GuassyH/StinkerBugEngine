@@ -2,6 +2,7 @@
 #include "DeltaTime.h"
 #include "CollisionInfo.h"
 #include "EntityBehaviour.h"
+#include "ComponentTypeID.h"
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
@@ -33,6 +34,19 @@ void Scene::DeleteEntity(Entity id) {
 	Scene_ECS.RemoveComponent<Camera>(id);
 	Scene_ECS.RemoveComponent<Light>(id);
 	Scene_ECS.RemoveComponent<MeshRenderer>(id);
+
+	/*
+	something like this per component
+	for (auto& [type, map] : Scene_ECS.components) {
+		auto compPtr = map.find(id);
+		if (compPtr != map.end() && compPtr->second) {
+			
+			Component* c = dynamic_cast<Component*>(compPtr->second.get());
+			Scene_ECS.RemoveComponent<c>(id);
+		}
+	}
+	*/
+
 
 	Scene_ECS.colliders.erase(id);
 	Scene_ECS.entity_behaviours.erase(id);

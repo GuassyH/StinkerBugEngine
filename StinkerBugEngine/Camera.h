@@ -49,7 +49,7 @@ public:
 
 	ShadowMapFBO m_shadowMapFBO;
 
-	virtual void DrawInInspector() override {
+	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Camera")) {
 			ImGui::DragFloat("FOV", &FOVdeg, 0.1f, 0.0f, 120.0f);
 			ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.1f, 2000);

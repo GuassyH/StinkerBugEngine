@@ -48,7 +48,7 @@ public:
 	const glm::mat4& GetModelMatrix() const { return modelMatrix; }
 	const glm::mat4& GetRotationMatrix() const { return rotationMatrix; }
 
-	virtual void DrawInInspector() override {
+	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Transform")) {
 			if (ImGui::DragFloat3("Position", &position.x, 0.1f)) { UpdateMatrix(); }
 			if (ImGui::DragFloat3("Rotation", &rotation.x, 0.1f)) { UpdateMatrix(); }
