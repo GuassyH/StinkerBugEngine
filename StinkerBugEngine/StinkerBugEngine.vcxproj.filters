@@ -58,15 +58,21 @@
     <Filter Include="Resource Files\Shaders\PostProcess">
       <UniqueIdentifier>{4228cdea-0a75-4347-ba62-b6e71aed4413}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core\UI">
+      <UniqueIdentifier>{468b228b-d344-4dec-8f36-bdb2a00da78c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\UI">
+      <UniqueIdentifier>{cb6aa583-a9ee-4de7-8df5-f42cad0e5f49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Componentesque">
+      <UniqueIdentifier>{8c182a5e-e41e-4247-9d5b-50508f5522a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Componentesque">
+      <UniqueIdentifier>{2731f286-5fd6-4b00-bb5a-46a13293ed00}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VBO.cpp">
@@ -84,9 +90,6 @@
     <ClCompile Include="SceneManager.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="FullScreenPass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="stb.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
@@ -101,9 +104,6 @@
     </ClCompile>
     <ClCompile Include="Display.cpp">
       <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="ShadowMapFBO.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SphereCollider.cpp">
       <Filter>Source Files\Components\Collision</Filter>
@@ -138,23 +138,35 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="UI.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ECSystem.cpp">
       <Filter>Source Files\ECS</Filter>
     </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="HierarchyWindow.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="InspectorWindow.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Core\Componentesque</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Core\Componentesque</Filter>
+    </ClCompile>
+    <ClCompile Include="FullScreenPass.cpp">
+      <Filter>Source Files\Core\Componentesque</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapFBO.cpp">
+      <Filter>Source Files\Core\Componentesque</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Core\Componentesque</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VBO.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
@@ -173,17 +185,11 @@
     <ClInclude Include="Constants.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="SceneManager.h">
       <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="FullScreenPass.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
       <Filter>Header Files\Components\Collision</Filter>
@@ -230,9 +236,6 @@
     <ClInclude Include="Light.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="ShadowMapFBO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CollisionInfo.h">
       <Filter>Header Files\Components\Collision</Filter>
     </ClInclude>
@@ -269,17 +272,11 @@
     <ClInclude Include="imgui\imstb_textedit.h">
       <Filter>Header Files\imgui</Filter>
     </ClInclude>
-    <ClInclude Include="UI.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
     <ClInclude Include="EntityHelper.h">
       <Filter>Header Files\ECS</Filter>
-    </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ComponentTypeID.h">
       <Filter>Header Files\ECS</Filter>
@@ -289,6 +286,36 @@
     </ClInclude>
     <ClInclude Include="ConsoleCapture.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="OskarComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="HierarchyWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="InspectorWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="FullScreenPass.h">
+      <Filter>Header Files\Core\Componentesque</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Core\Componentesque</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Header Files\Core\Componentesque</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Core\Componentesque</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapFBO.h">
+      <Filter>Header Files\Core\Componentesque</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

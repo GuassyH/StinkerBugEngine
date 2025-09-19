@@ -33,8 +33,6 @@ public:
 	void imgui_render(CameraMovement& camera_move, Scene& scene);
 	void imgui_shutdown();
 
-	void Hierarchy(Scene& scene);
-	void EntityInspector(Scene& scene);
 	void Console();
 };
 

@@ -8,6 +8,7 @@
 #include "Light.h"
 #include "Mesh.h"
 #include "TestComponent.h"
+#include "OskarComponent.h"
 
 #include "Collider.h"
 #ifdef COLLIDER_COMPONENT_H
@@ -15,10 +16,13 @@
 #include "BoxCollider.h"
 #endif
 
-// #include <unordered_map>
-// #include <typeindex>
+#include <functional>
+#include "ComponentTypeID.h"
 
-// std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components_list_components;
+struct ComponentInfo {
+    const char* name;
+    std::function<std::shared_ptr<Component>()> create;
+};
 
 
 #endif

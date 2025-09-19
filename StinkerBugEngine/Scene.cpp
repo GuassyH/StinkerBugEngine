@@ -30,6 +30,7 @@ Entity& Scene::CreateEntity(std::string name) {
 
 
 // Resolve collision (apply forces)
+
 void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2) {
 	if (collision_info.normal != glm::vec3(0.0)) {
 		glm::vec3 relative_velocity = rb1.velocity - rb2.velocity;
@@ -75,14 +76,10 @@ void Scene::CheckCollisions(uint32_t id) {
 
 		// Temporary Plane collision
 		Transform& transform = Scene_ECS.GetComponent<Transform>(id);
-		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f)
-		{
-			transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; Scene_ECS.GetComponent<RigidBody>(id).velocity.y = 0.0f;
+		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f){
+			transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; 
+			Scene_ECS.GetComponent<RigidBody>(id).velocity.y = 0.0f;
 		}
-	}
-	else {
-		// std::cout << "This entity (" << id << ") doesnt have a collider\n";
-		return;
 	}
 }
 
@@ -118,7 +115,7 @@ void Scene::Render() {
 		Light* light = dynamic_cast<Light*>(lightPtr.get());
 		if (light->light_type == LightTypes::Directional) {
 			main_light->id = id;
-			break;
+			continue;
 		}
 	}
 

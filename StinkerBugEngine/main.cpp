@@ -39,43 +39,16 @@ int main(void) {
 	sceneManager.SetActiveScene(scene);
 
 	Shader skybox_shader("skybox.vert", "skybox.frag");
-
 	Material skybox_mat(skybox_shader);
-	Material material; material.Color = Constants::Colors::White;
-	Material red; red.Color = Constants::Colors::Red;
-	Material blue; blue.Color = Constants::Colors::Blue;
 	
-	Mesh floor = Mesh(Constants::Shapes::Plane());
-	Mesh sphere = Mesh(Constants::Shapes::UVSphere());
-	Mesh cube = Mesh(Constants::Shapes::Cube()); cube.name = "Cube";
-
-
 	EntityHelper camera(scene.CreateEntity("Camera"), &scene.Scene_ECS);
 	camera.GetComponent<Transform>().position = glm::vec3(0.0, 2.0, 10);
 	camera.AddComponent<Camera>(display.windowWidth, display.windowHeight, camera.GetComponent<Transform>()).main = true;
 	camera.AddComponent<CameraMovement>();
-	
-	FullScreenPass skybox_pass = FullScreenPass(camera.GetComponent<Camera>(), skybox_mat);
-
-	Model test_model("assets/models/test_model.obj");
-	Mesh test_model_mesh = Mesh(test_model);
-
-	// ALL ENTITIES
-	EntityHelper big_Light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS);
-	big_Light.AddComponent<Light>().light_type = LightTypes::Directional;
-	big_Light.GetComponent<Light>().color = glm::vec4(0.7f);
-	big_Light.GetComponent<Transform>().rotation = glm::vec3(-56.0f, 45.0f, 12.0f);
-
-	EntityHelper e_plane(scene.CreateEntity("Floor"), &scene.Scene_ECS);
-	e_plane.GetComponent<Transform>().scale = glm::vec3(250);
-	e_plane.AddComponent<MeshRenderer>(floor, material);
-
-	EntityHelper e_model_test(scene.CreateEntity("Test Model"), &scene.Scene_ECS);
-	e_model_test.AddComponent<MeshRenderer>(test_model_mesh, blue);
-	e_model_test.GetComponent<Transform>().position = glm::vec3(0, 0.5, 0);
-
 	Camera& camera_component = camera.GetComponent<Camera>();
 	CameraMovement& camera_movement = camera.GetComponent<CameraMovement>();
+	
+	FullScreenPass skybox_pass = FullScreenPass(camera.GetComponent<Camera>(), skybox_mat);
 
 	Scene& active_scene = sceneManager.GetActiveScene();
 	active_scene.StartEntityBehaviours();
@@ -101,10 +74,7 @@ int main(void) {
 	ui.imgui_shutdown();
 	display.~Display();
 
-	e_model_test.~EntityHelper();
-	e_plane.~EntityHelper();
 	camera.~EntityHelper();
-	big_Light.~EntityHelper();
 
 	
 	return 0;
