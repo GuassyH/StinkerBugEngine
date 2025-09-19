@@ -244,6 +244,13 @@ void UI::EntityInspector(Scene& scene) {
 			}
 		}
 
+		if (!scene.Scene_ECS.HasComponent<Light>(selected_entity)) {
+			if (ImGui::Button("Light", ImVec2(235, 20))) {
+				scene.Scene_ECS.AddComponent<Light>(selected_entity);
+				ImGui::CloseCurrentPopup();
+			}
+		}
+
 		if (!scene.Scene_ECS.HasComponent<BoxCollider>(selected_entity) && !scene.Scene_ECS.HasComponent<Collider>(selected_entity)) {
 			if (ImGui::Button("BoxCollider", ImVec2(235, 20))) {
 				scene.Scene_ECS.AddComponent<BoxCollider>(selected_entity);

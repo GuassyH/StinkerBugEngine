@@ -8,11 +8,12 @@
 
 #include "ComponentsList.h"
 #include "Shader.h"
+#include "EntityHelper.h"
+
 
 inline glm::vec3 WorldUp = glm::vec3(0.0, 1.0, 0.0);
 
 Shader m_shadowMapShader;
-
 
 Camera::Camera(int width, int height, Transform& t) {
 	Display& display = Display::getInstance();
@@ -54,7 +55,7 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 	CameraMatrix = projection * view;
 }
 
-void Camera::ShadowPass(glm::mat4 light_MVP) {
+void Camera::ShadowPass(glm::mat4 light_MVP, Light& light, Transform& l_transform) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
@@ -80,9 +81,17 @@ void Camera::ShadowPass(glm::mat4 light_MVP) {
 }
 
 
-void Camera::LightingPass(glm::mat4 light_MVP) {
+void Camera::LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transform) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
-	
+
+	float pitch = glm::radians(l_transform.rotation.x);
+	float yaw = glm::radians(l_transform.rotation.y);
+
+	glm::vec3 direction;
+	direction.x = cos(pitch) * cos(yaw);
+	direction.y = sin(pitch);
+	direction.z = cos(pitch) * sin(yaw);
+
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
@@ -104,8 +113,8 @@ void Camera::LightingPass(glm::mat4 light_MVP) {
 
 
 		if (renderer.material->Lit) {
-			glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene().light_direction;
-			glm::vec3 l_col = SceneManager::getInstance().GetActiveScene().light_color;
+			glm::vec3 l_dir = direction;
+			glm::vec3 l_col = light.color;
 			glUniform3f(glGetUniformLocation(r_shader.ID, "lightDir"), l_dir.x, l_dir.y, l_dir.z);
 			glUniform4f(glGetUniformLocation(r_shader.ID, "lightColor"), l_col.r, l_col.g, l_col.b, 1.0f);
 			glUniform1f(glGetUniformLocation(r_shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene().ambient);
@@ -116,7 +125,11 @@ void Camera::LightingPass(glm::mat4 light_MVP) {
 	}
 }
 
-void Camera::Render(Light& light, Transform& l_transform) {
+
+void Camera::Render(Scene* scene) {
+
+
+	Transform& l_transform = scene->main_light->GetComponent<Transform>();
 	float pitch = glm::radians(l_transform.rotation.x);
 	float yaw = glm::radians(l_transform.rotation.y);
 
@@ -124,22 +137,22 @@ void Camera::Render(Light& light, Transform& l_transform) {
 	direction.x = cos(pitch) * cos(yaw);
 	direction.y = sin(pitch);
 	direction.z = cos(pitch) * sin(yaw);
-	glm::vec3 lightViewDir = l_transform.rotation;
 
 	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 200.0f);
-	glm::mat4 lightView = glm::lookAt(transform->position + l_transform.position, transform->position + l_transform.position + lightViewDir, WorldUp);
+	//glm::mat4 lightView = glm::lookAt(transform->position + l_transform.position, transform->position + l_transform.position + lightViewDir, WorldUp);
+	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + direction, WorldUp);
 	glm::mat4 light_MVP = lightProj * lightView;
 
 	// std::cout << "Light rot : " << ": " << lightViewDir.x << "x " << lightViewDir.y << "y " << lightViewDir.z << "z\n";
 	
 	m_shadowMapFBO.BindForWriting();    
-	ShadowPass(light_MVP);              
+	ShadowPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
 
 	glViewport(0, 0, width, height);         
 	m_shadowMapFBO.BindForReading(GL_TEXTURE0); 
 
-	LightingPass(light_MVP);                 
+	LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);   
 
 }

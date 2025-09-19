@@ -63,9 +63,8 @@ int main(void) {
 	// ALL ENTITIES
 	EntityHelper big_Light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS);
 	big_Light.AddComponent<Light>().light_type = LightTypes::Directional;
-	big_Light.GetComponent<Light>().color = glm::vec4(0.4f);
-	big_Light.GetComponent<Transform>().rotation = scene.light_direction;
-	big_Light.GetComponent<Transform>().position = -big_Light.GetComponent<Transform>().rotation * glm::vec3(100);
+	big_Light.GetComponent<Light>().color = glm::vec4(0.7f);
+	big_Light.GetComponent<Transform>().rotation = glm::vec3(-56.0f, 45.0f, 12.0f);
 
 	EntityHelper e_plane(scene.CreateEntity("Floor"), &scene.Scene_ECS);
 	e_plane.GetComponent<Transform>().scale = glm::vec3(250);
@@ -83,18 +82,15 @@ int main(void) {
 	active_scene.WakeEntityBehaviours();
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
-		skybox_pass.Draw(camera_component);
 
-		big_Light.GetComponent<Transform>().position = -big_Light.GetComponent<Transform>().rotation * glm::vec3(100);
-
-		Transform& light_t = big_Light.GetComponent<Transform>();
-
-		camera_component.UpdateMatrix(display.windowWidth, display.windowHeight);
-		camera_component.Render(big_Light.GetComponent<Light>(), light_t);
-
+		if (active_scene.HasMainLight()) {
+			skybox_pass.Draw(camera_component, &scene.main_light->GetComponent<Light>(), &scene.main_light->GetComponent<Transform>());
+		}
+		
 
 		active_scene.UpdateEntityBehaviours();
 		active_scene.UpdatePhysics();
+		active_scene.Render();
 
 		ui.imgui_render(camera_movement, active_scene);
 		display.EndFrame();

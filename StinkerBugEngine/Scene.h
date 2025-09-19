@@ -13,27 +13,28 @@
 #include "ECSystem.h"
 #include "Entity.h"
 
+class EntityHelper;
+
 class Scene {
 public:
 	Scene() = default;
 	Entity& CreateEntity();
 	Entity& CreateEntity(std::string name);
-	void DeleteEntity(Entity id);
 
 	// Physics
 	float gravity = -9.82f;
 
 	// Environment
 	float ambient = 0.2f;
-	glm::vec3 light_direction = glm::normalize(glm::vec3(-1, -1.3, -0.84));
-	glm::vec3 light_color = glm::vec3(1.0);
-
+	EntityHelper* main_light;
 	ECSystem Scene_ECS;
 
-	void DrawMeshes(Camera& camera);
+	void Render();
 	void CheckCollisions(uint32_t id);
 	void ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2);
 	void UpdatePhysics();
+
+	bool HasMainLight();
 
 	void StartEntityBehaviours();
 	void WakeEntityBehaviours();

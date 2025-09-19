@@ -3,6 +3,8 @@
 #include "CollisionInfo.h"
 #include "EntityBehaviour.h"
 #include "ComponentTypeID.h"
+#include "Display.h"
+#include "EntityHelper.h"
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
@@ -101,7 +103,44 @@ void Scene::UpdatePhysics() {
 }
 
 
+bool Scene::HasMainLight() {
+	return (main_light && Scene_ECS.components[typeid(Light)].find(main_light->id) != Scene_ECS.components[typeid(Light)].end());
+}
 
+void Scene::Render() {
+	Display& display = Display::getInstance();
+	main_light = new EntityHelper();
+	main_light->ecs = &Scene_ECS;
+	main_light->id = 0;
+
+	for (auto& [id, lightPtr] : Scene_ECS.components[typeid(Light)])
+	{
+		Light* light = dynamic_cast<Light*>(lightPtr.get());
+		if (light->light_type == LightTypes::Directional) {
+			main_light->id = id;
+			break;
+		}
+	}
+
+	if (HasMainLight()) {
+		float pitch = glm::radians(main_light->GetComponent<Transform>().rotation.x);
+		float yaw = glm::radians(main_light->GetComponent<Transform>().rotation.y);
+
+		glm::vec3 direction;
+		direction.x = cos(pitch) * cos(yaw);
+		direction.y = sin(pitch);
+		direction.z = cos(pitch) * sin(yaw);
+
+		main_light->GetComponent<Transform>().position = -direction * glm::vec3(100);
+
+		
+		for (auto& [id, camPtr] : Scene_ECS.components[typeid(Camera)]) {
+			Camera* c = dynamic_cast<Camera*>(camPtr.get());
+			c->UpdateMatrix(display.windowWidth, display.windowHeight);
+			c->Render(this);
+		}
+	}
+}
 
 // Call the EntityBehaviours Start
 void Scene::StartEntityBehaviours() {

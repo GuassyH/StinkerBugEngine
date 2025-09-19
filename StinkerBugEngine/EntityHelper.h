@@ -37,8 +37,8 @@ public:
 		return ecs->HasComponent<T>(id);
 	}
 
-private:
 	ECSystem* ecs;
+private:
 };
 
 #endif

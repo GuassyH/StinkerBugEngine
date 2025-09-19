@@ -21,7 +21,7 @@ public:
 	std::vector<GLuint> indices = Constants::Shapes::Quad().getIndices();
 
 	FullScreenPass(Camera& camera, Material& material);
-	void Draw(Camera& camera);
+	void Draw(Camera& camera, Light* light, Transform* l_transform);
 
 	VAO VAO1;
 	VBO VBO1;

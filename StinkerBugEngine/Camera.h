@@ -18,6 +18,7 @@ class Transform;
 class MeshRenderer;
 class Shader;
 class Light;
+class Scene;
 
 class Camera : public Component {
 public:
@@ -43,9 +44,9 @@ public:
 	void UpdateMatrix(int windowWidth, int windowHeight);
 
 
-	void ShadowPass(glm::mat4 light_MVP);
-	void LightingPass(glm::mat4 light_MVP);
-	void Render(Light& light, Transform& l_transform);
+	void ShadowPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
+	void LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
+	void Render(Scene* scene);
 
 	ShadowMapFBO m_shadowMapFBO;
 

@@ -30,10 +30,16 @@ FullScreenPass::FullScreenPass(Camera& camera, Material& material) : material(&m
 	}
 }
 
-void FullScreenPass::Draw(Camera& camera) {
+void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) {
 	material->shader.Use();
 
+	float pitch = glm::radians(l_transform->rotation.x);
+	float yaw = glm::radians(l_transform->rotation.y);
 
+	glm::vec3 direction;
+	direction.x = cos(pitch) * cos(yaw);
+	direction.y = sin(pitch);
+	direction.z = cos(pitch) * sin(yaw);
 
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenWidth"), display.windowWidth);
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenHeight"), display.windowHeight);
@@ -47,8 +53,8 @@ void FullScreenPass::Draw(Camera& camera) {
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camNearPlane"), camera.nearPlane);
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camFarPlane"), camera.farPlane);
 
-	glm::vec3 l_dir = SceneManager::getInstance().GetActiveScene().light_direction;
-	glm::vec3 l_col = SceneManager::getInstance().GetActiveScene().light_color;
+	glm::vec3 l_dir = direction;
+	glm::vec3 l_col = light->color;
 	glUniform3f(glGetUniformLocation(material->shader.ID, "sunDir"), l_dir.x, l_dir.y, l_dir.z);
 	glUniform4f(glGetUniformLocation(material->shader.ID, "sunColor"), l_col.r, l_col.g, l_col.b, 1.0f);
 
