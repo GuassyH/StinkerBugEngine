@@ -6,7 +6,7 @@
 /// THIS IS THE ENTITY INSPECTOR
 char buff[255];
 char* new_name;
-void InspectorWindow::Draw(Scene& scene, Display& display, bool& is_entity_selected, Entity& selected_entity) {
+void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 
 	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 350, 0));
 	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight));

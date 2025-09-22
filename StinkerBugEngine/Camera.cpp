@@ -127,7 +127,8 @@ void Camera::LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transf
 
 
 void Camera::Render(Scene* scene) {
-
+	glClearColor(0.7, 0.5, 1.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Transform& l_transform = scene->main_light->GetComponent<Transform>();
 	float pitch = glm::radians(l_transform.rotation.x);
@@ -143,16 +144,85 @@ void Camera::Render(Scene* scene) {
 	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + direction, WorldUp);
 	glm::mat4 light_MVP = lightProj * lightView;
 
-	// std::cout << "Light rot : " << ": " << lightViewDir.x << "x " << lightViewDir.y << "y " << lightViewDir.z << "z\n";
-	
-	m_shadowMapFBO.BindForWriting();    
+	// Bind the shadowMaps FBO and Draw the Scene
+	m_shadowMapFBO.BindForWriting();
 	ShadowPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); 
+	// Rebind to the base FBO (0)
+	
+	if (!output_texture) {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glViewport(0, 0, width, height);         
-	m_shadowMapFBO.BindForReading(GL_TEXTURE0); 
+		// Set viewport to the width and height and bind the shadow map for reading
+		glClearColor(0.7, 0.5, 1.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);   
+		glViewport(0, 0, width, height);
+		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
 
+		// Do lighting pass and bind to base FBO (0)
+		LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
+	else {
+		// if (!CheckOuputFBO(output_texture)) { return; }
+		CheckOuputFBO();
+		glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
+
+		glClearColor(0.7, 0.5, 1.0, 1.0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glViewport(0, 0, output_texture->imgWidth, output_texture->imgHeight);
+		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
+
+		// Do lighting pass and bind to base FBO (0)
+		LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 }
+
+
+bool Camera::CheckOuputFBO() {
+	// make sure output_texture exists
+	if (!output_texture) return false;
+	if (outputFBO) { glDeleteFramebuffers(1, &outputFBO); outputFBO = 0; }
+	if (output_texture && output_texture->ID) { GLuint id = output_texture->ID; glDeleteTextures(1, &id); output_texture->ID = 0; }
+	if (outputRBO) { glDeleteRenderbuffers(1, &outputRBO); outputRBO = 0; }
+
+	// store sizes so texture struct is honest
+	output_texture->imgWidth = width;
+	output_texture->imgHeight = height;
+
+	// generate & bind FBO (separate GLuint)
+	glGenFramebuffers(1, &outputFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
+
+	// generate texture for color attachment
+	glGenTextures(1, &output_texture->ID);
+	glBindTexture(GL_TEXTURE_2D, output_texture->ID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, output_texture->ID, 0);
+
+	// renderbuffer for depth+stencil
+	glGenRenderbuffers(1, &outputRBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, outputRBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, outputRBO);
+
+	GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
+		std::cout << "output_texture FBO not complete! : " << std::hex << fboStatus << std::dec << std::endl;
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		return false;
+	}
+
+	// unbind to be safe
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	return true;
+}
+

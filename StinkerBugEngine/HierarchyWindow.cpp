@@ -4,7 +4,7 @@
 #include "EntityHelper.h"
 
 /// THIS IS THE HIERARCHY
-void HierarchyWindow::Draw(Scene& scene, Display& display, bool& is_entity_selected, Entity& selected_entity) {
+void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight));
 	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);

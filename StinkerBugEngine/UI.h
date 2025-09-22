@@ -7,8 +7,8 @@
 #include "Display.h"
 #include "ConsoleCapture.h"
 #include "Entity.h"
+#include "SceneViewWindow.h"
 
-class CameraMovement;
 class Scene;
 struct Mesh;
 struct Material;
@@ -21,16 +21,13 @@ private:
 	UI() = default;
 	Display& display = Display::getInstance();
 
-	unsigned int r_windowWidth;
-	unsigned int r_windowHeight;
-	bool opened = true;
-	bool closed = false;
 	ConsoleCapture consoleCapture;
+	SceneViewWindow sceneViewWindow;
 public:
 	static UI& getInstance() { static UI instance; return instance; }
 
 	void imgui_init();
-	void imgui_render(CameraMovement& camera_move, Scene& scene);
+	void imgui_render(Scene& scene);
 	void imgui_shutdown();
 
 	void Console();

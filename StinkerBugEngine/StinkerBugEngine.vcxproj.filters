@@ -64,11 +64,14 @@
     <Filter Include="Source Files\Core\UI">
       <UniqueIdentifier>{cb6aa583-a9ee-4de7-8df5-f42cad0e5f49}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Core\Componentesque">
+    <Filter Include="Source Files\Componentesque">
       <UniqueIdentifier>{8c182a5e-e41e-4247-9d5b-50508f5522a9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Core\Componentesque">
+    <Filter Include="Header Files\Componentesque">
       <UniqueIdentifier>{2731f286-5fd6-4b00-bb5a-46a13293ed00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{c4f561d4-17ff-469c-9218-13cb9a700c02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -151,19 +154,25 @@
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Core\Componentesque</Filter>
+      <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Core\Componentesque</Filter>
+      <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
     <ClCompile Include="FullScreenPass.cpp">
-      <Filter>Source Files\Core\Componentesque</Filter>
+      <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
     <ClCompile Include="ShadowMapFBO.cpp">
-      <Filter>Source Files\Core\Componentesque</Filter>
+      <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Core\Componentesque</Filter>
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneViewWindow.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -300,22 +309,31 @@
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
     <ClInclude Include="FullScreenPass.h">
-      <Filter>Header Files\Core\Componentesque</Filter>
+      <Filter>Header Files\Componentesque</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Core\Componentesque</Filter>
+      <Filter>Header Files\Componentesque</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Header Files\Core\Componentesque</Filter>
+      <Filter>Header Files\Componentesque</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
-      <Filter>Header Files\Core\Componentesque</Filter>
+      <Filter>Header Files\Componentesque</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="ShadowMapFBO.h">
-      <Filter>Header Files\Core\Componentesque</Filter>
+      <Filter>Header Files\Componentesque</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneViewWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorCamera.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Componentesque</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -337,5 +355,10 @@
     <None Include="ShadowMapFBO.vert">
       <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="OldGrass.png">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

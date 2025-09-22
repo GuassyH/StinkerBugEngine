@@ -106,7 +106,7 @@ bool Scene::HasMainLight() {
 
 void Scene::Render() {
 	Display& display = Display::getInstance();
-	main_light = new EntityHelper();
+	if (!main_light) { main_light = new EntityHelper(); }
 	main_light->ecs = &Scene_ECS;
 	main_light->id = 0;
 

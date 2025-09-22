@@ -14,6 +14,8 @@
 #include "ShadowMapFBO.h"
 #include "Component.h"
 
+#include "Texture.h"
+
 class Transform;
 class MeshRenderer;
 class Shader;
@@ -21,7 +23,10 @@ class Light;
 class Scene;
 
 class Camera : public Component {
+private:
 public:
+	GLuint outputFBO = 0;
+	GLuint outputRBO = 0;
 	Transform* transform = nullptr;
 	bool main = false;
 
@@ -47,8 +52,10 @@ public:
 	void ShadowPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
 	void LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
 	void Render(Scene* scene);
+	bool CheckOuputFBO();
 
 	ShadowMapFBO m_shadowMapFBO;
+	Texture* output_texture = nullptr;
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Camera")) {

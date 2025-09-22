@@ -26,14 +26,13 @@ void UI::imgui_init() {
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
-	r_windowWidth = display.windowWidth - 680;
-	r_windowHeight = display.windowHeight - 340;
+	sceneViewWindow.Init();
 
 	std::cout << "\nImGui / UI initialized\n\n";
 }
 
 
-void UI::imgui_render(CameraMovement& camera_move, Scene& scene) {
+void UI::imgui_render(Scene& scene) {
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -42,14 +41,10 @@ void UI::imgui_render(CameraMovement& camera_move, Scene& scene) {
 	int mode = 0;
 	glfwGetInputMode(display.window, mode);
 
-	if (camera_move.focusMouse) { ImGui::SetMouseCursor(ImGuiMouseCursor_None); glfwSetInputMode(display.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN); }
-	else { ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow); glfwSetInputMode(display.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL); }
-
-	if (!camera_move.focusMouse) {
-		HierarchyWindow().Draw(scene, display, is_entity_selected, selected_entity);
-		InspectorWindow().Draw(scene, display, is_entity_selected, selected_entity);
-		Console();
-	}
+	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity);
+	HierarchyWindow().Draw(scene, is_entity_selected, selected_entity);
+	InspectorWindow().Draw(scene, is_entity_selected, selected_entity);
+	Console();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -70,6 +65,7 @@ void UI::imgui_shutdown() {
 
 /// CONSOLE OUTPUT
 void UI::Console() {
+	bool opened = true;
 	ImGui::SetNextWindowPos(ImVec2(350, display.windowHeight - 340));
 	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, 340));
 	ImGui::Begin("Console", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
