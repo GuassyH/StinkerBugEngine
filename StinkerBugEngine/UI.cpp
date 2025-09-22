@@ -7,7 +7,6 @@
 
 #include "HierarchyWindow.h"
 #include "InspectorWindow.h"
-
 /// CORE
 
 void UI::imgui_init() {
@@ -42,6 +41,7 @@ void UI::imgui_render(Scene& scene) {
 	glfwGetInputMode(display.window, mode);
 
 	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity);
+	topBarWindow.Draw(scene, is_entity_selected, selected_entity);
 	HierarchyWindow().Draw(scene, is_entity_selected, selected_entity);
 	InspectorWindow().Draw(scene, is_entity_selected, selected_entity);
 	Console();

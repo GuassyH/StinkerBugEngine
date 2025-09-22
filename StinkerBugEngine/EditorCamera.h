@@ -4,7 +4,7 @@
 
 #include "Transform.h"
 #include "Camera.h"
-
+#include "Constants.h"
 
 class EditorCamera {
 public:
@@ -63,31 +63,32 @@ public:
 		Display& display = Display::getInstance();
 		GLFWwindow* window = display.window;
 
-		double mouseX;
-		double mouseY;
+		// Get mouse position in screen coords
+		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		mouseX -= (double)r_pos.x;
-		mouseY -= (double)r_pos.y;
+		// Compute mouse delta relative to image center
+		float centerX = r_pos.x + (r_size.x / 2.0f);
+		float centerY = r_pos.y + (r_size.y / 2.0f);
 
-		mouseX *= ((double)display.windowWidth / (double)r_size.x);
-		mouseY *= ((double)display.windowHeight / (double)r_size.y);
+		float deltaX = (float)(mouseX - centerX);
+		float deltaY = (float)(mouseY - centerY);
 
+		// Convert to [-1,1] range based on image size (optional)
+		deltaX /= r_size.x;
+		deltaY /= r_size.y;
 
-		mouseX *= (double)camera->width / (double)display.windowWidth;
-		mouseY *= (double)camera->height / (double)display.windowHeight;
+		// Apply sensitivity
+		float rotX = -deltaY * sensitivity * 100.0f;
+		float rotY = -deltaX * sensitivity * 100.0f;
 
-
-		float rotX = sensitivity * ((float)(mouseY - (camera->height / 2.0f)) / (float)camera->height) * 100;
-		float rotY = sensitivity * ((float)(mouseX - (camera->width / 2.0f)) / (float)camera->width) * 100;
-
-		glm::vec3 newOrientation = glm::rotate(this->transform->rotation, glm::radians(-rotX), glm::normalize(glm::cross(this->transform->rotation, Constants::Dirs::Up)));
+		glm::vec3 newOrientation = glm::rotate(this->transform->rotation, glm::radians(rotX), glm::normalize(glm::cross(this->transform->rotation, Constants::Dirs::Up)));
 		if (!((glm::angle(newOrientation, Constants::Dirs::Up) <= glm::radians(5.0f)) || (glm::angle(newOrientation, -Constants::Dirs::Up) <= glm::radians(5.0f)))) {
 			this->transform->rotation = newOrientation;
 		}
-		this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(-rotY), Constants::Dirs::Up);
+		this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(rotY), Constants::Dirs::Up);
 
-		glfwSetCursorPos(window, ((r_size.x / 2.0f) + r_pos.x), ((r_size.y / 2.0f) + r_pos.y));
+		glfwSetCursorPos(window, centerX, centerY);
 		
 	}
 };

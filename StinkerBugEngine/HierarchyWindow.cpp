@@ -5,8 +5,8 @@
 
 /// THIS IS THE HIERARCHY
 void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight));
+	ImGui::SetNextWindowPos(ImVec2(0, 40));
+	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 40));
 	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 	ImGui::DragFloat("Gravity", &scene.gravity, 0.1f, -50.0f, 50.0f);

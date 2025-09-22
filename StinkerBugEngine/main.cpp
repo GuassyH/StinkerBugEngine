@@ -51,9 +51,7 @@ int main(void) {
 	active_scene.WakeEntityBehaviours();
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
-
-		active_scene.UpdateEntityBehaviours();
-		active_scene.UpdatePhysics();
+		
 		active_scene.Render();
 
 		ui.imgui_render(active_scene);

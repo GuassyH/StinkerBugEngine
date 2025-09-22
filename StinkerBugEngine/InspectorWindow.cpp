@@ -8,8 +8,8 @@ char buff[255];
 char* new_name;
 void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 
-	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 350, 0));
-	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight));
+	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 350, 40));
+	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 40));
 	ImGui::Begin("Entity Inspector", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 	if (scene.Scene_ECS.entities.find(selected_entity) != scene.Scene_ECS.entities.end() && is_entity_selected) {

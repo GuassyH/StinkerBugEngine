@@ -3,10 +3,8 @@
 #include "Scene.h"
 #include "Display.h"
 #include "Entity.h"
-#include "EditorCamera.h"
-#include "Texture.h"
 
-class SceneViewWindow {
+class TopBarWindow {
 private:
 	bool opened = true;
 	bool closed = false;
@@ -16,11 +14,8 @@ private:
 
 	Display& display = Display::getInstance();
 public:
+	bool play_scene, pause_scene, scene_started = false;
 
-	EditorCamera* editorCamera = nullptr;
-	Texture* cam_output = nullptr;
 
-	SceneViewWindow() = default;
-	void Init();
 	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
 };

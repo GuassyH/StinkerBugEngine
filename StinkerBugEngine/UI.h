@@ -7,7 +7,9 @@
 #include "Display.h"
 #include "ConsoleCapture.h"
 #include "Entity.h"
+
 #include "SceneViewWindow.h"
+#include "TopBarWindow.h"
 
 class Scene;
 struct Mesh;
@@ -23,6 +25,7 @@ private:
 
 	ConsoleCapture consoleCapture;
 	SceneViewWindow sceneViewWindow;
+	TopBarWindow topBarWindow;
 public:
 	static UI& getInstance() { static UI instance; return instance; }
 
