@@ -4,7 +4,7 @@
 #include "Scene.h"
 
 Display& display = Display::getInstance();
-FullScreenPass::FullScreenPass(Camera& camera, Material& material) : material(&material) {
+FullScreenPass::FullScreenPass(Material& material) : material(&material) {
 	VAO1 = VAO();
 	VBO1 = VBO();
 	EBO1 = EBO();
@@ -26,7 +26,7 @@ FullScreenPass::FullScreenPass(Camera& camera, Material& material) : material(&m
 	FullScreenPass::material->fullscreen_pass = true;
 	
 	for (auto& vert : vertices) {
-		vert.pos.z = -camera.nearPlane;
+		vert.pos.z = -0.1f;
 	}
 }
 
@@ -41,8 +41,8 @@ void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) 
 	direction.y = sin(pitch);
 	direction.z = cos(pitch) * sin(yaw);
 
-	glUniform1i(glGetUniformLocation(material->shader.ID, "screenWidth"), display.windowWidth);
-	glUniform1i(glGetUniformLocation(material->shader.ID, "screenHeight"), display.windowHeight);
+	glUniform1i(glGetUniformLocation(material->shader.ID, "screenWidth"), camera.width);
+	glUniform1i(glGetUniformLocation(material->shader.ID, "screenHeight"), camera.height);
 
 	glUniform3f(glGetUniformLocation(material->shader.ID, "camUp"), camera.localUp.x, camera.localUp.y, camera.localUp.z);
 	glUniform3f(glGetUniformLocation(material->shader.ID, "camForward"), camera.forward.x, camera.forward.y, camera.forward.z);

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <array>
 #include <vector>
+#include <string>
 
 #include "glm/glm.hpp"
 #include "glad/glad.h"
@@ -212,7 +213,17 @@ namespace Constants {
         static inline glm::vec3 Right = glm::vec3(1.0, 0.0, 0.0);
         static inline glm::vec3 Forward = glm::vec3(1.0, 0.0, -1.0);
     }
-    
+    namespace DebugLog {
+        static inline void Vec4(std::string text, glm::vec4 vector) {
+            std::cout << text << ": " << vector.x << "x " << vector.y << "y " << vector.z << "z " << vector.w << "w\n";
+        }
+        static inline void Vec3(std::string text, glm::vec3 vector) {
+            std::cout << text << ": " << vector.x << "x " << vector.y << "y " << vector.z << "z\n";
+        }
+        static inline void Vec2(std::string text, glm::vec2 vector) {
+            std::cout << text << ": " << vector.x << "x " << vector.y << "y\n";
+        }
+    }
 }
 
 #endif

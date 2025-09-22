@@ -12,6 +12,7 @@
 
 #include "ECSystem.h"
 #include "Entity.h"
+#include "FullScreenPass.h"
 
 class EntityHelper;
 
@@ -28,6 +29,7 @@ public:
 	float ambient = 0.2f;
 	EntityHelper* main_light;
 	ECSystem Scene_ECS;
+	std::vector<FullScreenPass> passes;
 
 	void Render();
 	void CheckCollisions(uint32_t id);

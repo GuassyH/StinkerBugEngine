@@ -52,10 +52,11 @@ public:
 	void ShadowPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
 	void LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
 	void Render(Scene* scene);
-	bool CheckOuputFBO();
+	bool CheckOuputFBO(bool forceRewrite);
 
 	ShadowMapFBO m_shadowMapFBO;
 	Texture* output_texture = nullptr;
+	Texture* old_output_texture = nullptr;
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Camera")) {

@@ -41,7 +41,9 @@ bool ShadowMapFBO::Init(unsigned int width, unsigned int height) {
 void ShadowMapFBO::BindForWriting() {
     glViewport(0, 0, m_width, m_height);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    glEnable(GL_DEPTH_TEST);
     glClear(GL_DEPTH_BUFFER_BIT);
+
 }
 
 void ShadowMapFBO::BindForReading(GLenum TextureUnit) {

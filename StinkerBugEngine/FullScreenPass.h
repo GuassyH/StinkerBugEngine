@@ -20,7 +20,8 @@ public:
 	std::vector<Vertex> vertices = Constants::Shapes::Quad().getVertices();
 	std::vector<GLuint> indices = Constants::Shapes::Quad().getIndices();
 
-	FullScreenPass(Camera& camera, Material& material);
+	FullScreenPass() = default;
+	FullScreenPass(Material& material);
 	void Draw(Camera& camera, Light* light, Transform* l_transform);
 
 	VAO VAO1;

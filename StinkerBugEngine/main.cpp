@@ -22,9 +22,6 @@
 #include "UI.h"
 #include "Model.h"
 
-inline void DebugVec3(std::string text, glm::vec3 vector) {
-	std::cout << text << ": " << vector.x << "x " << vector.y << "y " << vector.z << "z\n";
-}
 
 int main(void) {
 	Display& display = Display::getInstance();
@@ -42,19 +39,10 @@ int main(void) {
 	Shader skybox_shader("skybox.vert", "skybox.frag");
 	Material skybox_mat(skybox_shader);
 	
-	/*
-	EntityHelper camera(scene.CreateEntity("Camera"), &scene.Scene_ECS);
-	camera.GetComponent<Transform>().position = glm::vec3(0.0, 2.0, 10);
-	camera.AddComponent<Camera>(display.windowWidth, display.windowHeight, camera.GetComponent<Transform>()).main = true;
-	camera.AddComponent<CameraMovement>();
-	Camera& camera_component = camera.GetComponent<Camera>();
-	CameraMovement& camera_movement = camera.GetComponent<CameraMovement>();
-	
-	FullScreenPass skybox_pass = FullScreenPass(camera_component, skybox_mat);
-	*/
+	FullScreenPass skybox_pass(skybox_mat);
+	scene.passes.push_back(skybox_pass);
 
-
-	EntityHelper dir_light(scene.CreateEntity(), &scene.Scene_ECS);
+	EntityHelper dir_light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS);
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
 
@@ -63,11 +51,6 @@ int main(void) {
 	active_scene.WakeEntityBehaviours();
 	while (!glfwWindowShouldClose(display.window)) {
 		display.BeginFrame();
-
-		if (active_scene.HasMainLight()) {
-			// skybox_pass.Draw(camera_component, &scene.main_light->GetComponent<Light>(), &scene.main_light->GetComponent<Transform>());
-		}
-		
 
 		active_scene.UpdateEntityBehaviours();
 		active_scene.UpdatePhysics();

@@ -9,7 +9,7 @@
 #include "ComponentsList.h"
 #include "Shader.h"
 #include "EntityHelper.h"
-
+#include "FullScreenPass.h"
 
 inline glm::vec3 WorldUp = glm::vec3(0.0, 1.0, 0.0);
 
@@ -127,8 +127,6 @@ void Camera::LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transf
 
 
 void Camera::Render(Scene* scene) {
-	glClearColor(0.7, 0.5, 1.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Transform& l_transform = scene->main_light->GetComponent<Transform>();
 	float pitch = glm::radians(l_transform.rotation.x);
@@ -140,54 +138,67 @@ void Camera::Render(Scene* scene) {
 	direction.z = cos(pitch) * sin(yaw);
 
 	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 200.0f);
-	//glm::mat4 lightView = glm::lookAt(transform->position + l_transform.position, transform->position + l_transform.position + lightViewDir, WorldUp);
 	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + direction, WorldUp);
 	glm::mat4 light_MVP = lightProj * lightView;
+
+	glClearColor(0.7, 0.5, 1.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Bind the shadowMaps FBO and Draw the Scene
 	m_shadowMapFBO.BindForWriting();
 	ShadowPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
-	// Rebind to the base FBO (0)
 	
+
 	if (!output_texture) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		// Set viewport to the width and height and bind the shadow map for reading
 		glClearColor(0.7, 0.5, 1.0, 1.0);
+		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glViewport(0, 0, width, height);
-		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-
-		// Do lighting pass and bind to base FBO (0)
-		LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	else {
-		// if (!CheckOuputFBO(output_texture)) { return; }
-		CheckOuputFBO();
+		if (!CheckOuputFBO(false)) { std::cout << "The output_texture is null or FBO incomplete" << std::endl; return; }
 		glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
 
 		glClearColor(0.7, 0.5, 1.0, 1.0);
+		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glViewport(0, 0, output_texture->imgWidth, output_texture->imgHeight);
-		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-
-		// Do lighting pass and bind to base FBO (0)
-		LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
+	
+	for (FullScreenPass pass : scene->passes) {
+		pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+	}
+
+	// Do lighting pass and bind to base FBO (0)
+	m_shadowMapFBO.BindForReading(GL_TEXTURE0);
+	LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
+	
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 
-bool Camera::CheckOuputFBO() {
-	// make sure output_texture exists
+bool Camera::CheckOuputFBO(bool forceRewrite) {
 	if (!output_texture) return false;
+
+	// If rewrite isnt forced then check first otherwise force a reqrite
+	if (!forceRewrite) {
+		if (old_output_texture == output_texture &&	// the texture hasnt changed
+			output_texture->imgWidth == width &&	// the width is the same as the camera's
+			output_texture->imgHeight == height)	// the height is the same as the camera's
+		{ return true; }
+	}
+
+	// Delete old buffers & textures if needed
 	if (outputFBO) { glDeleteFramebuffers(1, &outputFBO); outputFBO = 0; }
-	if (output_texture && output_texture->ID) { GLuint id = output_texture->ID; glDeleteTextures(1, &id); output_texture->ID = 0; }
 	if (outputRBO) { glDeleteRenderbuffers(1, &outputRBO); outputRBO = 0; }
+	if (output_texture && output_texture->ID) { GLuint id = output_texture->ID; glDeleteTextures(1, &id); output_texture->ID = 0; }
+
+	old_output_texture = output_texture;
 
 	// store sizes so texture struct is honest
 	output_texture->imgWidth = width;

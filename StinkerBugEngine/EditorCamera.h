@@ -21,6 +21,9 @@ public:
 	float horizontal, vertical, elevator = 0;
 	glm::vec3 moveDir = glm::vec3(0.0f);
 
+	glm::vec2 r_size;
+	glm::vec2 r_pos;
+
 	void Move() {
 		float deltaTime = DeltaTime::getInstance().get();
 		Display& display = Display::getInstance();
@@ -64,9 +67,19 @@ public:
 		double mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		float rotX = sensitivity * ((float)(mouseY - (camera->height / 2)) / (float)camera->height) * 100;
-		float rotY = sensitivity * ((float)(mouseX - (camera->width / 2)) / (float)camera->width) * 100;
+		mouseX -= (double)r_pos.x;
+		mouseY -= (double)r_pos.y;
 
+		mouseX *= ((double)display.windowWidth / (double)r_size.x);
+		mouseY *= ((double)display.windowHeight / (double)r_size.y);
+
+
+		mouseX *= (double)camera->width / (double)display.windowWidth;
+		mouseY *= (double)camera->height / (double)display.windowHeight;
+
+
+		float rotX = sensitivity * ((float)(mouseY - (camera->height / 2.0f)) / (float)camera->height) * 100;
+		float rotY = sensitivity * ((float)(mouseX - (camera->width / 2.0f)) / (float)camera->width) * 100;
 
 		glm::vec3 newOrientation = glm::rotate(this->transform->rotation, glm::radians(-rotX), glm::normalize(glm::cross(this->transform->rotation, Constants::Dirs::Up)));
 		if (!((glm::angle(newOrientation, Constants::Dirs::Up) <= glm::radians(5.0f)) || (glm::angle(newOrientation, -Constants::Dirs::Up) <= glm::radians(5.0f)))) {
@@ -74,7 +87,7 @@ public:
 		}
 		this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(-rotY), Constants::Dirs::Up);
 
-		glfwSetCursorPos(window, (camera->width / 2.0f), (camera->height / 2.0f));
+		glfwSetCursorPos(window, ((r_size.x / 2.0f) + r_pos.x), ((r_size.y / 2.0f) + r_pos.y));
 		
 	}
 };

@@ -11,6 +11,9 @@ private:
 	bool opened = true;
 	bool closed = false;
 
+	bool firstRightClick;
+	bool firstLeftClick;
+
 	Display& display = Display::getInstance();
 public:
 	EditorCamera* editorCamera = nullptr;
