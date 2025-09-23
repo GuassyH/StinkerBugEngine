@@ -175,11 +175,10 @@ void Camera::Render(Scene* scene) {
 		glEnable(GL_DEPTH_TEST);
 
 		glViewport(0, 0, output_texture->imgWidth, output_texture->imgHeight);
-		std::cout << "shadow fbo tex: " << m_shadowMapFBO.m_shadowMap << " - output_tex: " << output_texture->ID << "\n";
 	}
 
 	for (FullScreenPass pass : scene->passes) {
-		// pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+		pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
 	}
 	// Do lighting pass and bind to base FBO (0)
 	m_shadowMapFBO.BindForReading(GL_TEXTURE0);
@@ -240,6 +239,7 @@ bool Camera::CheckOuputFBO(bool forceRewrite) {
 		return false;
 	}
 
+	std::cout << "shadow fbo tex: " << m_shadowMapFBO.m_shadowMap << " - output_tex: " << output_texture->ID << "\n";
 
 	// unbind to be safe
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

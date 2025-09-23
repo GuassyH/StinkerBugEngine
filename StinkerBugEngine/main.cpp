@@ -22,7 +22,6 @@
 #include "UI.h"
 #include "Model.h"
 
-
 int main(void) {
 	Display& display = Display::getInstance();
 	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { return -1; }
@@ -46,7 +45,6 @@ int main(void) {
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
 	
-
 	Scene& active_scene = sceneManager.GetActiveScene();
 	active_scene.StartEntityBehaviours();
 	active_scene.WakeEntityBehaviours();

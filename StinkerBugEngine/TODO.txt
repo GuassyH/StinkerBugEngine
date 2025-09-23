@@ -1,0 +1,16 @@
+TODO LIST
+
+
+
+(1) BoxCollider is weird, big collider was very wrong. It would be helpful with a gizmo that highlights the boxcollider
+(2) Sphere vs Box collision.
+(3) Move Gizmo; When an entity is selected. Draw a gizmo at its position and rotation to help with moving quickly
+(4) Make UI entity tab/button its own thing, so that you can right click and delete for example
+(5) UI docking (should just be importing the branch)
+
+(6) Make a scene / physics tab. So that you can change scene and physics settings
+(7) Make a game window; should get the main camera and render from its view
+(8) Go through everything and just polish polish polish
+(9) VERY ADVANCED. Make drag and drop with a file explorer. So you can drag and drop i.e. materials into mesh renderer
+
+(10) ...
