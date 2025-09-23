@@ -1,5 +1,7 @@
 #include "HierarchyWindow.h"
 
+#include <string.h>
+
 #include "ComponentsList.h"
 #include "EntityHelper.h"
 
@@ -9,7 +11,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 40));
 	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
-	ImGui::DragFloat("Gravity", &scene.gravity, 0.1f, -50.0f, 50.0f);
+	ImGui::DragFloat("Gravity", &scene.gravity, 0.1f);
 	ImGui::Separator();
 
 	ImGui::Text("Entities");
@@ -43,11 +45,11 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	glfwGetCursorPos(display.window, &m_x, &m_y);
 
 	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
-	ImGui::SetNextWindowPos(ImVec2(m_x, m_y), ImGuiCond_Once); // simplified
+	ImGui::SetNextWindowPos(ImVec2((float)m_x, (float)m_y), ImGuiCond_Once); // simplified
 	if (ImGui::BeginPopup("Create Object")) {
 		ImGui::Text("Create Object");
 		if (ImGui::Button("Create Empty Entity", ImVec2(180, 20))) {
-			scene.CreateEntity();
+			selected_entity = scene.CreateEntity();
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -58,32 +60,47 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			new_ntt.AddComponent<Light>();
 			new_ntt.GetComponent<Light>().light_type = LightTypes::Directional;
 			new_ntt.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
+			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
 
+		if (ImGui::Button("Create Camera", ImVec2(180, 20))) {
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Camera (" + std::to_string(new_ntt.id) + ")";
+			new_ntt.AddComponent<Camera>(1920, 1080, new_ntt.GetComponent<Transform>());
+			selected_entity = new_ntt.id;
+			new_ntt.~EntityHelper();
+			ImGui::CloseCurrentPopup();
+		}
 
 		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Cube());
 			new_ntt.GetComponent<MeshRenderer>().material = new Material();
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Sphere", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::UVSphere());
 			new_ntt.GetComponent<MeshRenderer>().material = new Material();
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Plane", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Plane());
 			new_ntt.GetComponent<MeshRenderer>().material = new Material();
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
@@ -92,7 +109,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
-	ImGui::SetNextWindowPos(ImVec2(m_x, m_y), ImGuiCond_Once); // simplified
+	ImGui::SetNextWindowPos(ImVec2((float)m_x, (float)m_y), ImGuiCond_Once); // simplified
 	if (ImGui::BeginPopup("Change Object")) {
 		ImGui::Text("Change Object");
 		ImGui::EndPopup();

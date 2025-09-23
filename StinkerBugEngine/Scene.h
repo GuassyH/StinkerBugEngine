@@ -27,7 +27,7 @@ public:
 
 	// Environment
 	float ambient = 0.2f;
-	EntityHelper* main_light;
+	EntityHelper* main_light = nullptr;
 	ECSystem Scene_ECS;
 	std::vector<FullScreenPass> passes;
 

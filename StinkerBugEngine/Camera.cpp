@@ -54,14 +54,14 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 	CameraMatrix = projection * view;
 }
 
-void Camera::ShadowPass(glm::mat4 light_MVP, Light& light, Transform& l_transform) {
+void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
+		
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
-		// std::cout << "Shadow Pass\n";
 		Mesh& r_mesh = *renderer.mesh;
 		r_transform.UpdateMatrix();
 
@@ -69,18 +69,18 @@ void Camera::ShadowPass(glm::mat4 light_MVP, Light& light, Transform& l_transfor
 
 
 		// Set the shadow maps light world view proj matrix
-		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_WVP"), 1, GL_FALSE, glm::value_ptr(light_MVP));
+		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_VP"), 1, GL_FALSE, glm::value_ptr(light_VP));
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
 
 		// Render the scene through the light view
 		renderer.mesh->VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, renderer.mesh->indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(renderer.mesh->indices.size()), GL_UNSIGNED_INT, 0);
 	}
 
 }
 
 
-void Camera::LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transform) {
+void Camera::LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transform) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
 	float pitch = glm::radians(l_transform.rotation.x);
@@ -94,20 +94,20 @@ void Camera::LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transf
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.mesh || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
+
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
-
-
 		Shader& r_shader = renderer.material->shader;
 		Mesh& r_mesh = *renderer.mesh;
+
 		r_transform.UpdateMatrix();
 		r_shader.Use();
 
 		glUniform1i(glGetUniformLocation(r_shader.ID, "ShadowMap"), 0);
-		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "light_WVP"), 1, GL_FALSE, glm::value_ptr(light_MVP));
+		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "light_VP"), 1, GL_FALSE, glm::value_ptr(light_VP));
 		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
 		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetRotationMatrix()));
 		glUniformMatrix4fv(glGetUniformLocation(r_shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(CameraMatrix));
-		glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), transform->position.x, transform->position.y, transform->position.z);
+		glUniform3f(glGetUniformLocation(r_shader.ID, "camPos"), this->transform->position.x, this->transform->position.y, this->transform->position.z);
 		glUniform4f(glGetUniformLocation(r_shader.ID, "color"), renderer.material->Color.r, renderer.material->Color.g, renderer.material->Color.b, renderer.material->Color.a);
 
 
@@ -120,7 +120,7 @@ void Camera::LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transf
 		}
 
 		renderer.mesh->VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, renderer.mesh->indices.size(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(renderer.mesh->indices.size()), GL_UNSIGNED_INT, 0);
 	}
 }
 
@@ -128,6 +128,7 @@ void Camera::LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transf
 void Camera::Render(Scene* scene) {
 
 	Transform& l_transform = scene->main_light->GetComponent<Transform>();
+	// l_transform.UpdateMatrix();
 	float pitch = glm::radians(l_transform.rotation.x);
 	float yaw = glm::radians(l_transform.rotation.y);
 
@@ -135,25 +136,29 @@ void Camera::Render(Scene* scene) {
 	direction.x = cos(pitch) * cos(yaw);
 	direction.y = sin(pitch);
 	direction.z = cos(pitch) * sin(yaw);
+	
+	// TEMPORARY
+	l_transform.position = this->transform->position + (-direction * glm::vec3(100));
 
 	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 200.0f);
 	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + direction, WorldUp);
-	glm::mat4 light_MVP = lightProj * lightView;
+	glm::mat4 light_VP = lightProj * lightView;
 
-	glClearColor(0.7, 0.5, 1.0, 1.0);
+	glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
 	// Bind the shadowMaps FBO and Draw the Scene
 	m_shadowMapFBO.BindForWriting();
-	ShadowPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
-	
+	ShadowPass(light_VP, scene->main_light->GetComponent<Light>(), l_transform);
 
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	if (!output_texture) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		glClearColor(0.7, 0.5, 1.0, 1.0);
-		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 
 		glViewport(0, 0, width, height);
 	}
@@ -161,21 +166,18 @@ void Camera::Render(Scene* scene) {
 		if (!CheckOuputFBO(false)) { std::cout << "The output_texture is null or FBO incomplete" << std::endl; return; }
 		glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
 
-		glClearColor(0.7, 0.5, 1.0, 1.0);
-		glEnable(GL_DEPTH_TEST);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
 
 		glViewport(0, 0, output_texture->imgWidth, output_texture->imgHeight);
 	}
-	
-	for (FullScreenPass pass : scene->passes) {
-		pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
-	}
 
+	for (FullScreenPass pass : scene->passes) {
+		// pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+	}
 	// Do lighting pass and bind to base FBO (0)
 	m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-	LightingPass(light_MVP, scene->main_light->GetComponent<Light>(), l_transform);
-	
+	LightingPass(light_VP, scene->main_light->GetComponent<Light>(), l_transform);
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

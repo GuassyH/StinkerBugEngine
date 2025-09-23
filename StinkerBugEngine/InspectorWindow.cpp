@@ -60,9 +60,9 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			ImGui::OpenPopup("Add Component");
 		}
 
+
+
 		// Setup popup
-
-
 		ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 300, display.windowHeight - 360)); // simplified
 		ImGui::SetNextWindowSize(ImVec2(250, 300));
 		if (ImGui::BeginPopup("Add Component", ImGuiWindowFlags_NoMove)) {
@@ -84,22 +84,24 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 					new_ntt.~EntityHelper();
 				}
 			}
-			if (!scene.Scene_ECS.HasComponent<RigidBody>(selected_entity)) {
-				if (ImGui::Button("Rigidbody", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<RigidBody>(selected_entity);
+			
+			if (!scene.Scene_ECS.HasComponent<Camera>(selected_entity)) {
+				if (ImGui::Button("Camera", ImVec2(235, 20))) {
+					scene.Scene_ECS.AddComponent<Camera>(selected_entity, 1920, 1080, scene.Scene_ECS.GetComponent<Transform>(selected_entity));
 					ImGui::CloseCurrentPopup();
 				}
 			}
-			if (!scene.Scene_ECS.HasComponent<TestComponent>(selected_entity)) {
-				if (ImGui::Button("TestComponent", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<TestComponent>(selected_entity);
+			
+			if (!scene.Scene_ECS.HasComponent<Light>(selected_entity)) {
+				if (ImGui::Button("Light", ImVec2(235, 20))) {
+					scene.Scene_ECS.AddComponent<Light>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}
 
-			if (!scene.Scene_ECS.HasComponent<Light>(selected_entity)) {
-				if (ImGui::Button("Light", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<Light>(selected_entity);
+			if (!scene.Scene_ECS.HasComponent<RigidBody>(selected_entity)) {
+				if (ImGui::Button("Rigidbody", ImVec2(235, 20))) {
+					scene.Scene_ECS.AddComponent<RigidBody>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}

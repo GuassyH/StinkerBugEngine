@@ -49,8 +49,8 @@ public:
 	void UpdateMatrix(int windowWidth, int windowHeight);
 
 
-	void ShadowPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
-	void LightingPass(glm::mat4 light_MVP, Light& light, Transform& l_transform);
+	void ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform);
+	void LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transform);
 	void Render(Scene* scene);
 	bool CheckOuputFBO(bool forceRewrite);
 

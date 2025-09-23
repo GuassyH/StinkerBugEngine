@@ -19,7 +19,7 @@ class Material;
 class Camera;
 
 
-class Mesh {
+struct Mesh {
 public:
 	const char* name = "new_mesh";
 

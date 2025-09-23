@@ -100,7 +100,6 @@
     <ClInclude Include="ShadowMapFBO.h" />
     <ClInclude Include="SphereCollider.h" />
     <ClInclude Include="SphereMove.h" />
-    <ClInclude Include="TestComponent.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TopBarWindow.h" />
     <ClInclude Include="Transform.h" />

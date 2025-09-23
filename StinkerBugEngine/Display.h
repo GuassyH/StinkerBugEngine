@@ -34,6 +34,7 @@ public:
 	void SetSize(unsigned int width, unsigned int height);
 	~Display();
 
+	int FrameRate;
 };
 
 

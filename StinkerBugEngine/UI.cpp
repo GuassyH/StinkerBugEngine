@@ -17,9 +17,9 @@ void UI::imgui_init() {
 	ImGui::StyleColorsClassic();
 	
 	ImGuiStyle* custom_style = &ImGui::GetStyle();
-	custom_style->Colors[ImGuiCol_WindowBg] = ImVec4(0.1, 0.1, 0.13, 1.0);
+	custom_style->Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.13f, 1.0f);
 	custom_style->Colors[ImGuiCol_Header] = custom_style->Colors[ImGuiCol_Button];
-	custom_style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.8, 0.8, 0.8, 1.0);
+	custom_style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
 	custom_style->Colors[ImGuiCol_TitleBgActive] = custom_style->Colors[ImGuiCol_TitleBg];
 
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
@@ -66,8 +66,8 @@ void UI::imgui_shutdown() {
 /// CONSOLE OUTPUT
 void UI::Console() {
 	bool opened = true;
-	ImGui::SetNextWindowPos(ImVec2(350, display.windowHeight - 340));
-	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, 340));
+	ImGui::SetNextWindowPos(ImVec2(350, display.windowHeight - 300));
+	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, 300));
 	ImGui::Begin("Console", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 	const auto& lines = consoleCapture.GetLines();

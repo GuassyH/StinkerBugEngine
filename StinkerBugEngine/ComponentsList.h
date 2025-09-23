@@ -7,7 +7,6 @@
 #include "RigidBody.h"
 #include "Light.h"
 #include "Mesh.h"
-#include "TestComponent.h"
 #include "OskarComponent.h"
 
 #include "Collider.h"

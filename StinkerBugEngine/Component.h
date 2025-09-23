@@ -8,7 +8,7 @@
 
 class Component {
 public:	
-	Entity entity;
+	Entity entity = 0;
 
 	Component() = default;
 	virtual ~Component() = default;

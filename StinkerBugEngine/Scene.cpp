@@ -10,7 +10,7 @@ DeltaTime& deltaTime = DeltaTime::getInstance();
 
 // Create the Entity
 Entity& Scene::CreateEntity() {
-	Entity entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
+	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.component_bits[entity_id] = 0b0;
 	Scene_ECS.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
 	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
@@ -20,7 +20,7 @@ Entity& Scene::CreateEntity() {
 
 
 Entity& Scene::CreateEntity(std::string name) {
-	Entity entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
+	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.component_bits[entity_id] = 0b0;
 	Scene_ECS.entity_names[entity_id] = name;
 	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
@@ -30,7 +30,6 @@ Entity& Scene::CreateEntity(std::string name) {
 
 
 // Resolve collision (apply forces)
-
 void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2) {
 	if (collision_info.normal != glm::vec3(0.0)) {
 		glm::vec3 relative_velocity = rb1.velocity - rb2.velocity;
@@ -73,13 +72,6 @@ void Scene::CheckCollisions(uint32_t id) {
 				}
 			}
 		}
-
-		// Temporary Plane collision
-		Transform& transform = Scene_ECS.GetComponent<Transform>(id);
-		if ((transform.position.y - (this_collider->size.y / 2.0f)) <= 0.0f){
-			transform.position.y = (this_collider->size.y / 2.0f) + 0.001f; 
-			Scene_ECS.GetComponent<RigidBody>(id).velocity.y = 0.0f;
-		}
 	}
 }
 
@@ -99,11 +91,12 @@ void Scene::UpdatePhysics() {
 	}
 }
 
-
+// Check if a main light exists (directional light)
 bool Scene::HasMainLight() {
 	return (main_light && Scene_ECS.components[typeid(Light)].find(main_light->id) != Scene_ECS.components[typeid(Light)].end());
 }
 
+// Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
 	if (!main_light) { main_light = new EntityHelper(); }
@@ -120,17 +113,6 @@ void Scene::Render() {
 	}
 
 	if (HasMainLight()) {
-		float pitch = glm::radians(main_light->GetComponent<Transform>().rotation.x);
-		float yaw = glm::radians(main_light->GetComponent<Transform>().rotation.y);
-
-		glm::vec3 direction;
-		direction.x = cos(pitch) * cos(yaw);
-		direction.y = sin(pitch);
-		direction.z = cos(pitch) * sin(yaw);
-
-		main_light->GetComponent<Transform>().position = -direction * glm::vec3(100);
-
-		
 		for (auto& [id, camPtr] : Scene_ECS.components[typeid(Camera)]) {
 			Camera* c = dynamic_cast<Camera*>(camPtr.get());
 			c->UpdateMatrix(display.windowWidth, display.windowHeight);

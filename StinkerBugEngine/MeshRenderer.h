@@ -15,7 +15,7 @@
 #include "VBO.h"
 #include "EBO.h"
 
-struct MeshRenderer : public Component{
+class MeshRenderer : public Component{
 public:
 	Mesh* mesh = nullptr;
 	Material* material = nullptr;

@@ -13,7 +13,7 @@ enum class LightTypes : uint8_t {
 	Area = 3
 };
 
-struct Light : public Component {
+class Light : public Component {
 public:
 	// Global
 	LightTypes light_type = LightTypes::Spotlight;
@@ -42,7 +42,6 @@ public:
 				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
 			default:
 				break;
-			
 			}
 		}
 	}

@@ -3,7 +3,6 @@
 double currentTime;
 double lastTime;
 int nbFrames;
-int fps;
 
 void frame_buffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -74,16 +73,15 @@ void Display::BeginFrame() {
 
 	glClearColor(0.7, 0.5, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, windowWidth, windowHeight); // Should i do this?
 }
 
 void Display::EndFrame() {
+	glViewport(0, 0, windowWidth, windowHeight); // Should i do this?
 	if (currentTime - lastTime >= 1.0) {
-		fps = nbFrames;
+		FrameRate = nbFrames;
 		nbFrames = 0;
 		lastTime += 1.0;
-
-		std::ostringstream fps_text;	fps_text << title << " - FPS: " << fps;
-		glfwSetWindowTitle(window, fps_text.str().c_str());
 	}
 
 	if (glfwGetKey(window, GLFW_KEY_END) == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }

@@ -26,12 +26,14 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 	// Constants::DebugLog::Vec3("SceneView cam pos", editorCamera->transform->position);
 	// Constants::DebugLog::Vec3("SceneView cam rot", editorCamera->transform->rotation);
+	std::ostringstream fps_text;	fps_text << display.FrameRate << "fps";
 
 	ImGui::SetNextWindowPos(ImVec2(350, 40));
 	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 340));
 	ImGui::Begin("Scene View", &opened);
 
 
+	
 
 	if (!editorCamera->camera->output_texture) { ImGui::End(); std::cout << "No output texture!\n"; return; }
 
@@ -57,8 +59,8 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	}
 
 	ImVec2 imagePosInWindow;
-	imagePosInWindow.x = (windowSize.x - imageSize.x) * 0.5f + ImGui::GetCursorPosX();
-	imagePosInWindow.y = (windowSize.y - imageSize.y) * 0.5f + ImGui::GetCursorPosY();
+	imagePosInWindow.x = ((windowSize.x - imageSize.x) * 0.5f) + ImGui::GetCursorPosX();
+	imagePosInWindow.y = ((windowSize.y - imageSize.y) * 0.5f) + ImGui::GetCursorPosY();
 
 
 	ImGui::SetCursorPosX(imagePosInWindow.x);
@@ -72,7 +74,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		editorCamera->r_pos.y = windowPos.y + imagePosInWindow.y;
 
 		if (firstRightClick) {
-			glfwSetCursorPos(display.window, ((editorCamera->r_size.x / 2.0f) + editorCamera->r_pos.x), ((editorCamera->r_size.y / 2.0f) + editorCamera->r_pos.y));
+			glfwSetCursorPos(display.window, glm::roundEven((imageSize.x / 2.0f) + windowPos.x + imagePosInWindow.x), glm::roundEven((imageSize.y / 2.0f) + windowPos.y + imagePosInWindow.y));
 		}
 		glfwSetInputMode(display.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 		ImGui::SetMouseCursor(ImGuiMouseCursor_None);
@@ -89,7 +91,6 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	}
 
 	ImGui::Image((ImTextureID)(intptr_t)cam_output->ID, imageSize, ImVec2(0, 1), ImVec2(1, 0));
-
 
 	ImGui::End();
 }

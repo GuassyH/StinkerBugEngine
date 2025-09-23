@@ -16,13 +16,16 @@ public:
 	float moveSpeed = 2.0f;
 	float speedMul = 1.0f;
 
-	float sensitivity = 2;
+	float sensitivity = 2.0f;
 
-	float horizontal, vertical, elevator = 0;
+	float horizontal = 0.0f;
+	float vertical = 0.0f; 
+	float elevator = 0.0f;
+
 	glm::vec3 moveDir = glm::vec3(0.0f);
 
-	glm::vec2 r_size;
-	glm::vec2 r_pos;
+	glm::vec2 r_size = glm::vec2(0.0f);
+	glm::vec2 r_pos = glm::vec2(0.0f);
 
 	void Move() {
 		float deltaTime = DeltaTime::getInstance().get();
@@ -68,8 +71,8 @@ public:
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
 		// Compute mouse delta relative to image center
-		float centerX = r_pos.x + (r_size.x / 2.0f);
-		float centerY = r_pos.y + (r_size.y / 2.0f);
+		double centerX = glm::roundEven(r_pos.x + (r_size.x / 2.0f));
+		double centerY = glm::roundEven(r_pos.y + (r_size.y / 2.0f));
 
 		float deltaX = (float)(mouseX - centerX);
 		float deltaY = (float)(mouseY - centerY);
@@ -87,6 +90,7 @@ public:
 			this->transform->rotation = newOrientation;
 		}
 		this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(rotY), Constants::Dirs::Up);
+
 
 		glfwSetCursorPos(window, centerX, centerY);
 		

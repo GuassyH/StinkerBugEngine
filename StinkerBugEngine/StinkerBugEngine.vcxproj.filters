@@ -293,9 +293,6 @@
     <ClInclude Include="ComponentTypeID.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="TestComponent.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
     <ClInclude Include="ConsoleCapture.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
