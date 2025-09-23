@@ -74,6 +74,7 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform
 
 		// Render the scene through the light view
 		renderer.mesh->VAO1.Bind();
+		renderer.mesh->EBO1.Bind();
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(renderer.mesh->indices.size()), GL_UNSIGNED_INT, 0);
 	}
 
@@ -120,6 +121,7 @@ void Camera::LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transfo
 		}
 
 		renderer.mesh->VAO1.Bind();
+		renderer.mesh->EBO1.Bind();
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(renderer.mesh->indices.size()), GL_UNSIGNED_INT, 0);
 	}
 }
@@ -140,7 +142,7 @@ void Camera::Render(Scene* scene) {
 	// TEMPORARY
 	l_transform.position = this->transform->position + (-direction * glm::vec3(100));
 
-	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 1.0f, 200.0f);
+	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 200.0f);
 	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + direction, WorldUp);
 	glm::mat4 light_VP = lightProj * lightView;
 
@@ -149,8 +151,11 @@ void Camera::Render(Scene* scene) {
 	glEnable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
+
+
 	// Bind the shadowMaps FBO and Draw the Scene
 	m_shadowMapFBO.BindForWriting();
+	glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
 	ShadowPass(light_VP, scene->main_light->GetComponent<Light>(), l_transform);
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -170,6 +175,7 @@ void Camera::Render(Scene* scene) {
 		glEnable(GL_DEPTH_TEST);
 
 		glViewport(0, 0, output_texture->imgWidth, output_texture->imgHeight);
+		std::cout << "shadow fbo tex: " << m_shadowMapFBO.m_shadowMap << " - output_tex: " << output_texture->ID << "\n";
 	}
 
 	for (FullScreenPass pass : scene->passes) {
@@ -197,7 +203,8 @@ bool Camera::CheckOuputFBO(bool forceRewrite) {
 	// Delete old buffers & textures if needed
 	if (outputFBO) { glDeleteFramebuffers(1, &outputFBO); outputFBO = 0; }
 	if (outputRBO) { glDeleteRenderbuffers(1, &outputRBO); outputRBO = 0; }
-	if (output_texture && output_texture->ID) { GLuint id = output_texture->ID; glDeleteTextures(1, &id); output_texture->ID = 0; }
+	if (output_texture && output_texture->ID && output_texture->ID != m_shadowMapFBO.m_shadowMap) 
+	{ GLuint id = output_texture->ID; glDeleteTextures(1, &id); output_texture->ID = 0; }
 
 	old_output_texture = output_texture;
 
@@ -232,6 +239,7 @@ bool Camera::CheckOuputFBO(bool forceRewrite) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		return false;
 	}
+
 
 	// unbind to be safe
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

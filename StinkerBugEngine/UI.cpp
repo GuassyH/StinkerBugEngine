@@ -40,11 +40,17 @@ void UI::imgui_render(Scene& scene) {
 	int mode = 0;
 	glfwGetInputMode(display.window, mode);
 
+
+	
 	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity);
 	topBarWindow.Draw(scene, is_entity_selected, selected_entity);
 	HierarchyWindow().Draw(scene, is_entity_selected, selected_entity);
 	InspectorWindow().Draw(scene, is_entity_selected, selected_entity);
 	Console();
+	
+
+	// ImGui::ShowDemoWindow();
+	
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
