@@ -33,7 +33,7 @@ public:
 
 	void RecalculateMesh();
 
-	void render(Shader shader, Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
+	void render(Material* m_material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
 
 	~Mesh();
 

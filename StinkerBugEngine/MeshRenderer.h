@@ -10,6 +10,7 @@
 #include "Model.h"
 #include "Vertex.h"
 #include "Mesh.h"
+#include "Material.h"
 
 #include "VAO.h"
 #include "VBO.h"
@@ -25,12 +26,12 @@ public:
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Mesh Renderer")) {
-			/*
+			
 			if (model) {
-				ImGui::Text("Mesh: %s", model->name);
+				ImGui::Text("Model: %s", model->name);
 			}
 			else {
-				ImGui::Text("Mesh: None");
+				ImGui::Text("Model: None");
 			}
 			if (material) {
 				ImGui::ColorEdit4("Color", &material->Color.r);
@@ -40,8 +41,7 @@ public:
 			else {
 				ImGui::Text("Material: None");
 			}
-			*/
-
+			
 		}
 	}
 };

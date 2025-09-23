@@ -22,7 +22,7 @@
 #include "Light.h"
 
 class Model {
-protected:
+private:
 	std::vector<Mesh> meshes;
 	std::vector<Texture> textures_loaded;
 	std::string directory;
@@ -35,12 +35,12 @@ public:
 	const char* name = "new_model";
 
 	Model() = default;
-	Model(Mesh mesh);
+	Model(Mesh& mesh);
 	~Model() = default;
 
 	void init();
 	void loadModel(std::string path);
-	void render(Shader shader, Material* m_material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
+	void render(Material* m_material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
 	void cleanup();
 };
 

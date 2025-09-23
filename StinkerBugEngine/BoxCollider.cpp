@@ -4,7 +4,7 @@
 
 bool BoxCollider::CalculateCorners() {
 	// If the box collider isnt setup correctly (doesnt have a mesh) then return false
-	if (!entityHelper->GetComponent<MeshRenderer>().model) { return false; }
+	// if (!entityHelper->GetComponent<MeshRenderer>().model) { return false; }
 
 	if (init) {
 		vert_positions = {

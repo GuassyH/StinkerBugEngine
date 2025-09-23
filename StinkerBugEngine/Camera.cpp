@@ -59,7 +59,7 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform
 
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
+		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
 		
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 		r_transform.UpdateMatrix();
@@ -72,7 +72,7 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
 
 		// Render the scene through the light view
-		renderer.model->render(m_shadowMapShader, renderer.material, &r_transform, transform, this, &scene.main_light->GetComponent<Light>(), true);
+		renderer.model->render(renderer.material, &r_transform, transform, this, &light, true);
 	}
 
 }
@@ -83,12 +83,11 @@ void Camera::LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transfo
 
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a mesh and material then skip
+		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
 
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
-		Shader& r_shader = renderer.material->shader;
 
-		renderer.model->render(r_shader, renderer.material, &r_transform, transform, this, &scene.main_light->GetComponent<Light>(), false);
+		renderer.model->render(renderer.material, &r_transform, transform, this, &light, false);
 	}
 }
 

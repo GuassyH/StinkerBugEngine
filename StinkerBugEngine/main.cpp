@@ -44,7 +44,9 @@ int main(void) {
 	EntityHelper dir_light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS);
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
-	
+
+
+
 	Scene& active_scene = sceneManager.GetActiveScene();
 	active_scene.StartEntityBehaviours();
 	active_scene.WakeEntityBehaviours();
