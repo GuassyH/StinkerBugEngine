@@ -17,7 +17,9 @@ class Light : public Component {
 public:
 	// Global
 	LightTypes light_type = LightTypes::Spotlight;
-	glm::vec4 color = glm::vec4(1.0);
+	glm::vec4 color = glm::vec4(1.0f);
+	glm::vec3 vec_direction;
+	glm::mat4 light_VP = glm::mat4(1.0f);
 
 	// Spotlight
 	float distance;

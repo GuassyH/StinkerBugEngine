@@ -12,10 +12,12 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+#include "Shader.h"
 
 class Transform;
 class Material;
 class Camera;
+struct Light;
 
 
 struct Mesh {
@@ -30,6 +32,8 @@ public:
 	
 
 	void RecalculateMesh();
+
+	void render(Shader shader, Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
 
 	~Mesh();
 

@@ -77,7 +77,8 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 				if (ImGui::Button("Mesh Renderer", ImVec2(235, 20))) {
 					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS);
-					new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Cube());
+					Mesh n_m = Mesh(Constants::Shapes::Cube());
+					new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
 					new_ntt.GetComponent<MeshRenderer>().material = new Material();
 					new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();

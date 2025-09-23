@@ -13,8 +13,13 @@
 #include "Constants.h"
 #include "Vertex.h"
 
+
 #include "Texture.h"
 #include "Mesh.h"
+#include "Shader.h"
+#include "Camera.h"
+#include "Transform.h"
+#include "Light.h"
 
 class Model {
 protected:
@@ -30,11 +35,12 @@ public:
 	const char* name = "new_model";
 
 	Model() = default;
+	Model(Mesh mesh);
 	~Model() = default;
 
 	void init();
 	void loadModel(std::string path);
-	void render();
+	void render(Shader shader, Material* m_material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
 	void cleanup();
 };
 

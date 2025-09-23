@@ -10,7 +10,6 @@
 
 class BoxCollider : public Collider {
 public:
-    std::vector<Vertex> vertices;
     std::vector<glm::vec3> vert_positions;
 
     bool CalculateCorners();

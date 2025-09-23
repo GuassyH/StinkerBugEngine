@@ -77,7 +77,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Cube());
+			Mesh n_m = Mesh(Constants::Shapes::Cube());
+			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
 			new_ntt.GetComponent<MeshRenderer>().material = new Material();
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
@@ -87,7 +88,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		if (ImGui::Button("Create Sphere", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::UVSphere());
+			Mesh n_m = Mesh(Constants::Shapes::UVSphere());
+			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
 			new_ntt.GetComponent<MeshRenderer>().material = new Material();
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
@@ -97,7 +99,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		if (ImGui::Button("Create Plane", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Plane());
+			Mesh n_m = Mesh(Constants::Shapes::Plane());
+			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
 			new_ntt.GetComponent<MeshRenderer>().material = new Material();
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
