@@ -10,7 +10,19 @@
 
 class BoxCollider : public Collider {
 public:
+    std::vector<glm::vec3> corner_positions = {
+            glm::vec3(0, 0, 0),
+            glm::vec3(1, 0, 0),
+            glm::vec3(0, 1, 0),
+            glm::vec3(1, 1, 0),
+
+            glm::vec3(0, 0, 1),
+            glm::vec3(1, 0, 1),
+            glm::vec3(0, 1, 1),
+            glm::vec3(1, 1, 1),
+    };
     std::vector<glm::vec3> vert_positions;
+
 
     bool CalculateCorners();
 
@@ -24,7 +36,8 @@ public:
 
     virtual void DrawOnInspector() override {
         if (ImGui::CollapsingHeader("Box Collider")) {
-
+            ImGui::DragFloat3("Size", &size.x, 0.1f);
+            ImGui::DragFloat3("Offset", &offset.x, 0.1f);
         }
     }
 
@@ -35,7 +48,7 @@ private:
     
     glm::vec3 last_rotation = glm::vec3(0);
     glm::vec3 last_position = glm::vec3(0);
-    glm::vec3 last_scale = glm::vec3(1);
+    glm::vec3 last_size = glm::vec3(1);
 };
 
 
