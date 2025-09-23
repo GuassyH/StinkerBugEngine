@@ -6,7 +6,6 @@
 #include <array>
 
 #include "Vertex.h"
-#include "Model.h"
 
 #include "Constants.h"
 
@@ -28,7 +27,7 @@ public:
 	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds);
 	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds);
 	Mesh(const Constants::Shapes::Shape& shape);
-	Mesh(Model& model);
+	
 
 	void RecalculateMesh();
 
