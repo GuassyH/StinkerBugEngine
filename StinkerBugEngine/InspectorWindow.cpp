@@ -80,7 +80,7 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS);
 					Mesh n_m = Mesh(Constants::Shapes::Cube());
 					new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
-					new_ntt.GetComponent<MeshRenderer>().material = new Material();
+					new_ntt.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
 					new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();
 					new_ntt.~EntityHelper();

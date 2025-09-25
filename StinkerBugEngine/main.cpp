@@ -39,7 +39,7 @@ int main(void) {
 
 	Shader skybox_shader("skybox.vert", "skybox.frag");
 	Material skybox_mat(skybox_shader);
-	
+
 	FullScreenPass skybox_pass(skybox_mat);
 	scene.passes.push_back(skybox_pass);
 
@@ -47,12 +47,12 @@ int main(void) {
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
 
+
 	EntityHelper goblin(scene.CreateEntity("Goblin"), &scene.Scene_ECS);
 	goblin.AddComponent<MeshRenderer>().model = new Model(glm::vec3(0.05f));
 	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
-	goblin.GetComponent<MeshRenderer>().material = new Material();
-	goblin.AddComponent<Transform>().scale = goblin.GetComponent<MeshRenderer>().model->model_scale;
-
+	goblin.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
+	goblin.GetComponent<Transform>().scale = goblin.GetComponent<MeshRenderer>().model->model_scale;
 
 	Scene& active_scene = sceneManager.GetActiveScene();
 	active_scene.StartEntityBehaviours();

@@ -1,5 +1,5 @@
 #version 460 core
-
+#extension GL_NV_gpu_shader5 : enable
 
 #ifdef LIT
 	uniform vec3 lightDir;
@@ -13,6 +13,8 @@ vec4 shadowColor = vec4(0.9, 0.9, 0.95, 1.0);
 
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
+
+uniform uint32_t flags;
 
 uniform bool hasDiffuse;
 uniform bool hasSpecular;
@@ -83,27 +85,40 @@ void main(){
 		depthVal = 1.0 - (min(length(camPos - crntPos), 1000.0) / 1000.0); // Seperates object a bit, temporaray
 	#endif
 
-	#ifdef LIT	
+
+	#ifdef LIT
 		lightVal = directionalLight();
 		#ifdef SHADOW
 			vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
 			projCoords = projCoords * 0.5 + 0.5;
 			shadowVal = max(ShadowPCF(projCoords), 0.3); 
 		#endif
-	#endif
 
-
-	if(hasDiffuse){
-		fragColor = diffuseMap * min(lightVal, shadowVal) * depthVal;
-	}else{
-		fragColor = vec4(1.0) * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
-	}
-
-	#ifdef LIT
 		#ifdef SHADOW
+			if(hasDiffuse){
+				fragColor = diffuseMap * color * min(lightVal, shadowVal) * depthVal;
+			}else{
+				fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
+			}
 			if(shadowVal < 1.0){
 				fragColor *= shadowColor;
 			}
 		#endif
+		#ifndef SHADOW
+			if(hasDiffuse){
+				fragColor = diffuseMap * color * depthVal;
+			}else{
+				fragColor = color * depthVal;
+			}
+		#endif
 	#endif
+
+	#ifndef LIT
+		if(hasDiffuse){
+			fragColor = diffuseMap * color * depthVal;
+		}else{
+			fragColor = color * depthVal;
+		}
+	#endif
+
 }

@@ -35,8 +35,36 @@ public:
 			}
 			if (material) {
 				ImGui::ColorEdit4("Color", &material->Color.r);
-				ImGui::Checkbox("Lit", &material->Lit);
-				ImGui::Checkbox("Depth", &material->Depth);
+				if (ImGui::Selectable("Lit", material->HasFlag(MaterialFlags_Lit), ImGuiSelectableFlags_None, ImVec2(50, 20))) {
+					if(material->HasFlag(MaterialFlags_Lit)) {
+						material->RemoveFlag(MaterialFlags_Lit);
+					}
+					else {
+						material->AddFlag(MaterialFlags_Lit);
+					}
+				}
+				if (ImGui::Selectable("Depth", material->HasFlag(MaterialFlags_Depth), ImGuiSelectableFlags_None, ImVec2(50, 20))) {
+					if (material->HasFlag(MaterialFlags_Depth)) {
+						material->RemoveFlag(MaterialFlags_Depth);
+					}
+					else {
+						material->AddFlag(MaterialFlags_Depth);
+					}
+				}
+				if (ImGui::Selectable("Shadow", material->HasFlag(MaterialFlags_Shadow), ImGuiSelectableFlags_None, ImVec2(50, 20))) {
+					if (material->HasFlag(MaterialFlags_Shadow)) {
+						material->RemoveFlag(MaterialFlags_Shadow);
+					}
+					else {
+						material->AddFlag(MaterialFlags_Shadow);
+					}
+				}
+
+				if(ImGui::Button("Recompile Shader")) {
+					material->Recompile();
+				}
+				// ImGui::Checkbox("Lit", &material->Lit);
+				// ImGui::Checkbox("Depth", &material->Depth);
 			}
 			else {
 				ImGui::Text("Material: None");

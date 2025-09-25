@@ -79,7 +79,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
 			Mesh n_m = Mesh(Constants::Shapes::Cube());
 			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
-			new_ntt.GetComponent<MeshRenderer>().material = new Material();
+			new_ntt.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
@@ -90,7 +90,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
 			Mesh n_m = Mesh(Constants::Shapes::UVSphere());
 			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
-			new_ntt.GetComponent<MeshRenderer>().material = new Material();
+			new_ntt.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
@@ -101,7 +101,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
 			Mesh n_m = Mesh(Constants::Shapes::Plane());
 			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
-			new_ntt.GetComponent<MeshRenderer>().material = new Material();
+			new_ntt.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();

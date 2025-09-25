@@ -26,7 +26,7 @@ public:
 	float gravity = -9.82f;
 
 	// Environment
-	float ambient = 0.2f;
+	float ambient = 0.3f;
 	EntityHelper* main_light = nullptr;
 	ECSystem Scene_ECS;
 	std::vector<FullScreenPass> passes;

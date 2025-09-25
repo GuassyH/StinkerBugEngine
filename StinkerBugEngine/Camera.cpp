@@ -73,7 +73,7 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform
 
 		// Render the scene through the light view
 		//renderer.model->render(renderer.material, &r_transform, transform, this, &light, true);
-		renderer.model->render(renderer.material->shader, &r_transform, transform, this, &light, true);
+		renderer.model->render(renderer.material, &r_transform, transform, this, &light, true);
 	}
 
 }
@@ -89,7 +89,7 @@ void Camera::LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transfo
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 
 		//renderer.model->render(renderer.material, &r_transform, transform, this, &light, false);
-		renderer.model->render(renderer.material->shader, &r_transform, transform, this, &light, false);
+		renderer.model->render(renderer.material, &r_transform, transform, this, &light, false);
 	}
 }
 

@@ -5,6 +5,10 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Constants.h"
+#include "Display.h"
+#include "EntityHelper.h"
+
+class Scene;
 
 class EditorCamera {
 public:
@@ -26,6 +30,18 @@ public:
 
 	glm::vec2 r_size = glm::vec2(0.0f);
 	glm::vec2 r_pos = glm::vec2(0.0f);
+
+
+	EntityHelper arrowX;
+	EntityHelper arrowY;
+	EntityHelper arrowZ;
+	EntityHelper LittleBall;
+
+	EntityHelper selected_entity_helper;
+
+	// TEMPORARY SOLUTION
+	void AddGizmoEntities(Scene& scene);
+	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
 
 	void Move() {
 		float deltaTime = DeltaTime::getInstance().get();

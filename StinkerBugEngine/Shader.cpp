@@ -4,6 +4,8 @@
 #include <string>      // for std::string
 #include <iostream>    // for std::cerr
 
+#include "Material.h"
+
 // READFILE IS BORROWED
 std::string ReadFile(const std::string& filepath) {
 	std::ifstream file(filepath);
@@ -40,15 +42,28 @@ void CheckCompileErrors(unsigned int shader, const std::string& type) {
 }
 
 // Should be a template maybe?
-Shader::Shader(const char* vertexShaderFile, const char* fragmentShaderFile) {
+Shader::Shader(const char* vertexShaderFile, const char* fragmentShaderFile, Material* material) : vertexPath(vertexShaderFile), fragmentPath(fragmentShaderFile) {
 	std::string vertCode = ReadFile(vertexShaderFile);
 	std::string fragBaseCode = ReadFile(fragmentShaderFile);
 
 	std::ostringstream defStr; defStr << "#version 460 core" << "\n";
 	
-	defStr << "#define LIT" << "\n";
-	defStr << "#define DEPTH" << "\n";
-	defStr << "#define SHADOW" << "\n";
+	if(!material) {
+		defStr << "#define LIT" << "\n";
+		defStr << "#define DEPTH" << "\n";
+		defStr << "#define SHADOW" << "\n";
+	}
+	else {
+		if(material->HasFlag(MaterialFlags_Lit)) {
+			defStr << "#define LIT" << "\n";
+		}
+		if(material->HasFlag(MaterialFlags_Depth)) {
+			defStr << "#define DEPTH" << "\n";
+		}
+		if(material->HasFlag(MaterialFlags_Shadow)) {
+			defStr << "#define SHADOW" << "\n";
+		}
+	}
 
 	std::string fragCode = defStr.str() + "\n//" + fragBaseCode;
 	// std::cout << fragCode << std::endl;
@@ -79,6 +94,42 @@ void Shader::Compile(const char* vertSource, const char* fragSource) {
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+}
+
+void Shader::Recompile(Material* material) {
+	std::string vertCode = ReadFile(vertexPath);
+	std::string fragBaseCode = ReadFile(fragmentPath);
+
+	std::ostringstream defStr; defStr << "#version 460 core" << "\n";
+
+
+	if (!material) {
+		defStr << "#define LIT" << "\n";
+		defStr << "#define DEPTH" << "\n";
+		defStr << "#define SHADOW" << "\n";
+	}
+	else {
+		if (material->HasFlag(MaterialFlags_Lit)) {
+			defStr << "#define LIT" << "\n";
+		}
+		if (material->HasFlag(MaterialFlags_Depth)) {
+			defStr << "#define DEPTH" << "\n";
+		}
+		if (material->HasFlag(MaterialFlags_Shadow)) {
+			defStr << "#define SHADOW" << "\n";
+		}
+	}
+
+	std::string fragCode = defStr.str() + "\n//" + fragBaseCode;
+	// std::cout << fragCode << std::endl;
+
+	const char* vertSource = vertCode.c_str();
+	const char* fragSource = fragCode.c_str();
+
+	glDeleteProgram(ID); 
+
+	Compile(vertSource, fragSource);
+
 }
 
 void Shader::Use() {

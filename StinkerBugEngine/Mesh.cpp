@@ -40,7 +40,7 @@ void Mesh::RecalculateMesh() {
 
 
 
-void Mesh::render(Shader& shader, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
+void Mesh::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
 
 	if(shadowPass) {
 		VAO1.Bind();
@@ -48,6 +48,8 @@ void Mesh::render(Shader& shader, Transform* m_transform, Transform* c_transform
 		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 		return;
 	}
+
+	Shader& shader = material->shader;
 
 	if (!&shader || !light || !cam || !m_transform || !c_transform) { return; }
 	shader.Use();
@@ -95,7 +97,7 @@ void Mesh::render(Shader& shader, Transform* m_transform, Transform* c_transform
 	
 	// Others
 	shader.SetVec3("camPos", c_transform->position);
-
+	shader.SetVec4("color", material->Color);
 
 	glm::vec3 l_dir = light->vec_direction;
 	glm::vec3 l_col = light->color;

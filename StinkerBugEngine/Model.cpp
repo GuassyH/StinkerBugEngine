@@ -51,7 +51,7 @@ void Model::loadModel(std::string path) {
 	directory = path.substr(0, path.find_last_of("/"));
 	processNode(scene->mRootNode, scene);
 
-	name = scene->mName.C_Str();
+	name = "new_Model";
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene) {
@@ -131,13 +131,13 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 	
 	Mesh newMesh(vertices, indices, textures);
-	newMesh.name = mesh->mName.C_Str();
+	newMesh.name = "new_Mesh";
 	return newMesh;
 }
 
-void Model::render(Shader& shader, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
+void Model::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
 	for (Mesh mesh : meshes) {
-		mesh.render(shader, m_transform, c_transform, cam, light, shadowPass);
+		mesh.render(material, m_transform, c_transform, cam, light, shadowPass);
 	}
 }
 

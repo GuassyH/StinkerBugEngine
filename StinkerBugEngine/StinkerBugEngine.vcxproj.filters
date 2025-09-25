@@ -177,6 +177,9 @@
     <ClCompile Include="TopBarWindow.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
+    <ClCompile Include="EditorCamera.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VBO.h">

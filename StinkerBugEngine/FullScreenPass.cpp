@@ -21,9 +21,9 @@ FullScreenPass::FullScreenPass(Material& material) : material(&material) {
 	VAO1.Unbind();
 	EBO1.Unbind();
 
-	FullScreenPass::material->Lit = false;
-	FullScreenPass::material->Depth = false;
-	FullScreenPass::material->fullscreen_pass = true;
+	FullScreenPass::material->RemoveFlag(MaterialFlags_Lit);
+	FullScreenPass::material->RemoveFlag(MaterialFlags_Depth);
+	FullScreenPass::material->AddFlag(MaterialFlags_FullscreenPass);
 	
 	for (auto& vert : vertices) {
 		vert.pos.z = -0.1f;

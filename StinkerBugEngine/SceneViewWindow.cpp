@@ -3,6 +3,7 @@
 #include "ComponentsList.h"
 #include "EntityHelper.h"
 #include "Constants.h"
+#include "SceneManager.h"
 
 void SceneViewWindow::Init() {
 	cam_output = new Texture();
@@ -15,6 +16,8 @@ void SceneViewWindow::Init() {
 	editorCamera->camera->nearPlane = 0.1f;
 	editorCamera->camera->output_texture = cam_output;
 	editorCamera->camera->CheckOuputFBO(true);
+
+	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene());
 }
 
 
@@ -22,6 +25,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	if (!scene.HasMainLight()) { return; };
 	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);
 	editorCamera->camera->Render(&scene);
+	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity);
 
 	// Constants::DebugLog::Vec3("SceneView cam pos", editorCamera->transform->position);
 	// Constants::DebugLog::Vec3("SceneView cam rot", editorCamera->transform->rotation);
@@ -91,3 +95,5 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 	ImGui::End();
 }
+
+
