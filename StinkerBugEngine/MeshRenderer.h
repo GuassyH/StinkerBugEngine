@@ -22,6 +22,7 @@ public:
 	Material* material = nullptr;
 
 	MeshRenderer(Model& m, Material& mat) : model(&m), material(&mat) {}
+	MeshRenderer(Model* m, Material* mat) : model(m), material(mat) {}
 	MeshRenderer() = default; // still allow default construction
 
 	virtual void DrawOnInspector() override {

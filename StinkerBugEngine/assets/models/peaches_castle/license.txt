@@ -1,0 +1,11 @@
+Model Information:
+* title:	Peach Castle
+* source:	https://sketchfab.com/3d-models/peach-castle-a21cffbe8b8c4ae9b1614f26f2da8fed
+* author:	mStuff (https://sketchfab.com/mstuff)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Peach Castle" (https://sketchfab.com/3d-models/peach-castle-a21cffbe8b8c4ae9b1614f26f2da8fed) by mStuff (https://sketchfab.com/mstuff) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

@@ -36,10 +36,10 @@ namespace Gizmos {
 
 				obj.transform.UpdateMatrix();
                 if (scene.HasMainLight()) {
-				    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, &scene.main_light->GetComponent<Light>(), false);
+				    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, &scene.main_light->GetComponent<Light>());
                 }
                 else {
-                    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, nullptr, false);
+                    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, nullptr);
                 }
 
 			}

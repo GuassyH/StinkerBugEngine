@@ -135,11 +135,18 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	return newMesh;
 }
 
-void Model::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
+void Model::shadowPass(Material* material) {
 	for (Mesh mesh : meshes) {
-		mesh.render(material, m_transform, c_transform, cam, light, shadowPass);
+		mesh.shadowPass(material);
 	}
 }
+
+void Model::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light) {
+	for (Mesh mesh : meshes) {
+		mesh.render(material, m_transform, c_transform, cam, light);
+	}
+}
+
 
 void Model::cleanup() {
 	for (Mesh& mesh : meshes) {

@@ -47,13 +47,10 @@ int main(void) {
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
 
-
-	EntityHelper goblin(scene.CreateEntity("Goblin"), &scene.Scene_ECS);
-	goblin.AddComponent<MeshRenderer>().model = new Model(glm::vec3(0.05f));
+	EntityHelper goblin(scene.CreateEntity("test model"), &scene.Scene_ECS);
+	goblin.AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
-	goblin.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
-	goblin.GetComponent<Transform>().scale = goblin.GetComponent<MeshRenderer>().model->model_scale;
-
+	goblin.GetComponent<Transform>().scale = glm::vec3(0.05f);
 
 	Scene& active_scene = sceneManager.GetActiveScene();
 	active_scene.StartEntityBehaviours();

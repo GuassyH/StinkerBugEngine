@@ -50,7 +50,7 @@ void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) 
 	glm::vec3 l_dir;
 	glm::vec3 l_col;
 
-	if (light) {
+	if (light && l_transform) {
 		glm::vec3 direction;
 		float pitch = glm::radians(l_transform->rotation.x);
 		float yaw = glm::radians(l_transform->rotation.y);
@@ -71,6 +71,7 @@ void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) 
 	glUniform4f(glGetUniformLocation(material->shader.ID, "sunColor"), l_col.r, l_col.g, l_col.b, 1.0f);
 
 	glDisable(GL_DEPTH_TEST);
+
 
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);

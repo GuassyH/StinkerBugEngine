@@ -38,26 +38,14 @@ void Mesh::RecalculateMesh() {
 	EBO1.Unbind();
 }
 
-
-
-void Mesh::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
-
-	if(shadowPass) {
-		if (light) {
-			if (material && material->HasFlag(MaterialFlags_Shadow)) {
-				VAO1.Bind();
-				EBO1.Bind();
-				glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
-				return;
-			}
-			else {
-				return;
-			}
-		}
-		else {
-			return;
-		}
+void Mesh::shadowPass(Material* material) {
+	if (material && material->HasFlag(MaterialFlags_Shadow)) { 
+		VAO1.Bind();
+		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 	}
+}
+
+void Mesh::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light) {
 
 	Shader& shader = material->shader;
 
