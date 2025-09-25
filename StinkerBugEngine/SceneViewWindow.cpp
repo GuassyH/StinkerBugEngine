@@ -25,7 +25,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	if (!scene.HasMainLight()) { return; };
 	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);
 	editorCamera->camera->Render(&scene);
-	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity);
+	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity, true);
 
 	// Constants::DebugLog::Vec3("SceneView cam pos", editorCamera->transform->position);
 	// Constants::DebugLog::Vec3("SceneView cam rot", editorCamera->transform->rotation);

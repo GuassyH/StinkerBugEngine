@@ -9,6 +9,7 @@
 #include "Constants.h"
 #include "Display.h"
 #include "EntityHelper.h"
+#include "Gizmos.h"
 
 class Scene;
 
@@ -19,23 +20,17 @@ public:
 	
 	EditorCamera() = default;
 	
-	struct ArrowGizmo {
-		MeshRenderer mesh_renderer;
-		Transform transform;
-	};
-
-	ArrowGizmo arrowX;
-	ArrowGizmo arrowY;
-	ArrowGizmo arrowZ;
-	ArrowGizmo LittleBall;
-
+	
 	EntityHelper selected_entity_helper;
+	unsigned int selected_gizmo = 0;
+	std::vector<Gizmos::Gizmo> gizmos;
+
 
 	// TEMPORARY SOLUTION
 	void AddGizmoEntities(Scene& scene);
-	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity, bool window_hovered);
 
-
+	
 
 	float moveSpeed = 2.0f;
 	float speedMul = 1.0f;

@@ -58,9 +58,6 @@
     <Filter Include="Resource Files\Shaders\PostProcess">
       <UniqueIdentifier>{4228cdea-0a75-4347-ba62-b6e71aed4413}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Core\UI">
-      <UniqueIdentifier>{468b228b-d344-4dec-8f36-bdb2a00da78c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Core\UI">
       <UniqueIdentifier>{cb6aa583-a9ee-4de7-8df5-f42cad0e5f49}</UniqueIdentifier>
     </Filter>
@@ -72,6 +69,12 @@
     </Filter>
     <Filter Include="Resource Files\Models">
       <UniqueIdentifier>{4195ff70-aced-4ed5-8610-c66ace2691c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\UI">
+      <UniqueIdentifier>{27923ba9-d57f-4428-9cfd-5b5ce520564b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\UI\Gizmos">
+      <UniqueIdentifier>{468b228b-d344-4dec-8f36-bdb2a00da78c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -156,9 +159,6 @@
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Componentesque</Filter>
-    </ClCompile>
     <ClCompile Include="FullScreenPass.cpp">
       <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
@@ -171,14 +171,17 @@
     <ClCompile Include="SceneViewWindow.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Componentesque</Filter>
-    </ClCompile>
     <ClCompile Include="TopBarWindow.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
     <ClCompile Include="EditorCamera.cpp">
       <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -302,15 +305,6 @@
     <ClInclude Include="OskarComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="UI.h">
-      <Filter>Header Files\Core\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="HierarchyWindow.h">
-      <Filter>Header Files\Core\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="InspectorWindow.h">
-      <Filter>Header Files\Core\UI</Filter>
-    </ClInclude>
     <ClInclude Include="FullScreenPass.h">
       <Filter>Header Files\Componentesque</Filter>
     </ClInclude>
@@ -326,23 +320,35 @@
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="CharleyComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
     <ClInclude Include="ShadowMapFBO.h">
-      <Filter>Header Files\Componentesque</Filter>
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TopBarWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
     <ClInclude Include="SceneViewWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="InspectorWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="HierarchyWindow.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
     <ClInclude Include="EditorCamera.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Componentesque</Filter>
-    </ClInclude>
-    <ClInclude Include="TopBarWindow.h">
-      <Filter>Header Files\Core\UI</Filter>
-    </ClInclude>
-    <ClInclude Include="CharleyComponent.h">
-      <Filter>Header Files\Components</Filter>
+    <ClInclude Include="Gizmos.h">
+      <Filter>Header Files\Core\UI\Gizmos</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
