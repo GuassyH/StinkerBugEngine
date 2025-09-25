@@ -22,7 +22,7 @@ void SceneViewWindow::Init() {
 
 
 void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
-	if (!scene.HasMainLight()) { return; };
+	// if (!scene.HasMainLight()) { return; };
 	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);
 	editorCamera->camera->Render(&scene);
 	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity, true);

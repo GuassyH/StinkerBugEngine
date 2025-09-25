@@ -112,12 +112,10 @@ void Scene::Render() {
 		}
 	}
 
-	if (HasMainLight()) {
-		for (auto& [id, camPtr] : Scene_ECS.components[typeid(Camera)]) {
-			Camera* c = dynamic_cast<Camera*>(camPtr.get());
-			c->UpdateMatrix(display.windowWidth, display.windowHeight);
-			c->Render(this);
-		}
+	for (auto& [id, camPtr] : Scene_ECS.components[typeid(Camera)]) {
+		Camera* c = dynamic_cast<Camera*>(camPtr.get());
+		c->UpdateMatrix(display.windowWidth, display.windowHeight);
+		c->Render(this);
 	}
 }
 

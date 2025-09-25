@@ -15,13 +15,20 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::Separator();
 
 	ImGui::Text("Entities");
-	for (auto [id, name] : scene.Scene_ECS.entity_names) {
-		std::ostringstream ss; ss << name;
+	for (auto id : scene.Scene_ECS.entities) {
+		std::ostringstream ss; ss << scene.Scene_ECS.entity_names.find(id)->second;
 		// Should maybe be a selectable instead?
 		if (ImGui::Button(ss.str().c_str(), ImVec2(330, 20))) {
-			selected_entity = id;
-			is_entity_selected = true;
-			std::cout << "Selected: " << name << "\n";
+			if(scene.Scene_ECS.entities.find(id) == scene.Scene_ECS.entities.end()) {
+				is_entity_selected = false;
+				selected_entity = id;
+				continue;
+			}
+			else {
+				selected_entity = id;
+				is_entity_selected = true;
+				std::cout << "Selected: " << ss.str().c_str() << "\n";
+			}
 		}
 	}
 

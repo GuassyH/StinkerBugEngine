@@ -54,7 +54,7 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 	CameraMatrix = projection * view;
 }
 
-void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform) {
+void Camera::ShadowPass(glm::mat4 light_VP, Light* light) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
@@ -72,13 +72,13 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
 
 		// Render the scene through the light view
-		renderer.model->render(renderer.material, &r_transform, transform, this, &light, true);
+		renderer.model->render(renderer.material, &r_transform, transform, this, light, true);
 	}
 
 }
 
 
-void Camera::LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transform) {
+void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
@@ -87,43 +87,48 @@ void Camera::LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transfo
 
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 
-		renderer.model->render(renderer.material, &r_transform, transform, this, &light, false);
+		renderer.model->render(renderer.material, &r_transform, transform, this, light, false);
 	}
 }
 
 
 void Camera::Render(Scene* scene) {
 
-	Transform& l_transform = scene->main_light->GetComponent<Transform>();
-	// l_transform.UpdateMatrix();
-	float pitch = glm::radians(l_transform.rotation.x);
-	float yaw = glm::radians(l_transform.rotation.y);
-
-	glm::vec3 direction;
-	direction.x = cos(pitch) * cos(yaw);
-	direction.y = sin(pitch);
-	direction.z = cos(pitch) * sin(yaw);
-	scene->main_light->GetComponent<Light>().vec_direction = direction;
-
-	// TEMPORARY
-	l_transform.position = this->transform->position + (-direction * glm::vec3(100));
-
-	glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 200.0f);
-	glm::mat4 lightView = glm::lookAt(l_transform.position, l_transform.position + direction, WorldUp);
-	glm::mat4 light_VP = lightProj * lightView;
-	scene->main_light->GetComponent<Light>().light_VP = light_VP;
-
 	glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
+	glm::mat4 light_VP = glm::mat4(1.0f);
+	Transform* l_transform = nullptr;
 
+	if (scene->HasMainLight()) { 
+		l_transform = &scene->main_light->GetComponent<Transform>();
+		// l_transform.UpdateMatrix();
+		float pitch = glm::radians(l_transform->rotation.x);
+		float yaw = glm::radians(l_transform->rotation.y);
 
-	// Bind the shadowMaps FBO and Draw the Scene
-	m_shadowMapFBO.BindForWriting();
-	glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
-	ShadowPass(light_VP, scene->main_light->GetComponent<Light>(), l_transform);
+		glm::vec3 direction;
+		direction.x = cos(pitch) * cos(yaw);
+		direction.y = sin(pitch);
+		direction.z = cos(pitch) * sin(yaw);
+		scene->main_light->GetComponent<Light>().vec_direction = direction;
+
+		// TEMPORARY
+		l_transform->position = this->transform->position + (-direction * glm::vec3(100));
+
+		glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 200.0f);
+		glm::mat4 lightView = glm::lookAt(l_transform->position, l_transform->position + direction, WorldUp);
+		glm::mat4 light_VP = lightProj * lightView;
+		
+		scene->main_light->GetComponent<Light>().light_VP = light_VP;
+		
+		// Bind shadow map and draw scene to it
+		m_shadowMapFBO.BindForWriting();
+		glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
+		ShadowPass(light_VP, &scene->main_light->GetComponent<Light>());
+	}
+
 
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	if (!output_texture) {
@@ -144,12 +149,25 @@ void Camera::Render(Scene* scene) {
 		glViewport(0, 0, output_texture->imgWidth, output_texture->imgHeight);
 	}
 
+
+
 	for (FullScreenPass pass : scene->passes) {
-		pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+		if (scene->HasMainLight()) {
+			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+		}
+		else {
+			pass.Draw(*this, nullptr, nullptr);
+		}
 	}
-	// Do lighting pass and bind to base FBO (0) Technically dont bind shadowFBO now but its wtv
-	m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-	LightingPass(light_VP, scene->main_light->GetComponent<Light>(), l_transform);
+
+	if (scene->HasMainLight()) {
+		// Do lighting pass and bind to base FBO (0) Technically dont bind shadowFBO now but its wtv
+		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
+		LightingPass(light_VP, &scene->main_light->GetComponent<Light>());
+	}
+	else {
+		LightingPass(light_VP, nullptr);
+	}
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

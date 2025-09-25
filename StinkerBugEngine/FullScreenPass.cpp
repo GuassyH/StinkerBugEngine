@@ -33,13 +33,7 @@ FullScreenPass::FullScreenPass(Material& material) : material(&material) {
 void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) {
 	material->shader.Use();
 
-	float pitch = glm::radians(l_transform->rotation.x);
-	float yaw = glm::radians(l_transform->rotation.y);
 
-	glm::vec3 direction;
-	direction.x = cos(pitch) * cos(yaw);
-	direction.y = sin(pitch);
-	direction.z = cos(pitch) * sin(yaw);
 
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenWidth"), camera.width);
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenHeight"), camera.height);
@@ -53,12 +47,28 @@ void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) 
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camNearPlane"), camera.nearPlane);
 	glUniform1f(glGetUniformLocation(material->shader.ID, "camFarPlane"), camera.farPlane);
 
-	glm::vec3 l_dir = direction;
-	glm::vec3 l_col = light->color;
+	glm::vec3 l_dir;
+	glm::vec3 l_col;
+
+	if (light) {
+		glm::vec3 direction;
+		float pitch = glm::radians(l_transform->rotation.x);
+		float yaw = glm::radians(l_transform->rotation.y);
+
+		direction.x = cos(pitch) * cos(yaw);
+		direction.y = sin(pitch);
+		direction.z = cos(pitch) * sin(yaw);
+	
+		l_dir = direction;
+		l_col = light->color;
+	}
+	else {
+		l_dir = glm::vec3(0.0f, -1.0f, 0.0f);
+		l_col = glm::vec3(1.0f, 1.0f, 1.0f);
+	}
+	
 	glUniform3f(glGetUniformLocation(material->shader.ID, "sunDir"), l_dir.x, l_dir.y, l_dir.z);
 	glUniform4f(glGetUniformLocation(material->shader.ID, "sunColor"), l_col.r, l_col.g, l_col.b, 1.0f);
-
-
 
 	glDisable(GL_DEPTH_TEST);
 

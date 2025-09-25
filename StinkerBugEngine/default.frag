@@ -13,11 +13,10 @@ vec4 shadowColor = vec4(0.9, 0.9, 0.95, 1.0);
 
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
-
-uniform uint32_t flags;
-
 uniform bool hasDiffuse;
 uniform bool hasSpecular;
+
+uniform bool lightEnabled;
 
 uniform vec3 camPos;
 uniform vec4 color;
@@ -86,22 +85,28 @@ void main(){
 	#endif
 
 
-	#ifdef LIT
-		lightVal = directionalLight();
+	#ifdef LIT 
+			lightVal = directionalLight(); 
 		#ifdef SHADOW
-			vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
-			projCoords = projCoords * 0.5 + 0.5;
-			shadowVal = max(ShadowPCF(projCoords), 0.3); 
-		#endif
+			if(lightEnabled) { 
+				vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
+				projCoords = projCoords * 0.5 + 0.5;
+				shadowVal = max(ShadowPCF(projCoords), 0.3); 
 
-		#ifdef SHADOW
-			if(hasDiffuse){
-				fragColor = diffuseMap * color * min(lightVal, shadowVal) * depthVal;
+				if(hasDiffuse){
+					fragColor = diffuseMap * color * min(lightVal, shadowVal) * depthVal;
+				}else{
+					fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
+				}
+				if(shadowVal < 1.0){
+					fragColor *= shadowColor;
+				}
 			}else{
-				fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
-			}
-			if(shadowVal < 1.0){
-				fragColor *= shadowColor;
+				if(hasDiffuse){
+					fragColor = diffuseMap * color * depthVal;
+				}else{
+					fragColor = color * depthVal;
+				}
 			}
 		#endif
 		#ifndef SHADOW
