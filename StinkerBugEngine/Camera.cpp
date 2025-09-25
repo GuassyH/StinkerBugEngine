@@ -72,7 +72,6 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light& light, Transform& l_transform
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
 
 		// Render the scene through the light view
-		//renderer.model->render(renderer.material, &r_transform, transform, this, &light, true);
 		renderer.model->render(renderer.material, &r_transform, transform, this, &light, true);
 	}
 
@@ -88,7 +87,6 @@ void Camera::LightingPass(glm::mat4 light_VP, Light& light, Transform& l_transfo
 
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 
-		//renderer.model->render(renderer.material, &r_transform, transform, this, &light, false);
 		renderer.model->render(renderer.material, &r_transform, transform, this, &light, false);
 	}
 }

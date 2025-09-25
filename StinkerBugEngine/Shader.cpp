@@ -63,6 +63,9 @@ Shader::Shader(const char* vertexShaderFile, const char* fragmentShaderFile, Mat
 		if(material->HasFlag(MaterialFlags_Shadow)) {
 			defStr << "#define SHADOW" << "\n";
 		}
+		if (material->HasFlag(MaterialFlags_NoDepthTest)) {
+			defStr << "#define NO_DEPTH_TEST" << "\n";
+		}
 	}
 
 	std::string fragCode = defStr.str() + "\n//" + fragBaseCode;
@@ -117,6 +120,9 @@ void Shader::Recompile(Material* material) {
 		}
 		if (material->HasFlag(MaterialFlags_Shadow)) {
 			defStr << "#define SHADOW" << "\n";
+		}
+		if (material->HasFlag(MaterialFlags_NoDepthTest)) {
+			defStr << "#define NO_DEPTH_TEST" << "\n";
 		}
 	}
 

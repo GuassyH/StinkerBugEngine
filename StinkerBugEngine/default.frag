@@ -74,7 +74,7 @@ float ShadowPCF(vec3 projCoords)
 
 
 void main(){
-
+	
 	vec4 diffuseMap = texture(diffuse0, texCoords);
 	vec4 specularMap = texture(specular0, texCoords);
 	vec4 lightVal = vec4(1.0);

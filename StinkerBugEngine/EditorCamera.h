@@ -3,6 +3,8 @@
 
 
 #include "Transform.h"
+#include "MeshRenderer.h"
+
 #include "Camera.h"
 #include "Constants.h"
 #include "Display.h"
@@ -16,6 +18,24 @@ public:
 	Camera* camera = nullptr;
 	
 	EditorCamera() = default;
+	
+	struct ArrowGizmo {
+		MeshRenderer mesh_renderer;
+		Transform transform;
+	};
+
+	ArrowGizmo arrowX;
+	ArrowGizmo arrowY;
+	ArrowGizmo arrowZ;
+	ArrowGizmo LittleBall;
+
+	EntityHelper selected_entity_helper;
+
+	// TEMPORARY SOLUTION
+	void AddGizmoEntities(Scene& scene);
+	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+
+
 
 	float moveSpeed = 2.0f;
 	float speedMul = 1.0f;
@@ -30,19 +50,6 @@ public:
 
 	glm::vec2 r_size = glm::vec2(0.0f);
 	glm::vec2 r_pos = glm::vec2(0.0f);
-
-
-	EntityHelper arrowX;
-	EntityHelper arrowY;
-	EntityHelper arrowZ;
-	EntityHelper LittleBall;
-
-	EntityHelper selected_entity_helper;
-
-	// TEMPORARY SOLUTION
-	void AddGizmoEntities(Scene& scene);
-	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
-
 	void Move() {
 		float deltaTime = DeltaTime::getInstance().get();
 		Display& display = Display::getInstance();
