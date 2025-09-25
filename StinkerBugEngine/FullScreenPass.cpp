@@ -51,15 +51,7 @@ void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) 
 	glm::vec3 l_col;
 
 	if (light && l_transform) {
-		glm::vec3 direction;
-		float pitch = glm::radians(l_transform->rotation.x);
-		float yaw = glm::radians(l_transform->rotation.y);
-
-		direction.x = cos(pitch) * cos(yaw);
-		direction.y = sin(pitch);
-		direction.z = cos(pitch) * sin(yaw);
-	
-		l_dir = direction;
+		l_dir = l_transform->DegToRad();
 		l_col = light->color;
 	}
 	else {

@@ -4,6 +4,11 @@ Model::Model(Mesh& mesh) {
 	meshes.push_back(mesh);
 }
 
+Model::Model(const Constants::Shapes::Shape& shape) {
+	Mesh mesh(shape);
+	meshes.push_back(mesh);
+}
+
 
 void Model::init() {}
 

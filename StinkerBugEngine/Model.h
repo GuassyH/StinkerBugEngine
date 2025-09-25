@@ -36,6 +36,7 @@ public:
 
 	Model() = default;
 	Model(Mesh& mesh);
+	Model(const Constants::Shapes::Shape& shape);
 	Model(glm::vec3 scale) : model_scale(scale) {}
 	~Model() = default;
 

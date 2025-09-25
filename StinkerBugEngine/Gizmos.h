@@ -28,7 +28,7 @@ namespace Gizmos {
 			std::vector<GizmoObject> objects;
 			void Draw(Camera* camera, Scene& scene, Transform* editor_transform, EntityHelper& selected_entity_helper) {
 			for (GizmoObject obj : objects) {
-				glm::vec3 cam_to_entity = editor_transform->position + (glm::normalize(selected_entity_helper.GetComponent<Transform>().position - editor_transform->position) * 3.0f);
+				glm::vec3 cam_to_entity = editor_transform->position + (glm::normalize(selected_entity_helper.GetComponent<Transform>().position - editor_transform->position) * 4.0f);
 				obj.transform.position = cam_to_entity + obj.position_offset;
 
 				glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
@@ -227,7 +227,7 @@ namespace Gizmos {
         GizmoObject circleY;
         GizmoObject circleZ;
 
-
+        float radius = 0.65f;
         float transparency = 0.85f;
     
         RotateHandle() {
@@ -247,7 +247,7 @@ namespace Gizmos {
             circleX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
             circleX.mesh_renderer.material->Color = Constants::Colors::Red;
             circleX.mesh_renderer.material->Color.a = transparency;
-            circleX.transform.scale = glm::vec3(0.51f);
+            circleX.transform.scale = glm::vec3(radius + 0.01f);
 
             // Y Arrow
             circleY.mesh_renderer.model = new Model();
@@ -255,7 +255,7 @@ namespace Gizmos {
             circleY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
             circleY.mesh_renderer.material->Color = Constants::Colors::Green;
             circleY.mesh_renderer.material->Color.a = transparency;
-            circleY.transform.scale = glm::vec3(0.5f);
+            circleY.transform.scale = glm::vec3(radius);
 
             // Z Arrow
             circleZ.mesh_renderer.model = new Model();
@@ -263,7 +263,7 @@ namespace Gizmos {
             circleZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
             circleZ.mesh_renderer.material->Color = Constants::Colors::Blue;
             circleZ.mesh_renderer.material->Color.a = transparency;
-            circleZ.transform.scale = glm::vec3(0.49f);
+            circleZ.transform.scale = glm::vec3(radius - 0.01f);
 
 
             circleX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);
@@ -276,6 +276,8 @@ namespace Gizmos {
         }
 
     };
+
+    
 }
 
 

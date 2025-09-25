@@ -48,6 +48,22 @@ public:
 	const glm::mat4& GetModelMatrix() const { return modelMatrix; }
 	const glm::mat4& GetRotationMatrix() const { return rotationMatrix; }
 
+	glm::vec3 DegToRad() {
+		float pitch = glm::radians(rotation.x);
+		float yaw = glm::radians(rotation.y);
+
+		glm::vec3 direction;
+		direction.z = (cos(pitch) * cos(yaw));
+		direction.y = -sin(pitch);
+		direction.x = (cos(pitch) * sin(yaw));
+		
+		return direction;
+	}
+
+	void RadToDeg(const glm::vec3& rad) {
+		rotation = glm::degrees(rad);
+	}
+
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen)) {
 			if (ImGui::DragFloat3("Position", &position.x, 0.1f)) { UpdateMatrix(); }

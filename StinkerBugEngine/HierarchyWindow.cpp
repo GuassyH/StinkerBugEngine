@@ -67,7 +67,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			new_ntt.AddComponent<Light>();
 			new_ntt.GetComponent<Light>().light_type = LightTypes::Directional;
-			new_ntt.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
+			new_ntt.GetComponent<Transform>().rotation = glm::vec3(25.0f, 205.0f, 0.0f);
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
@@ -85,9 +85,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
-			Mesh n_m = Mesh(Constants::Shapes::Cube());
-			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
-			new_ntt.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
+			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
@@ -96,9 +94,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		if (ImGui::Button("Create Sphere", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
-			Mesh n_m = Mesh(Constants::Shapes::UVSphere());
-			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
-			new_ntt.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
+			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::UVSphere()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
@@ -107,9 +103,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		if (ImGui::Button("Create Plane", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
-			Mesh n_m = Mesh(Constants::Shapes::Plane());
-			new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
-			new_ntt.GetComponent<MeshRenderer>().material = new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow);
+			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();

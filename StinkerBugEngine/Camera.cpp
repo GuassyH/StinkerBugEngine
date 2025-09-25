@@ -104,21 +104,14 @@ void Camera::Render(Scene* scene) {
 
 	if (scene->HasMainLight()) { 
 		l_transform = &scene->main_light->GetComponent<Transform>();
-		// l_transform.UpdateMatrix();
-		float pitch = glm::radians(l_transform->rotation.x);
-		float yaw = glm::radians(l_transform->rotation.y);
 
-		glm::vec3 direction;
-		direction.x = cos(pitch) * cos(yaw);
-		direction.y = sin(pitch);
-		direction.z = cos(pitch) * sin(yaw);
+
+		glm::vec3 direction = l_transform->DegToRad();
+
 		scene->main_light->GetComponent<Light>().vec_direction = direction;
 
-		// TEMPORARY
-		l_transform->position = this->transform->position + (-direction * glm::vec3(100));
-
 		glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 200.0f);
-		glm::mat4 lightView = glm::lookAt(l_transform->position, l_transform->position + direction, WorldUp);
+		glm::mat4 lightView = glm::lookAt(transform->position - (direction * glm::vec3(100)), transform->position - (direction * glm::vec3(100)) + direction, WorldUp);
 		glm::mat4 light_VP = lightProj * lightView;
 		
 		scene->main_light->GetComponent<Light>().light_VP = light_VP;
