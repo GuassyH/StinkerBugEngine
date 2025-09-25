@@ -130,7 +130,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	}
 
 	
-	// return Mesh(vertices, indices, textures);
 	Mesh newMesh(vertices, indices, textures);
 	newMesh.name = mesh->mName.C_Str();
 	return newMesh;
@@ -139,7 +138,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 void Model::render(Shader& shader, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
 	for (Mesh mesh : meshes) {
 		mesh.RecalculateMesh();
-		// mesh.render(m_material, m_transform, c_transform, cam, light, shadowPass);
+
 		mesh.render(shader, m_transform, c_transform, cam, light, shadowPass);
 	}
 }

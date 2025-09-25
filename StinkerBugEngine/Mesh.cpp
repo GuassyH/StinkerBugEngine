@@ -81,8 +81,7 @@ void Mesh::render(Shader& shader, Transform* m_transform, Transform* c_transform
 		textures[i].Bind();
 	}
 
-	std::cout << "Draw Mesh" << std::endl;
-
+	// Set uniforms, ILL CHANGE THIS TO BE MORE EFFICIENT LATER
 	glUniform1i(glGetUniformLocation(shader.ID, "ShadowMap"), 0);
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "light_VP"), 1, GL_FALSE, glm::value_ptr(light->light_VP));
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(m_transform->GetModelMatrix()));

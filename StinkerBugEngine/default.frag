@@ -89,7 +89,7 @@ void main(){
 	#endif
 
 	// fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
-	fragColor = diffuseMap * min(lightVal, shadowVal) * depthVal;
+	fragColor = vec4(1.0) * min(lightVal, shadowVal) * depthVal;
 
 	#ifdef LIT
 		#ifdef SHADOW

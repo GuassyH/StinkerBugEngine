@@ -21,12 +21,11 @@ public:
 	void Delete();
 	void Load(bool flip);
 
-	Texture() : imgWidth(1), imgHeight(1), numColCh(1), ID(1) {};
-	Texture(const char* fileName);
+	Texture() : directory("null"), path("null"), type(aiTextureType_DIFFUSE), imgHeight(1), imgWidth(1), numColCh(8), ID(0) {};
 	Texture(int imgWidth, int imgHeight);
+	Texture(std::string dir, std::string path, aiTextureType type = aiTextureType_DIFFUSE);
 	
 	// model loading
-	Texture(std::string dir, std::string path, aiTextureType type);
 
 
 };

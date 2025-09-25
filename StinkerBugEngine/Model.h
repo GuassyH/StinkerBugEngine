@@ -32,9 +32,11 @@ private:
 	std::vector<Texture> loadTextures(aiMaterial* material, aiTextureType type);
 public:
 	const char* name = "new_model";
+	glm::vec3 model_scale = glm::vec3(1.0f);
 
 	Model() = default;
 	Model(Mesh& mesh);
+	Model(glm::vec3 scale) : model_scale(scale) {}
 	~Model() = default;
 
 	void init();

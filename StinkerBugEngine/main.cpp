@@ -48,9 +48,10 @@ int main(void) {
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
 
 	EntityHelper goblin(scene.CreateEntity("Goblin"), &scene.Scene_ECS);
-	goblin.AddComponent<MeshRenderer>().model = new Model();
+	goblin.AddComponent<MeshRenderer>().model = new Model(glm::vec3(0.05f));
 	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
 	goblin.GetComponent<MeshRenderer>().material = new Material();
+	goblin.GetComponent<Transform>().scale = goblin.GetComponent<MeshRenderer>().model->model_scale;
 	
 
 	Scene& active_scene = sceneManager.GetActiveScene();
