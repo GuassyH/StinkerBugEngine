@@ -17,7 +17,7 @@ Texture::Texture(int width, int height) : directory("null"), path("null"), type(
 Texture::Texture(std::string dir, std::string path, aiTextureType type) : directory(dir), path(path), type(type), imgWidth(1), imgHeight(1), numColCh(1), ID(0) {}
 
 void Texture::Bind() {
-	glActiveTexture(ID);
+	glBindTexture(GL_TEXTURE_2D, ID);
 }
 
 void Texture::Generate() {

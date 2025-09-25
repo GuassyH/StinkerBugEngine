@@ -80,11 +80,12 @@ void Display::EndFrame() {
 	glViewport(0, 0, windowWidth, windowHeight); // Should i do this?
 	if (currentTime - lastTime >= 1.0) {
 		FrameRate = nbFrames;
+		glfwSetWindowTitle(window, (std::string(title) + " - " + std::to_string(FrameRate) + " FPS").c_str());
 		nbFrames = 0;
 		lastTime += 1.0;
 	}
 
-	// if (glfwGetKey(window, GLFW_KEY_END) == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
+	if (glfwGetKey(window, GLFW_KEY_END) == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
 	glfwPollEvents();
 	glfwSwapBuffers(window);
 }

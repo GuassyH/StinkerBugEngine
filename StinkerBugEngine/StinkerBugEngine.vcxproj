@@ -119,9 +119,6 @@
     <None Include="skybox.vert" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="OldGrass.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="TODO.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

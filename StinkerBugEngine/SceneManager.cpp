@@ -38,6 +38,7 @@ void SceneManager::UnloadScene(Scene& scene) {
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (renderer.model) {
+			renderer.model->cleanup();
 			renderer.model->~Model();
 		}
 		if (renderer.material) {

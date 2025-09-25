@@ -8,7 +8,6 @@
 #include "Camera.h"
 #include "Light.h"
 
-SceneManager& sceneManager = SceneManager::getInstance();
 
 Mesh::Mesh(const Constants::Shapes::Shape& shape, std::vector<Texture> textures)
 	: vertices(shape.getVertices()), indices(shape.getIndices()), textures(textures) {
@@ -22,10 +21,6 @@ Mesh::Mesh(std::vector<Vertex> verts, std::vector<uint32_t> inds, std::vector<Te
 
 
 void Mesh::RecalculateMesh() {
-	// The VAO is being overwritten or something like that
-	//	   VBO
-	//	   EBO
-
 	VAO1 = VAO();
 	VBO1 = VBO();
 	EBO1 = EBO();
@@ -57,13 +52,14 @@ void Mesh::render(Shader& shader, Transform* m_transform, Transform* c_transform
 	if (!&shader || !light || !cam || !m_transform || !c_transform) { return; }
 	shader.Use();
 
-	// Textures
+	// Textures should only be done once per material but for now its here
 	unsigned int diffuseIdx = 0;
 	unsigned int specularIdx = 0;
 
+	/// SINCE SHADOW MAP IS GL_TEXTURE0, START AT GL_TEXTURE1
 	for (unsigned int i = 0; i < textures.size(); i++) {
 		// activate texture slot
-		glActiveTexture(GL_TEXTURE0 + i); // Activate the texture unit first
+		glActiveTexture(GL_TEXTURE1 + i); // Activate the texture unit first
 
 		// retrieve texture number (the N in diffuse_textureN)
 		std::string name;
@@ -75,33 +71,48 @@ void Mesh::render(Shader& shader, Transform* m_transform, Transform* c_transform
 			name = "specular" + std::to_string(specularIdx++);
 			break;
 		}
+
 		// Set shader texture value
-		glUniform1i(glGetUniformLocation(shader.ID, name.c_str()), i);
+		shader.SetInt(name.c_str(), i + 1); // Set the sampler to the correct texture unit
 		// Bind
 		textures[i].Bind();
 	}
 
+	shader.SetInt("hasDiffuse", diffuseIdx > 0);
+	shader.SetInt("hasSpecular", specularIdx > 0);
+
+	// Reset active texture to shadowmap
+	cam->m_shadowMapFBO.BindForReading(GL_TEXTURE0);
+
 	// Set uniforms, ILL CHANGE THIS TO BE MORE EFFICIENT LATER
-	glUniform1i(glGetUniformLocation(shader.ID, "ShadowMap"), 0);
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "light_VP"), 1, GL_FALSE, glm::value_ptr(light->light_VP));
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(m_transform->GetModelMatrix()));
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "rotationMatrix"), 1, GL_FALSE, glm::value_ptr(m_transform->GetRotationMatrix()));
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "camMatrix"), 1, GL_FALSE, glm::value_ptr(cam->CameraMatrix));
-	glUniform3f(glGetUniformLocation(shader.ID, "camPos"), c_transform->position.x, c_transform->position.y, c_transform->position.z);
-	// glUniform4f(glGetUniformLocation(shader.ID, "color"), m_material->Color.r, m_material->Color.g, m_material->Color.b, m_material->Color.a);
+	shader.SetInt("ShadowMap", 0);
+	
+	// Set matrices
+	shader.SetMat4("light_VP", light->light_VP);
+	shader.SetMat4("modelMatrix", m_transform->GetModelMatrix());
+	shader.SetMat4("rotationMatrix", m_transform->GetRotationMatrix());
+	shader.SetMat4("camMatrix", cam->CameraMatrix);
+	
+	// Others
+	shader.SetVec3("camPos", c_transform->position);
+
 
 	glm::vec3 l_dir = light->vec_direction;
 	glm::vec3 l_col = light->color;
-	glUniform3f(glGetUniformLocation(shader.ID, "lightDir"), l_dir.x, l_dir.y, l_dir.z);
-	glUniform4f(glGetUniformLocation(shader.ID, "lightColor"), l_col.r, l_col.g, l_col.b, 1.0f);
-	glUniform1f(glGetUniformLocation(shader.ID, "ambient"), SceneManager::getInstance().GetActiveScene().ambient);
+
+	// set dir light uniforms
+	shader.SetVec3("lightDir", l_dir);
+	shader.SetVec4("lightColor", glm::vec4(l_col, 1.0f));
+	shader.SetFloat("ambient", SceneManager::getInstance().GetActiveScene().ambient);
 
 	VAO1.Bind();
-	EBO1.Bind();
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
-	VAO1.Unbind();
 
+	// Reset all to textures to the shadow map texture since its needed for all objects
+	// This should maybe not be done like this but for now it works
+	VAO1.Unbind();
 	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 void Mesh::cleanup() { 

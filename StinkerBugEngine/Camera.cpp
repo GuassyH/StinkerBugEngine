@@ -149,7 +149,7 @@ void Camera::Render(Scene* scene) {
 	for (FullScreenPass pass : scene->passes) {
 		pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
 	}
-	// Do lighting pass and bind to base FBO (0)
+	// Do lighting pass and bind to base FBO (0) Technically dont bind shadowFBO now but its wtv
 	m_shadowMapFBO.BindForReading(GL_TEXTURE0);
 	LightingPass(light_VP, scene->main_light->GetComponent<Light>(), l_transform);
 	

@@ -137,8 +137,6 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 
 void Model::render(Shader& shader, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass) {
 	for (Mesh mesh : meshes) {
-		mesh.RecalculateMesh();
-
 		mesh.render(shader, m_transform, c_transform, cam, light, shadowPass);
 	}
 }
