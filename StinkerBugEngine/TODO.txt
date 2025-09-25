@@ -1,7 +1,5 @@
 TODO LIST
 
-
-
 (1) BoxCollider is weird, big collider was very wrong. It would be helpful with a gizmo that highlights the boxcollider
 (2) Sphere vs Box collision.
 (3) Move Gizmo; When an entity is selected. Draw a gizmo at its position and rotation to help with moving quickly

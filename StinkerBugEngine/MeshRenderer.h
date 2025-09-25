@@ -7,9 +7,10 @@
 #include "Constants.h"
 #include "Component.h"
 
-#include "Material.h"
+#include "Model.h"
 #include "Vertex.h"
 #include "Mesh.h"
+#include "Material.h"
 
 #include "VAO.h"
 #include "VBO.h"
@@ -17,19 +18,20 @@
 
 class MeshRenderer : public Component{
 public:
-	Mesh* mesh = nullptr;
+	Model* model = nullptr;
 	Material* material = nullptr;
 
-	MeshRenderer(Mesh& m, Material& mat) : mesh(&m), material(&mat) {}
+	MeshRenderer(Model& m, Material& mat) : model(&m), material(&mat) {}
 	MeshRenderer() = default; // still allow default construction
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Mesh Renderer")) {
-			if (mesh) {
-				ImGui::Text("Mesh: %s", mesh->name);
+			
+			if (model) {
+				ImGui::Text("Model: %s", model->name);
 			}
 			else {
-				ImGui::Text("Mesh: None");
+				ImGui::Text("Model: None");
 			}
 			if (material) {
 				ImGui::ColorEdit4("Color", &material->Color.r);
@@ -39,6 +41,7 @@ public:
 			else {
 				ImGui::Text("Material: None");
 			}
+			
 		}
 	}
 };

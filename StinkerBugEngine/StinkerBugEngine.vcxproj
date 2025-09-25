@@ -58,6 +58,7 @@
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMovement.h" />
+    <ClInclude Include="CharleyComponent.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ColliderFunctions.h" />
     <ClInclude Include="CollisionInfo.h" />
@@ -116,9 +117,6 @@
     <None Include="ShadowMapFBO.vert" />
     <None Include="skybox.frag" />
     <None Include="skybox.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="OldGrass.png" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt" />

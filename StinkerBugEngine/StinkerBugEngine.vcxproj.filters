@@ -70,9 +70,6 @@
     <Filter Include="Header Files\Componentesque">
       <UniqueIdentifier>{2731f286-5fd6-4b00-bb5a-46a13293ed00}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resource Files\Textures">
-      <UniqueIdentifier>{c4f561d4-17ff-469c-9218-13cb9a700c02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files\Models">
       <UniqueIdentifier>{4195ff70-aced-4ed5-8610-c66ace2691c7}</UniqueIdentifier>
     </Filter>
@@ -341,6 +338,9 @@
     <ClInclude Include="TopBarWindow.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
+    <ClInclude Include="CharleyComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -361,11 +361,6 @@
     <None Include="ShadowMapFBO.vert">
       <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="OldGrass.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO.txt">

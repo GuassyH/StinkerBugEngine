@@ -1,0 +1,11 @@
+Model Information:
+* title:	AKM | Free Lowpoly
+* source:	https://sketchfab.com/3d-models/akm-free-lowpoly-409c8845a8034f92b860fdff752dc2dc
+* author:	Vlasov Daniil (https://sketchfab.com/dan741vlasov)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "AKM | Free Lowpoly" (https://sketchfab.com/3d-models/akm-free-lowpoly-409c8845a8034f92b860fdff752dc2dc) by Vlasov Daniil (https://sketchfab.com/dan741vlasov) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

@@ -17,7 +17,9 @@ class Light : public Component {
 public:
 	// Global
 	LightTypes light_type = LightTypes::Spotlight;
-	glm::vec4 color = glm::vec4(1.0);
+	glm::vec4 color = glm::vec4(1.0f);
+	glm::vec3 vec_direction;
+	glm::mat4 light_VP = glm::mat4(1.0f);
 
 	// Spotlight
 	float distance;
@@ -40,8 +42,9 @@ public:
 				ImGui::DragFloat("Distance", &distance, 0.1f, 0.0f);
 				ImGui::DragFloat("Inner Radius", &radius_i, 0.1f, 0.0f);
 				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
-			default:
-				break;
+			case LightTypes::Area:
+				ImGui::DragFloat("Inner Radius", &radius_i, 0.1f, 0.0f);
+				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
 			}
 		}
 	}

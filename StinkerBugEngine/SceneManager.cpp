@@ -24,8 +24,8 @@ void SceneManager::UnloadScene() {
 	Scene& scene = GetActiveScene();
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-		if (renderer.mesh) {
-			renderer.mesh->~Mesh();
+		if (renderer.model) {
+			renderer.model->~Model();
 		}
 		if (renderer.material) {
 			glDeleteProgram(renderer.material->shader.ID);
@@ -37,8 +37,9 @@ void SceneManager::UnloadScene() {
 void SceneManager::UnloadScene(Scene& scene) {
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-		if (renderer.mesh) {
-			renderer.mesh->~Mesh();
+		if (renderer.model) {
+			renderer.model->cleanup();
+			renderer.model->~Model();
 		}
 		if (renderer.material) {
 			glDeleteProgram(renderer.material->shader.ID);

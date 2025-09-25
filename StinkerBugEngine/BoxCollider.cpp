@@ -4,24 +4,18 @@
 
 bool BoxCollider::CalculateCorners() {
 	// If the box collider isnt setup correctly (doesnt have a mesh) then return false
-	if (!entityHelper->GetComponent<MeshRenderer>().mesh) { return false; }
+	// if (!entityHelper->GetComponent<MeshRenderer>().model) { return false; }
 
-	if (init) {
-		Mesh* v_mesh = entityHelper->GetComponent<MeshRenderer>().mesh;
-		vertices.clear();
-		vertices.insert(vertices.begin(), v_mesh->vertices.begin(), v_mesh->vertices.begin() + 8);
-	}
-
-	if (transform->rotation != last_rotation || transform->position != last_position || transform->scale != last_scale || init) {
+	if (transform->rotation != last_rotation || transform->position != last_position || size != last_size || init) {
 
 		last_rotation = transform->rotation;
 		last_position = transform->position;
-		last_scale = transform->scale;
+		last_size = size;
 		vert_positions.clear();
 
 		for (size_t i = 0; i < 8; i++)
 		{
-			glm::vec3 tb_local = vertices[i].pos + offset;
+			glm::vec3 tb_local = (corner_positions[i] + offset - glm::vec3(0.5)) * size;
 			vert_positions.push_back(glm::vec3(transform->GetModelMatrix() * glm::vec4(tb_local, 1.0f)));
 		}
 	}

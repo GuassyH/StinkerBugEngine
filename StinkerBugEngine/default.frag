@@ -6,12 +6,16 @@
 	uniform vec4 lightColor;
 #endif
 #ifdef SHADOW
-	vec4 shadowColor = vec4(0.9, 0.9, 0.95, 1.0);
 	uniform sampler2DShadow ShadowMap;
+	in vec4 shadowFragPos;
 #endif
-in vec4 shadowFragPos;
+vec4 shadowColor = vec4(0.9, 0.9, 0.95, 1.0);
 
 uniform sampler2D diffuse0;
+uniform sampler2D specular0;
+
+uniform bool hasDiffuse;
+uniform bool hasSpecular;
 
 uniform vec3 camPos;
 uniform vec4 color;
@@ -66,16 +70,11 @@ float ShadowPCF(vec3 projCoords)
 }
 #endif
 
-vec4 TextureSample(){
-	vec4 col = vec4(1);
-
-	col = texture(diffuse0, texCoords);
-
-	return col;
-}
 
 void main(){
-	vec4 texColor = TextureSample();
+
+	vec4 diffuseMap = texture(diffuse0, texCoords);
+	vec4 specularMap = texture(specular0, texCoords);
 	vec4 lightVal = vec4(1.0);
 	float depthVal = 1.0;
 	float shadowVal = 1.0;
@@ -93,8 +92,12 @@ void main(){
 		#endif
 	#endif
 
-	// fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
-	fragColor = color * min(lightVal, shadowVal) * depthVal;
+
+	if(hasDiffuse){
+		fragColor = diffuseMap * min(lightVal, shadowVal) * depthVal;
+	}else{
+		fragColor = vec4(1.0) * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
+	}
 
 	#ifdef LIT
 		#ifdef SHADOW

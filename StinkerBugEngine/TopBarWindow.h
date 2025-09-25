@@ -20,6 +20,5 @@ public:
 	bool next_frame = false;
 	bool scene_started = false;
 
-
 	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
 };

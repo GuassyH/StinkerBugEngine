@@ -6,7 +6,6 @@
 
 void SceneViewWindow::Init() {
 	cam_output = new Texture();
-
 	editorCamera = new EditorCamera();
 	editorCamera->transform = new Transform();
 	editorCamera->transform->rotation = glm::vec3(0, 0, -1);
@@ -15,12 +14,12 @@ void SceneViewWindow::Init() {
 	editorCamera->camera->farPlane = 1000.0f;
 	editorCamera->camera->nearPlane = 0.1f;
 	editorCamera->camera->output_texture = cam_output;
-
 	editorCamera->camera->CheckOuputFBO(true);
 }
 
 
 void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
+	if (!scene.HasMainLight()) { return; };
 	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);
 	editorCamera->camera->Render(&scene);
 
@@ -33,9 +32,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::Begin("Scene View", &opened);
 
 
-	
-
-	if (!editorCamera->camera->output_texture) { ImGui::End(); std::cout << "No output texture!\n"; return; }
+	if (!editorCamera->camera->output_texture ) { ImGui::End(); std::cout << "No output texture!\n"; return; }
 
 
 	ImVec2 windowSize = ImGui::GetContentRegionAvail();

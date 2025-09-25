@@ -12,27 +12,31 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+#include "Shader.h"
+#include "Texture.h"
+#include "Material.h"
 
 class Transform;
-class Material;
 class Camera;
-
+struct Light;
 
 struct Mesh {
 public:
 	const char* name = "new_mesh";
 
 	Mesh() = default;
-	template <size_t NVerts, size_t NInds>
-	Mesh(const std::array<Vertex, NVerts>& verts, const std::array<uint32_t, NInds>& inds);
-	Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds);
-	Mesh(const Constants::Shapes::Shape& shape);
+	// Mesh(const std::vector<Vertex>& verts, const std::vector<uint32_t>& inds);
+	Mesh(const Constants::Shapes::Shape& shape, std::vector<Texture> textures = {});
+	Mesh(std::vector<Vertex> verts, std::vector<uint32_t> inds, std::vector<Texture> textures = {});
 	
 
 	void RecalculateMesh();
 
-	~Mesh();
+	void render(Shader& shader, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
 
+	void cleanup();
+
+	std::vector<Texture> textures = {};
 	std::vector<Vertex> vertices = {};
 	std::vector<GLuint> indices = {};
 

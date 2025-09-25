@@ -4,6 +4,11 @@
 #include "glm/glm.hpp"
 #include "Shader.h"
 
+// FLAGS
+// uint32_t MaterialFlags_Lit = 1 << 0;
+// uint32_t MaterialFlags_Depth = 1 << 1;
+// uint32_t MaterialFlags_FullscreenPass = 1 << 2;
+
 
 class Material {
 public:
@@ -12,6 +17,7 @@ public:
 	bool fullscreen_pass = false;
 	glm::vec4 Color = glm::vec4(0.8, 0.8, 0.8, 1.0);
 	Shader shader;
+	// uint32_t flags = MaterialFlags_Lit | MaterialFlags_Depth;
 
 	// Texture diffuse0;
 	// Texture specular0;

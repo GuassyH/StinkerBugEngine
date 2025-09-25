@@ -1,6 +1,7 @@
 #include "InspectorWindow.h"
 
 #include "ComponentsList.h"
+#include "CharleyComponent.h"
 #include "EntityHelper.h"
 
 /// THIS IS THE ENTITY INSPECTOR
@@ -77,7 +78,8 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 				if (ImGui::Button("Mesh Renderer", ImVec2(235, 20))) {
 					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS);
-					new_ntt.AddComponent<MeshRenderer>().mesh = new Mesh(Constants::Shapes::Cube());
+					Mesh n_m = Mesh(Constants::Shapes::Cube());
+					new_ntt.AddComponent<MeshRenderer>().model = new Model(n_m);
 					new_ntt.GetComponent<MeshRenderer>().material = new Material();
 					new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();
@@ -123,6 +125,12 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			if (!scene.Scene_ECS.HasComponent<OskarComponent>(selected_entity)) {
 				if (ImGui::Button("Oskar Component", ImVec2(235, 20))) {
 					scene.Scene_ECS.AddComponent<OskarComponent>(selected_entity);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			if (!scene.Scene_ECS.HasComponent<CharleyComponent>(selected_entity)) {
+				if (ImGui::Button("Charley Component", ImVec2(235, 20))) {
+					scene.Scene_ECS.AddComponent<CharleyComponent>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}

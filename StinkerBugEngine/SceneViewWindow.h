@@ -14,6 +14,7 @@ private:
 	bool firstRightClick = true;
 	bool firstLeftClick = true;
 
+
 	Display& display = Display::getInstance();
 public:
 
