@@ -341,6 +341,9 @@
     <ClInclude Include="TopBarWindow.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
+    <ClInclude Include="CharleyComponent.h">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

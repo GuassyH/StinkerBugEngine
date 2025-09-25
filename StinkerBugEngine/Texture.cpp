@@ -37,13 +37,16 @@ Texture::Texture(int width, int height) : imgHeight(height), imgWidth(width), nu
 
 Texture::Texture(std::string dir, std::string path, aiTextureType type) : directory(dir), path(path), type(type) {}
 
+void Texture::Bind() {
+	glActiveTexture(ID);
+}
 
 void Texture::Generate() {
 	glGenTextures(1, &ID);
 }
 
 void Texture::Load(bool flip) {
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(flip);
 	unsigned char* bytes = stbi_load((directory + "/" + path).c_str(), &imgWidth, &imgHeight, &numColCh, 0);
 
 	glGenTextures(1, &ID);

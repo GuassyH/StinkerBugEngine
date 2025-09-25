@@ -9,15 +9,14 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
 #include "Constants.h"
 #include "Vertex.h"
-
 
 #include "Texture.h"
 #include "Mesh.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Material.h"
 #include "Transform.h"
 #include "Light.h"
 
@@ -30,7 +29,7 @@ private:
 
 	void processNode(aiNode* node, const aiScene* scene);
 	Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-	std::vector<Texture> loadTextures(aiMaterial* materials, aiTextureType type);
+	std::vector<Texture> loadTextures(aiMaterial* material, aiTextureType type);
 public:
 	const char* name = "new_model";
 
@@ -40,7 +39,8 @@ public:
 
 	void init();
 	void loadModel(std::string path);
-	void render(Material* m_material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
+	// void render(Material* m_material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
+	void render(Shader& shader, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
 	void cleanup();
 };
 

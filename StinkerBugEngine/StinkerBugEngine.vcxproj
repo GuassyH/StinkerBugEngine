@@ -58,6 +58,7 @@
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMovement.h" />
+    <ClInclude Include="CharleyComponent.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ColliderFunctions.h" />
     <ClInclude Include="CollisionInfo.h" />

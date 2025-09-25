@@ -1,30 +1,32 @@
-#include <cstdint>
-#include <iostream>
-#include <memory>
 #include <unordered_map>
+#include <iostream>
+#include <cstdint>
+#include <memory>
 
-#include "Display.h"
-#include "Constants.h"
-#include "SceneManager.h"
 #include "FullScreenPass.h"
-
+#include "SceneManager.h"
+#include "Constants.h"
+#include "Display.h"
 #include "Scene.h"
+#include "UI.h"
 
-#include "ComponentsList.h"
-#include "Entity.h"
-#include "EntityHelper.h"
+
 #include "EntityBehaviour.h"
+#include "ComponentsList.h"
+#include "EntityHelper.h"
 #include "ECSystem.h"
+#include "Entity.h"
+#include "Model.h"
 
 #include "CameraMovement.h"
-#include "SphereMove.h"
 #include "JumpMechanic.h"
-#include "UI.h"
-#include "Model.h"
+#include "SphereMove.h"
+
+
 
 int main(void) {
 	Display& display = Display::getInstance();
-	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { return -1; }
+	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { std::cout << "Display failed init" << std::endl; return -1; }
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 
@@ -45,7 +47,11 @@ int main(void) {
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(-55.0f, 15.0f, 0.0f);
 
-
+	EntityHelper goblin(scene.CreateEntity("Goblin"), &scene.Scene_ECS);
+	goblin.AddComponent<MeshRenderer>().model = new Model();
+	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
+	goblin.GetComponent<MeshRenderer>().material = new Material();
+	
 
 	Scene& active_scene = sceneManager.GetActiveScene();
 	active_scene.StartEntityBehaviours();
@@ -63,7 +69,7 @@ int main(void) {
 	ui.imgui_shutdown();
 	display.~Display();
 
-
 	
+
 	return 0;
 }

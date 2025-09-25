@@ -84,7 +84,7 @@ void Display::EndFrame() {
 		lastTime += 1.0;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_END) == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
+	// if (glfwGetKey(window, GLFW_KEY_END) == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
 	glfwPollEvents();
 	glfwSwapBuffers(window);
 }

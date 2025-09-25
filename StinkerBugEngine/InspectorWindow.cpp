@@ -1,6 +1,7 @@
 #include "InspectorWindow.h"
 
 #include "ComponentsList.h"
+#include "CharleyComponent.h"
 #include "EntityHelper.h"
 
 /// THIS IS THE ENTITY INSPECTOR
@@ -124,6 +125,12 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			if (!scene.Scene_ECS.HasComponent<OskarComponent>(selected_entity)) {
 				if (ImGui::Button("Oskar Component", ImVec2(235, 20))) {
 					scene.Scene_ECS.AddComponent<OskarComponent>(selected_entity);
+					ImGui::CloseCurrentPopup();
+				}
+			}
+			if (!scene.Scene_ECS.HasComponent<CharleyComponent>(selected_entity)) {
+				if (ImGui::Button("Charley Component", ImVec2(235, 20))) {
+					scene.Scene_ECS.AddComponent<CharleyComponent>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}

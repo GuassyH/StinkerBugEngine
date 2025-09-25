@@ -1,14 +1,15 @@
 #include "TopBarWindow.h"
 
 
+
 void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 
 	ImGui::SetNextWindowSize(ImVec2(display.windowWidth, 40));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
-	ImGui::Begin("Toolbar", &opened, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove);
+	ImGui::Begin("Toolbar", &opened, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 
 
-	ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 150, 5));
+	ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 75, 5));
 	ImGui::Selectable("Play", &play_scene, ImGuiSelectableFlags_None, ImVec2(50, 30));
 	ImGui::SameLine();
 	ImGui::Selectable("Pause", &pause_scene, ImGuiSelectableFlags_None, ImVec2(50, 30));
@@ -26,7 +27,7 @@ void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected
 	}
 
 	// When playing scene the scene should be copied and played so that when you change something
-	// - it will be reset when you stop playing
+	//	- it will be reset when you stop playing
 	if (play_scene) {
 		if (!pause_scene) {
 			if (!scene_started) {
