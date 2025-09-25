@@ -28,6 +28,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 				selected_entity = id;
 				is_entity_selected = true;
 				std::cout << "Selected: " << ss.str().c_str() << "\n";
+				continue;
 			}
 		}
 	}

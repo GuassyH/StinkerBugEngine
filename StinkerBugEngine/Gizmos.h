@@ -35,7 +35,12 @@ namespace Gizmos {
 				obj.transform.rotation = selected_entity_helper.GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
 
 				obj.transform.UpdateMatrix();
-				obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, &scene.main_light->GetComponent<Light>(), false);
+                if (scene.HasMainLight()) {
+				    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, &scene.main_light->GetComponent<Light>(), false);
+                }
+                else {
+                    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, nullptr, false);
+                }
 
 			}
 		}
