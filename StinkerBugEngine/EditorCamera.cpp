@@ -1,6 +1,6 @@
 #include "EditorCamera.h"
 #include "Scene.h"
-
+#include "Screen.h"
 
 void EditorCamera::AddGizmoEntities(Scene& scene) {
 	Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle();
@@ -12,7 +12,7 @@ void EditorCamera::AddGizmoEntities(Scene& scene) {
 	gizmos.push_back(rotate_gizmo);
 }
 
-void EditorCamera::DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity, bool window_hovered) {
+void EditorCamera::DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 
@@ -29,14 +29,42 @@ void EditorCamera::DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& se
 	glEnable(GL_DEPTH_TEST);
 
 
-	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE && window_hovered) {
-		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_W) == GLFW_PRESS && window_hovered) { selected_gizmo = 0; }
-		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_S) == GLFW_PRESS && window_hovered) { selected_gizmo = 1; }
-		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_R) == GLFW_PRESS && window_hovered) { selected_gizmo = 2; }
+	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
+		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_W) == GLFW_PRESS) { selected_gizmo = 0; }
+		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_S) == GLFW_PRESS) { selected_gizmo = 1; }
+		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_R) == GLFW_PRESS) { selected_gizmo = 2; }
 	}
 	gizmos[selected_gizmo].Draw(camera, scene, transform, selected_entity_helper);
 
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDisable(GL_BLEND);
+}
+
+void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
+	
+	// If you left click
+	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) { 
+		if (Screen::IsMouseInViewport(w_pos, w_size)) {
+			if (firstClick) {
+				// Cast a ray from the mouse position
+				Screen::ScreenCastHit scHit = Screen::EntityAtMousePos(camera, scene, Screen::GetMousePosInViewport(w_pos, w_size, glm::vec2(camera->width, camera->height)));
+				firstClick = false;
+
+				if (scHit.hit) {
+					selected_entity = scHit.entity;
+					is_entity_selected = true;
+					std::cout << "Mouse hit entity: " << scHit.entity << "\n";
+				}
+				else {
+					is_entity_selected = false;
+					std::cout << "Mouse did not hit entity\n";
+				}
+			}
+		}
+
+	}
+	else {
+		firstClick = true;
+	}
 }

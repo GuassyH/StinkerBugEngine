@@ -52,6 +52,7 @@ int main(void) {
 	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
 	goblin.GetComponent<Transform>().scale = glm::vec3(0.05f);
 
+
 	Scene& active_scene = sceneManager.GetActiveScene();
 	active_scene.StartEntityBehaviours();
 	active_scene.WakeEntityBehaviours();

@@ -76,28 +76,22 @@
     <Filter Include="Header Files\Core\UI\Gizmos">
       <UniqueIdentifier>{468b228b-d344-4dec-8f36-bdb2a00da78c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core\Rendering">
+      <UniqueIdentifier>{e055d2d7-40b2-4923-8a5b-15540aaa0c81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Rendering">
+      <UniqueIdentifier>{8180086b-d12f-42ef-a92c-efb03e7b92e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VBO.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="VAO.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="EBO.cpp">
-      <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="dependencies\include\glad.c">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="stb.cpp">
-      <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files\Scene</Filter>
@@ -107,9 +101,6 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Display.cpp">
-      <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="SphereCollider.cpp">
       <Filter>Source Files\Components\Collision</Filter>
@@ -144,9 +135,6 @@
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="ECSystem.cpp">
-      <Filter>Source Files\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="UI.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
@@ -165,9 +153,6 @@
     <ClCompile Include="ShadowMapFBO.cpp">
       <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="SceneViewWindow.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
@@ -177,27 +162,33 @@
     <ClCompile Include="EditorCamera.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
+    <ClCompile Include="VBO.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="VAO.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="EBO.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Display.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="VBO.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="VAO.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="EBO.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="DeltaTime.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Constants.h">
@@ -247,9 +238,6 @@
     </ClInclude>
     <ClInclude Include="CameraMovement.h">
       <Filter>Header Files\EntityBehaviours</Filter>
-    </ClInclude>
-    <ClInclude Include="Display.h">
-      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Header Files\Components</Filter>
@@ -317,17 +305,8 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files\Componentesque</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
     <ClInclude Include="CharleyComponent.h">
       <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="ShadowMapFBO.h">
-      <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="UI.h">
       <Filter>Header Files\Core\UI</Filter>
@@ -350,6 +329,33 @@
     <ClInclude Include="Gizmos.h">
       <Filter>Header Files\Core\UI\Gizmos</Filter>
     </ClInclude>
+    <ClInclude Include="VAO.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VBO.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowMapFBO.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Display.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="EBO.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Screen.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -368,6 +374,12 @@
       <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
     <None Include="ShadowMapFBO.vert">
+      <Filter>Resource Files\Shaders\PostProcess</Filter>
+    </None>
+    <None Include="ColToID.frag">
+      <Filter>Resource Files\Shaders\PostProcess</Filter>
+    </None>
+    <None Include="ColToID.vert">
       <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
   </ItemGroup>

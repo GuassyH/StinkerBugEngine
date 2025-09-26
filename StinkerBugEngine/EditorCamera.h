@@ -26,10 +26,11 @@ public:
 	std::vector<Gizmos::Gizmo> gizmos;
 
 
+	bool firstClick = true;
 	// TEMPORARY SOLUTION
 	void AddGizmoEntities(Scene& scene);
-	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity, bool window_hovered);
-
+	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
 	
 
 	float moveSpeed = 2.0f;
@@ -43,8 +44,8 @@ public:
 
 	glm::vec3 moveDir = glm::vec3(0.0f);
 
-	glm::vec2 r_size = glm::vec2(0.0f);
-	glm::vec2 r_pos = glm::vec2(0.0f);
+	glm::vec2 w_size = glm::vec2(0.0f);
+	glm::vec2 w_pos = glm::vec2(0.0f);
 	void Move() {
 		float deltaTime = DeltaTime::getInstance().get();
 		Display& display = Display::getInstance();
@@ -78,7 +79,6 @@ public:
 
 	}
 
-	bool firstClick = false;
 	void Look() {
 		float deltaTime = DeltaTime::getInstance().get();
 		Display& display = Display::getInstance();
@@ -89,17 +89,17 @@ public:
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
 		// Compute mouse delta relative to image center
-		double centerX = glm::roundEven(r_pos.x + (r_size.x / 2.0f));
-		double centerY = glm::roundEven(r_pos.y + (r_size.y / 2.0f));
+		double centerX = glm::roundEven(w_pos.x + (w_size.x / 2.0f));
+		double centerY = glm::roundEven(w_pos.y + (w_size.y / 2.0f));
 
 		float deltaX = (float)(mouseX - centerX);
 		float deltaY = (float)(mouseY - centerY);
 
 		// Convert to [-1,1] range based on image size (optional)
-		deltaX /= r_size.x;
-		deltaY /= r_size.y;
+		deltaX /= w_size.x;
+		deltaY /= w_size.y;
 
-		// Apply sensitivity
+		// Apply sensitivity 
 		float rotX = -deltaY * sensitivity * 100.0f;
 		float rotY = -deltaX * sensitivity * 100.0f;
 
@@ -109,9 +109,7 @@ public:
 		}
 		this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(rotY), Constants::Dirs::Up);
 
-
 		glfwSetCursorPos(window, centerX, centerY);
-		
 	}
 };
 

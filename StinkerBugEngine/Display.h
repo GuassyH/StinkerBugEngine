@@ -14,7 +14,6 @@ public:
 	int windowWidth;
 	int windowHeight;
 
-
 	int monitorWidth;
 	int monitorHeight;
 

@@ -26,7 +26,6 @@
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
-    <ClCompile Include="ECSystem.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EntityBehaviour.cpp" />
     <ClCompile Include="FullScreenPass.cpp" />
@@ -99,6 +98,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneViewWindow.h" />
+    <ClInclude Include="Screen.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMapFBO.h" />
     <ClInclude Include="SphereCollider.h" />
@@ -113,6 +113,8 @@
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ColToID.frag" />
+    <None Include="ColToID.vert" />
     <None Include="default.frag" />
     <None Include="default.vert" />
     <None Include="ShadowMapFBO.frag" />

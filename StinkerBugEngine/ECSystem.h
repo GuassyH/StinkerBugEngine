@@ -159,7 +159,7 @@ public:
 		if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return *std::static_pointer_cast<T>(map.find(id)->second); }
 
 		AddComponentBit(ComponentBit<T>(), id);
-		std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
+		// std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 
 		map[id] = std::make_shared<T>(std::forward<Args>(args)...);
 		return GetComponent<T>(id);

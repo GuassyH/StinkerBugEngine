@@ -25,7 +25,8 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	// if (!scene.HasMainLight()) { return; };
 	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);
 	editorCamera->camera->Render(&scene);
-	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity, true);
+	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity);
+	editorCamera->SelectObject(scene, is_entity_selected, selected_entity);
 
 	// Constants::DebugLog::Vec3("SceneView cam pos", editorCamera->transform->position);
 	// Constants::DebugLog::Vec3("SceneView cam rot", editorCamera->transform->rotation);
@@ -68,11 +69,11 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::SetCursorPosY(imagePosInWindow.y);
 
 	if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
-		editorCamera->r_size.x = imageSize.x;
-		editorCamera->r_size.y = imageSize.y;
+		editorCamera->w_size.x = imageSize.x;
+		editorCamera->w_size.y = imageSize.y;
 		
-		editorCamera->r_pos.x = windowPos.x + imagePosInWindow.x;
-		editorCamera->r_pos.y = windowPos.y + imagePosInWindow.y;
+		editorCamera->w_pos.x = windowPos.x + imagePosInWindow.x;
+		editorCamera->w_pos.y = windowPos.y + imagePosInWindow.y;
 
 		if (firstRightClick) {
 			glfwSetCursorPos(display.window, glm::roundEven((imageSize.x / 2.0f) + windowPos.x + imagePosInWindow.x), glm::roundEven((imageSize.y / 2.0f) + windowPos.y + imagePosInWindow.y));
