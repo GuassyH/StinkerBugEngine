@@ -1,7 +1,6 @@
 #include "HierarchyWindow.h"
 
-#include <string.h>
-
+#include "EntitySelector.h"
 #include "ComponentsList.h"
 #include "EntityHelper.h"
 
@@ -11,26 +10,11 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 40));
 	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
-	ImGui::DragFloat("Gravity", &scene.gravity, 0.1f);
+	ImGui::Text("Entities");
 	ImGui::Separator();
 
-	ImGui::Text("Entities");
-	for (auto id : scene.Scene_ECS.entities) {
-		std::ostringstream ss; ss << scene.Scene_ECS.entity_names.find(id)->second;
-		// Should maybe be a selectable instead?
-		if (ImGui::Button(ss.str().c_str(), ImVec2(330, 20))) {
-			if(scene.Scene_ECS.entities.find(id) == scene.Scene_ECS.entities.end()) {
-				is_entity_selected = false;
-				selected_entity = id;
-				continue;
-			}
-			else {
-				selected_entity = id;
-				is_entity_selected = true;
-				std::cout << "Selected: " << ss.str().c_str() << "\n";
-				continue;
-			}
-		}
+	for (auto ID : scene.Scene_ECS.entities) {
+		EntitySelector().Draw(scene, ID, is_entity_selected, selected_entity);
 	}
 
 
@@ -43,9 +27,6 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	if (glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS && ImGui::IsWindowHovered()) {
 		if (!ImGui::IsAnyItemHovered()) {
 			ImGui::OpenPopup("Create Object");
-		}
-		else if (ImGui::IsAnyItemHovered()) {
-			ImGui::OpenPopup("Change Object");
 		}
 	}
 
@@ -72,7 +53,6 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
-
 		if (ImGui::Button("Create Camera", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Camera (" + std::to_string(new_ntt.id) + ")";
@@ -81,7 +61,6 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
-
 		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
 			scene.Scene_ECS.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
@@ -112,11 +91,15 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		ImGui::EndPopup();
 	}
 
-
 	ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
 	ImGui::SetNextWindowPos(ImVec2((float)m_x, (float)m_y), ImGuiCond_Once); // simplified
 	if (ImGui::BeginPopup("Change Object")) {
 		ImGui::Text("Change Object");
+		ImGui::Separator();
+		if (ImGui::Button("Delete")) {
+			scene.Scene_ECS.DestroyEntity(selected_entity);
+			ImGui::CloseCurrentPopup();
+		}
 		ImGui::EndPopup();
 	}
 

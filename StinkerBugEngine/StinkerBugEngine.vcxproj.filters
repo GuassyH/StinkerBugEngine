@@ -186,6 +186,9 @@
     <ClCompile Include="stb.cpp">
       <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="EntitySelector.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeltaTime.h">
@@ -355,6 +358,9 @@
     </ClInclude>
     <ClInclude Include="Screen.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="EntitySelector.h">
+      <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

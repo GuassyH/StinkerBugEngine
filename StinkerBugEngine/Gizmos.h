@@ -15,6 +15,11 @@
 #include "Constants.h"
 
 namespace Gizmos {
+
+    static inline glm::vec4 x_color = glm::vec4(255.0f / 255.0f, 112.0f / 255.0f, 122.0f / 255.0f, 1.0f);
+    static inline glm::vec4 y_color = glm::vec4(142.0f / 255.0f, 255.0f / 255.0f, 142.0f / 255.0f, 1.0f);
+    static inline glm::vec4 z_color = glm::vec4(45.0f / 255.0f, 230.0f / 255.0f, 255.0f / 255.0f, 1.0f);
+
 	struct GizmoObject {
 		MeshRenderer mesh_renderer;
 		Transform transform;
@@ -73,7 +78,7 @@ namespace Gizmos {
             arrowX.mesh_renderer.model = new Model();
             arrowX.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow.gltf");
             arrowX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowX.mesh_renderer.material->Color = Constants::Colors::Red;
+            arrowX.mesh_renderer.material->Color = x_color;
             arrowX.mesh_renderer.material->Color.a = transparency;
             arrowX.transform.scale = glm::vec3(0.5f);
 
@@ -81,7 +86,7 @@ namespace Gizmos {
             arrowY.mesh_renderer.model = new Model();
             arrowY.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow.gltf");
             arrowY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowY.mesh_renderer.material->Color = Constants::Colors::Green;
+            arrowY.mesh_renderer.material->Color = y_color;
             arrowY.mesh_renderer.material->Color.a = transparency;
             arrowY.transform.scale = glm::vec3(0.5f);
 
@@ -89,7 +94,7 @@ namespace Gizmos {
             arrowZ.mesh_renderer.model = new Model();
             arrowZ.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow.gltf");
             arrowZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowZ.mesh_renderer.material->Color = Constants::Colors::Blue;
+            arrowZ.mesh_renderer.material->Color = z_color;
             arrowZ.mesh_renderer.material->Color.a = transparency;
             arrowZ.transform.scale = glm::vec3(0.5f);
 
@@ -153,7 +158,7 @@ namespace Gizmos {
             arrowX.mesh_renderer.model = new Model();
             arrowX.mesh_renderer.model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
             arrowX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowX.mesh_renderer.material->Color = Constants::Colors::Red;
+            arrowX.mesh_renderer.material->Color = x_color;
             arrowX.mesh_renderer.material->Color.a = transparency;
             arrowX.transform.scale = glm::vec3(0.5f);
 
@@ -161,7 +166,7 @@ namespace Gizmos {
             arrowY.mesh_renderer.model = new Model();
             arrowY.mesh_renderer.model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
             arrowY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowY.mesh_renderer.material->Color = Constants::Colors::Green;
+            arrowY.mesh_renderer.material->Color = y_color;
             arrowY.mesh_renderer.material->Color.a = transparency;
             arrowY.transform.scale = glm::vec3(0.5f);
 
@@ -169,7 +174,7 @@ namespace Gizmos {
             arrowZ.mesh_renderer.model = new Model();
             arrowZ.mesh_renderer.model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
             arrowZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowZ.mesh_renderer.material->Color = Constants::Colors::Blue;
+            arrowZ.mesh_renderer.material->Color = z_color;
             arrowZ.mesh_renderer.material->Color.a = transparency;
             arrowZ.transform.scale = glm::vec3(0.5f);
 
@@ -245,7 +250,7 @@ namespace Gizmos {
             circleX.mesh_renderer.model = new Model();
             circleX.mesh_renderer.model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
             circleX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            circleX.mesh_renderer.material->Color = Constants::Colors::Red;
+            circleX.mesh_renderer.material->Color = x_color;
             circleX.mesh_renderer.material->Color.a = transparency;
             circleX.transform.scale = glm::vec3(radius + 0.01f);
 
@@ -253,7 +258,7 @@ namespace Gizmos {
             circleY.mesh_renderer.model = new Model();
             circleY.mesh_renderer.model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
             circleY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            circleY.mesh_renderer.material->Color = Constants::Colors::Green;
+            circleY.mesh_renderer.material->Color = y_color;
             circleY.mesh_renderer.material->Color.a = transparency;
             circleY.transform.scale = glm::vec3(radius);
 
@@ -261,7 +266,7 @@ namespace Gizmos {
             circleZ.mesh_renderer.model = new Model();
             circleZ.mesh_renderer.model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
             circleZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            circleZ.mesh_renderer.material->Color = Constants::Colors::Blue;
+            circleZ.mesh_renderer.material->Color = z_color;
             circleZ.mesh_renderer.material->Color.a = transparency;
             circleZ.transform.scale = glm::vec3(radius - 0.01f);
 

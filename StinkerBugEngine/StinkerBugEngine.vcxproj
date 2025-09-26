@@ -28,6 +28,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EntityBehaviour.cpp" />
+    <ClCompile Include="EntitySelector.cpp" />
     <ClCompile Include="FullScreenPass.cpp" />
     <ClCompile Include="HierarchyWindow.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
@@ -74,6 +75,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityBehaviour.h" />
     <ClInclude Include="EntityHelper.h" />
+    <ClInclude Include="EntitySelector.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="Gizmos.h" />
     <ClInclude Include="HierarchyWindow.h" />

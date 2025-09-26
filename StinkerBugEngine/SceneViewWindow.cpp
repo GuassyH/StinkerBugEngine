@@ -22,14 +22,11 @@ void SceneViewWindow::Init() {
 
 
 void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
-	// if (!scene.HasMainLight()) { return; };
 	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);
 	editorCamera->camera->Render(&scene);
 	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity);
 	editorCamera->SelectObject(scene, is_entity_selected, selected_entity);
 
-	// Constants::DebugLog::Vec3("SceneView cam pos", editorCamera->transform->position);
-	// Constants::DebugLog::Vec3("SceneView cam rot", editorCamera->transform->rotation);
 	std::ostringstream fps_text;	fps_text << display.FrameRate << "fps";
 
 	ImGui::SetNextWindowPos(ImVec2(350, 40));

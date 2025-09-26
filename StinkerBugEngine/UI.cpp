@@ -47,10 +47,8 @@ void UI::imgui_render(Scene& scene) {
 	HierarchyWindow().Draw(scene, is_entity_selected, selected_entity);
 	InspectorWindow().Draw(scene, is_entity_selected, selected_entity);
 	Console();
-	
 
 	// ImGui::ShowDemoWindow();
-	
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

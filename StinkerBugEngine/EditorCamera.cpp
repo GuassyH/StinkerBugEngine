@@ -44,12 +44,12 @@ void EditorCamera::DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& se
 void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 	
 	// If you left click
-	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) { 
-		if (Screen::IsMouseInViewport(w_pos, w_size)) {
-			if (firstClick) {
+	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS && glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) { 
+		if (firstClick) {
+			firstClick = false;
+			if (Screen::IsMouseInRect(w_pos, w_size)) {
 				// Cast a ray from the mouse position
 				Screen::ScreenCastHit scHit = Screen::EntityAtMousePos(camera, scene, Screen::GetMousePosInViewport(w_pos, w_size, glm::vec2(camera->width, camera->height)));
-				firstClick = false;
 
 				if (scHit.hit) {
 					selected_entity = scHit.entity;
@@ -58,11 +58,10 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 				}
 				else {
 					is_entity_selected = false;
-					std::cout << "Mouse did not hit entity\n";
+					std::cout << "Mouse did not hit any entity\n";
 				}
 			}
 		}
-
 	}
 	else {
 		firstClick = true;
