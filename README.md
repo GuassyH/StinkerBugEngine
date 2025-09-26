@@ -25,7 +25,15 @@ virtual void DrawOnInspector() override{
   }
 }
 
+Loading models is easy. Simply create an entity then follow this step-by-step:
+new_entity.AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_Lit | MaterialFlags_Shadow | MaterialFlags_Depth);
+new_entity.GetComponent<MeshRenderer>.model->loadModel("assets/models/file_path/file_scene.gltf");
+new_entity.GetComponent<MeshRenderer>.material->Color = Constants::Colors::White *OR* glm:vec4(1.0f);
 
-** DISCLAIMER **
+*NOTE* 
+You need to set the path to the *scene* not just the folder. The model loader will manage the rest
 
+Additionally, if you want to change the gizmo selected press W (transform handle), S (scale handle), R (rotation handle)
+
+* DISCLAIMER *
 This is more of a passion project, so it might not get regular updates, and it will be very scuffed.
