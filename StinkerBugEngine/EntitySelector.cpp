@@ -2,11 +2,11 @@
 
 
 void EntitySelector::Draw(Scene& scene, Entity& ID, bool& is_entity_selected, Entity& selected_entity) {
-	std::ostringstream ss; ss << scene.Scene_ECS.entity_names.find(ID)->second;
+	std::ostringstream ss; ss << scene.Scene_ECS.WorldRegistry.entity_names.find(ID)->second;
 
 
 	if(ImGui::Selectable(ss.str().c_str(), selected_entity == ID && is_entity_selected)) {
-		if (scene.Scene_ECS.entities.find(ID) == scene.Scene_ECS.entities.end()) {
+		if (scene.Scene_ECS.WorldRegistry.entities.find(ID) == scene.Scene_ECS.WorldRegistry.entities.end()) {
 			is_entity_selected = false;
 			selected_entity = ID;
 		}

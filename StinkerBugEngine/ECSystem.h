@@ -15,8 +15,10 @@
 #include "Entity.h"
 #include "ComponentTypeID.h"
 
-class ECSystem {
+class ECS_Registry {
 public:
+	ECS_Registry() = default;
+
 	Entity nextEntity = 0;
 	std::unordered_set<Entity> entities;
 	std::unordered_map<Entity, std::string> entity_names;
@@ -24,9 +26,9 @@ public:
 	std::unordered_map<Entity, std::unique_ptr<Collider>> colliders;
 	std::unordered_map<Entity, std::unique_ptr<EntityBehaviour>> entity_behaviours;
 
-	// Save 32 bit unsigned ints to store info on if a component is held
 	std::unordered_map<Entity, uint32_t> component_bits;
 	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components;
+
 
 	void DestroyEntity(Entity id) {
 		// remove all tracked things
@@ -41,10 +43,6 @@ public:
 			map.erase(id);
 		}
 	}
-
-
-	ECSystem() = default;
-	~ECSystem() = default;
 
 
 
@@ -131,7 +129,7 @@ public:
 	// In case its an entity behaviour collider (since they are polymorphic)
 	template<typename T, typename... Args>
 	std::enable_if_t<std::is_base_of_v<EntityBehaviour, T> || std::is_base_of_v<Collider, T>, T&>
-		AddComponent(const Entity id, Args&&... args){
+		AddComponent(const Entity id, Args&&... args) {
 		// Pointer to the container we'll use
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			colliders[id] = std::make_unique<T>(std::forward<Args>(args)...);
@@ -152,7 +150,7 @@ public:
 
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T> && std::is_base_of_v<Component, T>, T&>
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>&& std::is_base_of_v<Component, T>, T&>
 		AddComponent(const Entity id, Args&&... args)
 	{
 		auto& map = GetComponentMap<T>();
@@ -183,6 +181,16 @@ public:
 			std::cout << "Component not found" << std::endl;
 		}
 	}
+};
+
+class ECSystem {
+public:
+	ECS_Registry WorldRegistry = ECS_Registry();
+	ECS_Registry EditorRegistry = ECS_Registry();
+
+
+	ECSystem() = default;
+	~ECSystem() = default;
 
 };
 

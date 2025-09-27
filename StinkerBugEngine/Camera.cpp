@@ -10,7 +10,7 @@
 #include "Shader.h"
 #include "EntityHelper.h"
 #include "FullScreenPass.h"
-
+#include "Screen.h"
 
 Shader m_shadowMapShader;
 
@@ -56,11 +56,11 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 void Camera::ShadowPass(glm::mat4 light_VP, Light* light) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
-	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
 		
-		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
+		Transform& r_transform = scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(id);
 		r_transform.UpdateMatrix();
 
 		m_shadowMapShader.Use();
@@ -80,11 +80,11 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light* light) {
 void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
-	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
 
-		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
+		Transform& r_transform = scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(id);
 
 		renderer.model->render(renderer.material, &r_transform, transform, this, light);
 	}
@@ -184,39 +184,12 @@ bool Camera::CheckOuputFBO(bool forceRewrite) {
 
 	old_output_texture = output_texture;
 
-	// store sizes so texture struct is honest
 	output_texture->imgWidth = width;
 	output_texture->imgHeight = height;
 
-	// generate & bind FBO (separate GLuint)
-	glGenFramebuffers(1, &outputFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
+	Screen::InitFBO(this, outputFBO, outputRBO, output_texture->ID);
 
-	// generate texture for color attachment
-	glGenTextures(1, &output_texture->ID);
-	glBindTexture(GL_TEXTURE_2D, output_texture->ID);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, output_texture->ID, 0);
-
-	// renderbuffer for depth+stencil
-	glGenRenderbuffers(1, &outputRBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, outputRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, outputRBO);
-
-	GLenum fboStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (fboStatus != GL_FRAMEBUFFER_COMPLETE) {
-		std::cout << "output_texture FBO not complete! : " << std::hex << fboStatus << std::dec << std::endl;
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		return false;
-	}
-
-	std::cout << "shadow fbo tex: " << m_shadowMapFBO.m_shadowMap << " - output_tex: " << output_texture->ID << "\n";
+	// std::cout << "shadow fbo tex: " << m_shadowMapFBO.m_shadowMap << " - output_tex: " << output_texture->ID << "\n";
 
 	// unbind to be safe
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

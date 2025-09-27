@@ -77,6 +77,7 @@
     <ClInclude Include="EntityHelper.h" />
     <ClInclude Include="EntitySelector.h" />
     <ClInclude Include="FullScreenPass.h" />
+    <ClInclude Include="GizmoComponent.h" />
     <ClInclude Include="Gizmos.h" />
     <ClInclude Include="HierarchyWindow.h" />
     <ClInclude Include="imgui\imconfig.h" />
@@ -96,7 +97,7 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OskarComponent.h" />
-    <ClInclude Include="PhysicsFunctions.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

@@ -10,21 +10,21 @@ DeltaTime& deltaTime = DeltaTime::getInstance();
 
 // Create the Entity
 Entity& Scene::CreateEntity() {
-	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
-	Scene_ECS.component_bits[entity_id] = 0b0;
-	Scene_ECS.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
-	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
-	Scene_ECS.entities.insert(entity_id);
+	Entity& entity_id = Scene_ECS.WorldRegistry.nextEntity;	Scene_ECS.WorldRegistry.nextEntity++;
+	Scene_ECS.WorldRegistry.component_bits[entity_id] = 0b0;
+	Scene_ECS.WorldRegistry.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
+	Scene_ECS.WorldRegistry.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
+	Scene_ECS.WorldRegistry.entities.insert(entity_id);
 	return entity_id;
 }
 
 
 Entity& Scene::CreateEntity(std::string name) {
-	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
-	Scene_ECS.component_bits[entity_id] = 0b0;
-	Scene_ECS.entity_names[entity_id] = name;
-	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
-	Scene_ECS.entities.insert(entity_id);
+	Entity& entity_id = Scene_ECS.WorldRegistry.nextEntity;	Scene_ECS.WorldRegistry.nextEntity++;
+	Scene_ECS.WorldRegistry.component_bits[entity_id] = 0b0;
+	Scene_ECS.WorldRegistry.entity_names[entity_id] = name;
+	Scene_ECS.WorldRegistry.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
+	Scene_ECS.WorldRegistry.entities.insert(entity_id);
 	return entity_id;
 }
 
@@ -59,15 +59,15 @@ void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Trans
 // Check for collisions between all colliders
 // Add not double checking
 void Scene::CheckCollisions(uint32_t id) {
-	if (Scene_ECS.colliders.find(id) != Scene_ECS.colliders.end()) {
-		auto& this_collider = Scene_ECS.colliders[id];
-		for (auto& [id2, other_collider] : Scene_ECS.colliders) {
+	if (Scene_ECS.WorldRegistry.colliders.find(id) != Scene_ECS.WorldRegistry.colliders.end()) {
+		auto& this_collider = Scene_ECS.WorldRegistry.colliders[id];
+		for (auto& [id2, other_collider] : Scene_ECS.WorldRegistry.colliders) {
 			// if both ptrs arent null and arent the same collider
 			if (this_collider != other_collider) {
-				if (Scene_ECS.GetComponentMap<RigidBody>().find(id2) != Scene_ECS.GetComponentMap<RigidBody>().end()) {
+				if (Scene_ECS.WorldRegistry.GetComponentMap<RigidBody>().find(id2) != Scene_ECS.WorldRegistry.GetComponentMap<RigidBody>().end()) {
 					CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
 					if (collision_info.did_collide) {
-						ResolveCollision(collision_info, Scene_ECS.GetComponent<RigidBody>(id), Scene_ECS.GetComponent<Transform>(id), Scene_ECS.GetComponent<RigidBody>(id2), Scene_ECS.GetComponent<Transform>(id2));
+						ResolveCollision(collision_info, Scene_ECS.WorldRegistry.GetComponent<RigidBody>(id), Scene_ECS.WorldRegistry.GetComponent<Transform>(id), Scene_ECS.WorldRegistry.GetComponent<RigidBody>(id2), Scene_ECS.WorldRegistry.GetComponent<Transform>(id2));
 					}
 				}
 			}
@@ -77,7 +77,7 @@ void Scene::CheckCollisions(uint32_t id) {
 
 // Update all the RigidBodies
 void Scene::UpdatePhysics() {
-	for (auto& [id, components_rb] : Scene_ECS.GetComponentMap<RigidBody>()) {
+	for (auto& [id, components_rb] : Scene_ECS.WorldRegistry.GetComponentMap<RigidBody>()) {
 		RigidBody& rb = *std::static_pointer_cast<RigidBody>(components_rb);
 		if (!rb.isKinematic && rb.useGravity) { rb.velocity.y += gravity * deltaTime.get(); }
 
@@ -86,24 +86,24 @@ void Scene::UpdatePhysics() {
 		if (rb.isKinematic) { continue; }
 		rb.velocity -= (rb.velocity * rb.drag) * deltaTime.get();
 
-		Transform& transform = Scene_ECS.GetComponent<Transform>(id);
+		Transform& transform = Scene_ECS.WorldRegistry.GetComponent<Transform>(id);
 		transform.position += rb.velocity * deltaTime.get();
 	}
 }
 
 // Check if a main light exists (directional light)
 bool Scene::HasMainLight() {
-	return (main_light && Scene_ECS.components[typeid(Light)].find(main_light->id) != Scene_ECS.components[typeid(Light)].end());
+	return (main_light && Scene_ECS.WorldRegistry.components[typeid(Light)].find(main_light->id) != Scene_ECS.WorldRegistry.components[typeid(Light)].end());
 }
 
 // Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
 	if (!main_light) { main_light = new EntityHelper(); }
-	main_light->ecs = &Scene_ECS;
+	main_light->registry = &Scene_ECS.WorldRegistry;
 	main_light->id = 0;
 
-	for (auto& [id, lightPtr] : Scene_ECS.components[typeid(Light)])
+	for (auto& [id, lightPtr] : Scene_ECS.WorldRegistry.components[typeid(Light)])
 	{
 		Light* light = dynamic_cast<Light*>(lightPtr.get());
 		if (light->light_type == LightTypes::Directional) {
@@ -112,7 +112,7 @@ void Scene::Render() {
 		}
 	}
 
-	for (auto& [id, camPtr] : Scene_ECS.components[typeid(Camera)]) {
+	for (auto& [id, camPtr] : Scene_ECS.WorldRegistry.components[typeid(Camera)]) {
 		Camera* c = dynamic_cast<Camera*>(camPtr.get());
 		c->UpdateMatrix(display.windowWidth, display.windowHeight);
 		c->Render(this);
@@ -121,21 +121,21 @@ void Scene::Render() {
 
 // Call the EntityBehaviours Start
 void Scene::StartEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
+	for (auto& [id, behaviour] : Scene_ECS.WorldRegistry.entity_behaviours) {
 		behaviour->Start();
 	}
 }
 
 // Call the EntityBehaviours Awake
 void Scene::WakeEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
+	for (auto& [id, behaviour] : Scene_ECS.WorldRegistry.entity_behaviours) {
 		behaviour->Awake();
 	}
 }
 
 // Update all the EntityBehaviour scripts
 void Scene::UpdateEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
+	for (auto& [id, behaviour] : Scene_ECS.WorldRegistry.entity_behaviours) {
 		behaviour->Update();
 	}
 }

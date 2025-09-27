@@ -14,6 +14,11 @@
 class Scene;
 
 class EditorCamera {
+private:
+	unsigned int select_fbo;
+	unsigned int select_rbo;
+	unsigned int select_tex;
+
 public:
 	Transform* transform = nullptr;
 	Camera* camera = nullptr;
@@ -27,6 +32,8 @@ public:
 
 
 	bool firstClick = true;
+
+	void Init();
 	// TEMPORARY SOLUTION
 	void AddGizmoEntities(Scene& scene);
 	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity);

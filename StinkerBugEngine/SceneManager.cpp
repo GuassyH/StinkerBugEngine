@@ -22,7 +22,7 @@ Scene& SceneManager::GetActiveScene() {
 
 void SceneManager::UnloadScene() {
 	Scene& scene = GetActiveScene();
-	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (renderer.model) {
 			renderer.model->~Model();
@@ -35,7 +35,7 @@ void SceneManager::UnloadScene() {
 }
 
 void SceneManager::UnloadScene(Scene& scene) {
-	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (renderer.model) {
 			renderer.model->cleanup();

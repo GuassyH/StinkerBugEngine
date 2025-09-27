@@ -10,274 +10,280 @@
 #include "Camera.h"
 #include "EntityHelper.h"
 #include "Scene.h"
+#include "ECSystem.h"
 #include "ComponentsList.h"
 #include "Vertex.h"
 #include "Constants.h"
 
 namespace Gizmos {
 
-    static inline glm::vec4 x_color = glm::vec4(255.0f / 255.0f, 112.0f / 255.0f, 122.0f / 255.0f, 1.0f);
-    static inline glm::vec4 y_color = glm::vec4(142.0f / 255.0f, 255.0f / 255.0f, 142.0f / 255.0f, 1.0f);
-    static inline glm::vec4 z_color = glm::vec4(45.0f / 255.0f, 230.0f / 255.0f, 255.0f / 255.0f, 1.0f);
+    static inline float gizmo_opacity = 0.95f;
+    static inline glm::vec4 x_color = glm::vec4(255.0f / 255.0f, 112.0f / 255.0f, 122.0f / 255.0f, gizmo_opacity);
+    static inline glm::vec4 y_color = glm::vec4(142.0f / 255.0f, 255.0f / 255.0f, 142.0f / 255.0f, gizmo_opacity);
+    static inline glm::vec4 z_color = glm::vec4(45.0f / 255.0f, 230.0f / 255.0f, 255.0f / 255.0f, gizmo_opacity);
+    static inline glm::vec4 origo_color = glm::vec4(0.9f, 0.9f, 0.9f, gizmo_opacity);
+
+    inline Entity& createGizmo(ECS_Registry& gizmo_registry, const char* name) {
+        Entity& entity_id = gizmo_registry.nextEntity;	gizmo_registry.nextEntity++;
+        gizmo_registry.component_bits[entity_id] = 0b0;
+        gizmo_registry.entity_names[entity_id] = name;
+        gizmo_registry.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
+        gizmo_registry.entities.insert(entity_id);
+        return entity_id;
+    }
+
 
 	struct GizmoObject {
-		MeshRenderer mesh_renderer;
-		Transform transform;
+        GizmoObject() = default;
+
+        EntityHelper* entity_helper = nullptr;
+		MeshRenderer* mr = nullptr;
+		Transform* t = nullptr;
+        GizmoComponent* gc = nullptr;
 		glm::vec3 rotation_offset = glm::vec3(0.0f);
 		glm::vec3 position_offset = glm::vec3(0.0f);
 		bool needs_neg_z = false;
 	};
 
 	struct Gizmo {
-		public:
-			std::vector<GizmoObject> objects;
-			void Draw(Camera* camera, Scene& scene, Transform* editor_transform, EntityHelper& selected_entity_helper) {
-			for (GizmoObject obj : objects) {
-				glm::vec3 cam_to_entity = editor_transform->position + (glm::normalize(selected_entity_helper.GetComponent<Transform>().position - editor_transform->position) * 4.0f);
-				obj.transform.position = cam_to_entity + obj.position_offset;
+        Gizmo() = default;
 
-				glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
-				obj.transform.rotation = selected_entity_helper.GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
+        std::vector<GizmoObject> objects;
+		void Draw(Camera* camera, Scene& scene, Transform* editor_transform, EntityHelper& selected_entity_helper) {
+			glm::vec3 cam_to_entity = editor_transform->position + (glm::normalize(selected_entity_helper.GetComponent<Transform>().position - editor_transform->position) * 4.0f);
+		    
+            for (GizmoObject& obj : objects) {
+                if (!obj.mr || !obj.t || !obj.entity_helper || !obj.gc) { continue; }
 
-				obj.transform.UpdateMatrix();
-                if (scene.HasMainLight()) {
-				    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, &scene.main_light->GetComponent<Light>());
+                // Set position
+			    obj.t->position = cam_to_entity + obj.position_offset;
+
+                // Set rotation
+			    glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
+			    obj.t->rotation = selected_entity_helper.GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
+
+                // Update transform
+			    obj.t->UpdateMatrix();
+                
+                // if the the object is hovered change to hovor color.
+                if (obj.gc->isHovered && obj.gc->interactable) {
+                    obj.mr->material->Color = obj.gc->hover_color;
                 }
                 else {
-                    obj.mesh_renderer.model->render(obj.mesh_renderer.material, &obj.transform, editor_transform, camera, nullptr);
+                    obj.mr->material->Color = obj.gc->reg_color;
                 }
 
-			}
+                // Render
+                obj.mr->model->render(obj.mr->material, obj.t, editor_transform, camera, nullptr);
+
+                
+                // If is hovered reset and set hovered to false
+                if (obj.gc->isHovered) {
+                    obj.mr->material->Color = obj.gc->reg_color;
+                    obj.gc->isHovered = false;
+                }
+		    }
 		}
 	}; 
 
 	struct TransformHandle : public Gizmo {
-		GizmoObject arrowX;
-		GizmoObject arrowY;
-		GizmoObject arrowZ;
-		GizmoObject origo_point;
+        GizmoObject arrowX;
+        GizmoObject arrowY;
+        GizmoObject arrowZ;
+        GizmoObject translate_origo_point;
 
         float plane_size = 0.25f;
         float plane_offset = 0.2f;
         float transparency = 0.85f;
 
-        TransformHandle() {
+        TransformHandle(ECSystem& ecs) {
+            ECS_Registry& gizmo_register = ecs.EditorRegistry;
             arrowZ.needs_neg_z = true;
-            // Initialize arrows
-            arrowX.mesh_renderer = MeshRenderer();
-            arrowY.mesh_renderer = MeshRenderer();
-            arrowZ.mesh_renderer = MeshRenderer();
-            origo_point.mesh_renderer = MeshRenderer();
 
-            arrowX.transform = Transform();
-            arrowY.transform = Transform();
-            arrowZ.transform = Transform();
-            origo_point.transform = Transform();
+            // Initialize arrows
+            arrowX.entity_helper = new EntityHelper(createGizmo(gizmo_register, "arrowX"), &gizmo_register);
+            arrowY.entity_helper = new EntityHelper(createGizmo(gizmo_register, "arrowY"), &gizmo_register);
+            arrowZ.entity_helper = new EntityHelper(createGizmo(gizmo_register, "arrowZ"), &gizmo_register);
+            translate_origo_point.entity_helper = new EntityHelper(createGizmo(gizmo_register, "translate_origo_point"), &gizmo_register);
+
+            arrowX.mr = &arrowY.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+            arrowY.mr = &arrowZ.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+            arrowZ.mr = &arrowX.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+
+            arrowX.gc = &arrowX.entity_helper->AddComponent<GizmoComponent>();
+            arrowY.gc = &arrowY.entity_helper->AddComponent<GizmoComponent>();
+            arrowZ.gc = &arrowZ.entity_helper->AddComponent<GizmoComponent>();
+
+            arrowX.gc->reg_color = x_color;
+            arrowY.gc->reg_color = y_color;
+            arrowZ.gc->reg_color = z_color;
+
+
+            arrowX.t = &arrowX.entity_helper->GetComponent<Transform>();
+            arrowY.t = &arrowY.entity_helper->GetComponent<Transform>();
+            arrowZ.t = &arrowZ.entity_helper->GetComponent<Transform>();
 
             // X Arrow
-            arrowX.mesh_renderer.model = new Model();
-            arrowX.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
-            arrowX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowX.mesh_renderer.material->Color = x_color;
-            arrowX.mesh_renderer.material->Color.a = transparency;
-            arrowX.transform.scale = glm::vec3(0.5f);
+            arrowX.mr->model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
+            arrowX.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Y Arrow
-            arrowY.mesh_renderer.model = new Model();
-            arrowY.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
-            arrowY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowY.mesh_renderer.material->Color = y_color;
-            arrowY.mesh_renderer.material->Color.a = transparency;
-            arrowY.transform.scale = glm::vec3(0.5f);
+            arrowY.mr->model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
+            arrowY.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Z Arrow
-            arrowZ.mesh_renderer.model = new Model();
-            arrowZ.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
-            arrowZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowZ.mesh_renderer.material->Color = z_color;
-            arrowZ.mesh_renderer.material->Color.a = transparency;
-            arrowZ.transform.scale = glm::vec3(0.5f);
+            arrowZ.mr->model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
+            arrowZ.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
-            // Ball in the middle
-            Mesh origo_mesh = Mesh(Constants::Shapes::Cube());
-            origo_point.mesh_renderer.model = new Model(origo_mesh);
-            origo_point.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            origo_point.mesh_renderer.material->Color = Constants::Colors::White;
-            origo_point.mesh_renderer.material->Color.a = transparency;
-            origo_point.transform.scale = glm::vec3(0.1f);
+            // Ball in the middle 
+            translate_origo_point.mr = &translate_origo_point.entity_helper->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_NoDepthTest));
+            translate_origo_point.gc = &translate_origo_point.entity_helper->AddComponent<GizmoComponent>();
+            translate_origo_point.gc->reg_color = origo_color;
+            translate_origo_point.gc->interactable = false;
+            translate_origo_point.mr->material->Color.a = transparency;
+            translate_origo_point.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.15f);
+            translate_origo_point.t = &translate_origo_point.entity_helper->GetComponent<Transform>();
 
 			arrowX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);
 			arrowY.rotation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
 			arrowZ.rotation_offset = glm::vec3(90.0f, 0.0f, 0.0f);
 
-			objects.push_back(arrowX);
-			objects.push_back(arrowY);
-			objects.push_back(arrowZ);
+            objects.emplace_back(std::move(arrowX));
+            objects.emplace_back(std::move(arrowY));
+            objects.emplace_back(std::move(arrowZ));
 
-			objects.push_back(origo_point);
+            objects.emplace_back(std::move(translate_origo_point));
         }
 	};
     struct ScaleHandle : public Gizmo {
-        GizmoObject arrowX;
-        GizmoObject arrowY;
-        GizmoObject arrowZ;
 
-        GizmoObject origo_point;
+        GizmoObject scaleX;
+        GizmoObject scaleY;
+        GizmoObject scaleZ;
+        GizmoObject scale_origo_point;
 
-        GizmoObject XY_plane;
-        GizmoObject ZY_plane;
-        GizmoObject XZ_plane;
+        float plane_size = 0.25f;
+        float plane_offset = 0.2f;
+        float transparency = 0.85f;
 
-		float plane_size = 0.25f;
-		float plane_offset = 0.2f;
-		float transparency = 0.85f;
+        ScaleHandle(ECSystem& ecs) {
+            ECS_Registry& gizmo_register = ecs.EditorRegistry;
+            scaleZ.needs_neg_z = true;
 
-        ScaleHandle() {
-            arrowZ.needs_neg_z = true;
 
-            // Initialize scale handles
-            arrowX.mesh_renderer = MeshRenderer();
-            arrowY.mesh_renderer = MeshRenderer();
-            arrowZ.mesh_renderer = MeshRenderer();
-            origo_point.mesh_renderer = MeshRenderer();
+            //  arrowZ.needs_neg_z = true;
+            // Initialize arrows
+            scaleX.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scaleX"), &gizmo_register);
+            scaleY.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scaleY"), &gizmo_register);
+            scaleZ.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scaleZ"), &gizmo_register);
+            scale_origo_point.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scale_origo_point"), &gizmo_register);
 
-			XY_plane.mesh_renderer = MeshRenderer();
-			ZY_plane.mesh_renderer = MeshRenderer();
-			XZ_plane.mesh_renderer = MeshRenderer();
 
-            arrowX.transform = Transform();
-            arrowY.transform = Transform();
-            arrowZ.transform = Transform();
-            origo_point.transform = Transform();
+            
+            scaleX.mr = &scaleX.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+            scaleY.mr = &scaleY.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+            scaleZ.mr = &scaleZ.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
 
-			XY_plane.transform = Transform();
-			ZY_plane.transform = Transform();
-			XZ_plane.transform = Transform();
+
+            scaleX.gc = &scaleX.entity_helper->AddComponent<GizmoComponent>();
+            scaleY.gc = &scaleY.entity_helper->AddComponent<GizmoComponent>();
+            scaleZ.gc = &scaleZ.entity_helper->AddComponent<GizmoComponent>();
+
+            scaleX.gc->reg_color = x_color;
+            scaleY.gc->reg_color = y_color;
+            scaleZ.gc->reg_color = z_color;
+
+
+            scaleX.t = &scaleX.entity_helper->GetComponent<Transform>();
+            scaleY.t = &scaleY.entity_helper->GetComponent<Transform>();
+            scaleZ.t = &scaleZ.entity_helper->GetComponent<Transform>();
 
             // X Arrow
-            arrowX.mesh_renderer.model = new Model();
-            arrowX.mesh_renderer.model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
-            arrowX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowX.mesh_renderer.material->Color = x_color;
-            arrowX.mesh_renderer.material->Color.a = transparency;
-            arrowX.transform.scale = glm::vec3(0.5f);
+            scaleX.mr->model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
+            scaleX.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Y Arrow
-            arrowY.mesh_renderer.model = new Model();
-            arrowY.mesh_renderer.model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
-            arrowY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowY.mesh_renderer.material->Color = y_color;
-            arrowY.mesh_renderer.material->Color.a = transparency;
-            arrowY.transform.scale = glm::vec3(0.5f);
+            scaleY.mr->model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
+            scaleY.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Z Arrow
-            arrowZ.mesh_renderer.model = new Model();
-            arrowZ.mesh_renderer.model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
-            arrowZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            arrowZ.mesh_renderer.material->Color = z_color;
-            arrowZ.mesh_renderer.material->Color.a = transparency;
-            arrowZ.transform.scale = glm::vec3(0.5f);
+            scaleZ.mr->model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
+            scaleZ.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Ball in the middle
-            Mesh origo_mesh = Mesh(Constants::Shapes::Cube());
-            origo_point.mesh_renderer.model = new Model(origo_mesh);
-            origo_point.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            origo_point.mesh_renderer.material->Color = Constants::Colors::White;
-            origo_point.mesh_renderer.material->Color.a = transparency;
-            origo_point.transform.scale = glm::vec3(0.1f);
+            scale_origo_point.mr = &scale_origo_point.entity_helper->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_NoDepthTest));
+            scale_origo_point.gc = &scale_origo_point.entity_helper->AddComponent<GizmoComponent>();
+            scale_origo_point.gc->reg_color = origo_color;
+            scale_origo_point.gc->interactable = false;
+            scale_origo_point.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.15f);
+            scale_origo_point.t = &scale_origo_point.entity_helper->GetComponent<Transform>();
 
-            arrowX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);
-            arrowY.rotation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
-            arrowZ.rotation_offset = glm::vec3(90.0f, 0.0f, 0.0f);
+            scaleX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);
+            scaleY.rotation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
+            scaleZ.rotation_offset = glm::vec3(90.0f, 0.0f, 0.0f);
 
-			// XY Plane THEY NEED TO PIVOT AROUND THE AXIS
-			Mesh plane_mesh = Mesh(Constants::Shapes::Plane());
-			XY_plane.mesh_renderer.model = new Model(plane_mesh);
-			XY_plane.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-			XY_plane.mesh_renderer.material->Color = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
-            XY_plane.mesh_renderer.material->Color.a = transparency;
-            XY_plane.transform.scale = glm::vec3(plane_size);
-			XY_plane.position_offset = glm::vec3(plane_offset, plane_offset, 0.0f);
-			XY_plane.rotation_offset = glm::vec3(90.0f, 0.0f, 0.0f);
+            objects.emplace_back(std::move(scaleX));
+            objects.emplace_back(std::move(scaleY));
+            objects.emplace_back(std::move(scaleZ));
 
-            XZ_plane.mesh_renderer.model = new Model(plane_mesh);
-            XZ_plane.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            XZ_plane.mesh_renderer.material->Color = glm::vec4(1.0f, 0.0f, 1.0f, 1.0f);
-            XZ_plane.mesh_renderer.material->Color.a = transparency;
-            XZ_plane.transform.scale = glm::vec3(plane_size);
-            XZ_plane.position_offset = glm::vec3(plane_offset, 0.0f, plane_offset);
-            XZ_plane.rotation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
-            
-            ZY_plane.mesh_renderer.model = new Model(plane_mesh);
-            ZY_plane.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            ZY_plane.mesh_renderer.material->Color = glm::vec4(0.0f, 1.0f, 1.0f, 1.0f);
-            ZY_plane.mesh_renderer.material->Color.a = transparency;
-            ZY_plane.transform.scale = glm::vec3(plane_size);
-            ZY_plane.position_offset = glm::vec3(0.0f, plane_offset, plane_offset);
-            ZY_plane.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);
-
-
-            objects.push_back(arrowX);
-            objects.push_back(arrowY);
-            objects.push_back(arrowZ);
-            // objects.push_back(XY_plane);
-            // objects.push_back(XZ_plane);
-			// objects.push_back(ZY_plane);
-
-            objects.push_back(origo_point);
+            objects.emplace_back(std::move(scale_origo_point));
         }
 	};
     struct RotateHandle : public Gizmo {
-        GizmoObject circleX;
-        GizmoObject circleY;
-        GizmoObject circleZ;
+        GizmoObject rotateX;
+        GizmoObject rotateY;
+        GizmoObject rotateZ;
 
-        float radius = 0.65f;
+        float plane_size = 0.25f;
+        float plane_offset = 0.2f;
         float transparency = 0.85f;
-    
-        RotateHandle() {
-            // Initialize arrows
-            circleX.mesh_renderer = MeshRenderer();
-            circleY.mesh_renderer = MeshRenderer();
-            circleZ.mesh_renderer = MeshRenderer();
 
-            circleX.transform = Transform();
-            circleY.transform = Transform();
-            circleZ.transform = Transform();
-            circleZ.needs_neg_z = true;
+        RotateHandle(ECSystem& ecs) {
+            ECS_Registry& gizmo_register = ecs.EditorRegistry;
+            rotateZ.needs_neg_z = true;
+
+            //  arrowZ.needs_neg_z = true;
+            // Initialize arrows
+            rotateX.entity_helper = new EntityHelper(createGizmo(gizmo_register, "rotateX"), &gizmo_register);
+            rotateY.entity_helper = new EntityHelper(createGizmo(gizmo_register, "rotateY"), &gizmo_register);
+            rotateZ.entity_helper = new EntityHelper(createGizmo(gizmo_register, "rotateZ"), &gizmo_register);
+
+            rotateX.mr = &rotateX.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+            rotateY.mr = &rotateY.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+            rotateZ.mr = &rotateZ.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
+
+            rotateX.gc = &rotateX.entity_helper->AddComponent<GizmoComponent>();
+            rotateY.gc = &rotateY.entity_helper->AddComponent<GizmoComponent>();
+            rotateZ.gc = &rotateZ.entity_helper->AddComponent<GizmoComponent>();
+
+            rotateX.gc->reg_color = x_color;
+            rotateY.gc->reg_color = y_color;
+            rotateZ.gc->reg_color = z_color;
+
+            rotateX.t = &rotateX.entity_helper->GetComponent<Transform>();
+            rotateY.t = &rotateY.entity_helper->GetComponent<Transform>();
+            rotateZ.t = &rotateZ.entity_helper->GetComponent<Transform>();
 
             // X Arrow
-            circleX.mesh_renderer.model = new Model();
-            circleX.mesh_renderer.model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
-            circleX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            circleX.mesh_renderer.material->Color = x_color;
-            circleX.mesh_renderer.material->Color.a = transparency;
-            circleX.transform.scale = glm::vec3(radius + 0.01f);
+            rotateX.mr->model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateX.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Y Arrow
-            circleY.mesh_renderer.model = new Model();
-            circleY.mesh_renderer.model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
-            circleY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            circleY.mesh_renderer.material->Color = y_color;
-            circleY.mesh_renderer.material->Color.a = transparency;
-            circleY.transform.scale = glm::vec3(radius);
+            rotateY.mr->model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateY.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Z Arrow
-            circleZ.mesh_renderer.model = new Model();
-            circleZ.mesh_renderer.model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
-            circleZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
-            circleZ.mesh_renderer.material->Color = z_color;
-            circleZ.mesh_renderer.material->Color.a = transparency;
-            circleZ.transform.scale = glm::vec3(radius - 0.01f);
+            rotateZ.mr->model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateZ.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
+            rotateX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);
+            rotateY.rotation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
+            rotateZ.rotation_offset = glm::vec3(90.0f, 0.0f, 0.0f);
 
-            circleX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);
-            circleY.rotation_offset = glm::vec3(0.0f, 0.0f, 0.0f);
-            circleZ.rotation_offset = glm::vec3(90.0f, 0.0f, 0.0f);
+            objects.emplace_back(std::move(rotateX));
+            objects.emplace_back(std::move(rotateY));
+            objects.emplace_back(std::move(rotateZ));
 
-            objects.push_back(circleX);
-            objects.push_back(circleY);
-            objects.push_back(circleZ);
         }
 
     };

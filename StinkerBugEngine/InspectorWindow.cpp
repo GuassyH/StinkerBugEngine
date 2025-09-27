@@ -13,21 +13,21 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 40));
 	ImGui::Begin("Entity Inspector", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
-	if (scene.Scene_ECS.entities.find(selected_entity) != scene.Scene_ECS.entities.end() && is_entity_selected) {
+	if (scene.Scene_ECS.WorldRegistry.entities.find(selected_entity) != scene.Scene_ECS.WorldRegistry.entities.end() && is_entity_selected) {
 
 
-		std::ostringstream ss; ss << scene.Scene_ECS.entity_names.find(selected_entity)->second;
+		std::ostringstream ss; ss << scene.Scene_ECS.WorldRegistry.entity_names.find(selected_entity)->second;
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - ImGui::CalcTextSize(ss.str().c_str()).x * 0.5f);
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - 180 * 0.5f);
 		ImGui::SetNextItemWidth(180);
 
 		if (ImGui::InputTextWithHint(" ", ss.str().c_str(), buff, sizeof(buff), ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_NoHorizontalScroll | ImGuiInputTextFlags_AutoSelectAll)) {
-			scene.Scene_ECS.entity_names[selected_entity] = buff;
+			scene.Scene_ECS.WorldRegistry.entity_names[selected_entity] = buff;
 			memset(buff, 0, 255);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("U")) {	// You can now delete entities but adding new ones after deleting doesnt work
-			scene.Scene_ECS.DestroyEntity(selected_entity);
+			scene.Scene_ECS.WorldRegistry.DestroyEntity(selected_entity);
 			is_entity_selected = false;
 			goto BreakInspector;
 		}
@@ -36,9 +36,9 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		// Foreach type, get all the components and draw in inspector
 		// Collapsing component in one entity collapses the same component in ALL entities
 		// Probably because the CollapsingHeader name is the same so ID is the same
-		scene.Scene_ECS.GetComponent<Transform>(selected_entity).DrawOnInspector();
+		scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(selected_entity).DrawOnInspector();
 		ImGui::Separator();
-		for (auto& [type, map] : scene.Scene_ECS.components) {
+		for (auto& [type, map] : scene.Scene_ECS.WorldRegistry.components) {
 			auto compPtr = map.find(selected_entity);
 			if (compPtr != map.end() && compPtr->second && type != typeid(Transform)) {
 				Component* c = dynamic_cast<Component*>(compPtr->second.get());
@@ -46,9 +46,9 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 				ImGui::Separator();
 			}
 		}
-		if (scene.Scene_ECS.HasComponent<Collider>(selected_entity))
+		if (scene.Scene_ECS.WorldRegistry.HasComponent<Collider>(selected_entity))
 		{
-			scene.Scene_ECS.GetComponent<Collider>(selected_entity).DrawOnInspector(); ImGui::Separator();
+			scene.Scene_ECS.WorldRegistry.GetComponent<Collider>(selected_entity).DrawOnInspector(); ImGui::Separator();
 		}
 
 
@@ -75,9 +75,9 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 			// I mean it works but its not efficient. Should be a loop for each component type add component like with the DrawOnInspector
-			if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<MeshRenderer>(selected_entity)) {
 				if (ImGui::Button("Mesh Renderer", ImVec2(235, 20))) {
-					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS);
+					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS.WorldRegistry);
 					new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 					new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();
@@ -85,50 +85,50 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 				}
 			}
 			
-			if (!scene.Scene_ECS.HasComponent<Camera>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<Camera>(selected_entity)) {
 				if (ImGui::Button("Camera", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<Camera>(selected_entity, 1920, 1080, scene.Scene_ECS.GetComponent<Transform>(selected_entity));
+					scene.Scene_ECS.WorldRegistry.AddComponent<Camera>(selected_entity, 1920, 1080, scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(selected_entity));
 					ImGui::CloseCurrentPopup();
 				}
 			}
 			
-			if (!scene.Scene_ECS.HasComponent<Light>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<Light>(selected_entity)) {
 				if (ImGui::Button("Light", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<Light>(selected_entity);
+					scene.Scene_ECS.WorldRegistry.AddComponent<Light>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}
 
-			if (!scene.Scene_ECS.HasComponent<RigidBody>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<RigidBody>(selected_entity)) {
 				if (ImGui::Button("Rigidbody", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<RigidBody>(selected_entity);
+					scene.Scene_ECS.WorldRegistry.AddComponent<RigidBody>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}
 
-			if (!scene.Scene_ECS.HasComponent<BoxCollider>(selected_entity) && !scene.Scene_ECS.HasComponent<Collider>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<BoxCollider>(selected_entity) && !scene.Scene_ECS.WorldRegistry.HasComponent<Collider>(selected_entity)) {
 				if (ImGui::Button("BoxCollider", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<BoxCollider>(selected_entity);
+					scene.Scene_ECS.WorldRegistry.AddComponent<BoxCollider>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}
 
-			if (!scene.Scene_ECS.HasComponent<SphereCollider>(selected_entity) && !scene.Scene_ECS.HasComponent<Collider>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<SphereCollider>(selected_entity) && !scene.Scene_ECS.WorldRegistry.HasComponent<Collider>(selected_entity)) {
 				if (ImGui::Button("SphereCollider", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<SphereCollider>(selected_entity);
+					scene.Scene_ECS.WorldRegistry.AddComponent<SphereCollider>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}
 
-			if (!scene.Scene_ECS.HasComponent<OskarComponent>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<OskarComponent>(selected_entity)) {
 				if (ImGui::Button("Oskar Component", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<OskarComponent>(selected_entity);
+					scene.Scene_ECS.WorldRegistry.AddComponent<OskarComponent>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}
-			if (!scene.Scene_ECS.HasComponent<CharleyComponent>(selected_entity)) {
+			if (!scene.Scene_ECS.WorldRegistry.HasComponent<CharleyComponent>(selected_entity)) {
 				if (ImGui::Button("Charley Component", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<CharleyComponent>(selected_entity);
+					scene.Scene_ECS.WorldRegistry.AddComponent<CharleyComponent>(selected_entity);
 					ImGui::CloseCurrentPopup();
 				}
 			}

@@ -4,22 +4,17 @@
 #include "EntityHelper.h"
 #include "Constants.h"
 #include "SceneManager.h"
+#include "Screen.h"
 
 void SceneViewWindow::Init() {
 	cam_output = new Texture();
 	editorCamera = new EditorCamera();
-	editorCamera->transform = new Transform();
-	editorCamera->transform->rotation = glm::vec3(0, 0, -1);
-	editorCamera->camera = new Camera(1920, 1080, *editorCamera->transform);
-	editorCamera->camera->FOVdeg = 90.0f;
-	editorCamera->camera->farPlane = 1000.0f;
-	editorCamera->camera->nearPlane = 0.1f;
-	editorCamera->camera->output_texture = cam_output;
-	editorCamera->camera->CheckOuputFBO(true);
+	editorCamera->Init();
 
+	editorCamera->camera->output_texture = cam_output;
 	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene());
 }
-
+ 
 
 void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);

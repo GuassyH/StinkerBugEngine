@@ -10,6 +10,8 @@
 #include "Model.h"
 #include "OskarComponent.h"
 
+#include "GizmoComponent.h"
+
 #include "Collider.h"
 #ifdef COLLIDER_COMPONENT_H
 #include "SphereCollider.h"

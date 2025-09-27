@@ -1,12 +1,24 @@
 #include "EditorCamera.h"
 #include "Scene.h"
 #include "Screen.h"
+#include "Physics.h"
 
+void EditorCamera::Init() {
+	transform = new Transform();
+	transform->rotation = glm::vec3(0, 0, -1);
+	camera = new Camera(1920, 1080, *transform);
+	camera->FOVdeg = 90.0f;
+	camera->farPlane = 1000.0f;
+	camera->nearPlane = 0.1f;
+	camera->CheckOuputFBO(true);
+
+	Screen::InitFBO(camera, select_fbo, select_rbo, select_tex);
+}
 
 void EditorCamera::AddGizmoEntities(Scene& scene) {
-	Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle();
-	Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle();
-	Gizmos::Gizmo rotate_gizmo = Gizmos::RotateHandle();
+	Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle(scene.Scene_ECS);
+	Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle(scene.Scene_ECS);
+	Gizmos::Gizmo rotate_gizmo = Gizmos::RotateHandle(scene.Scene_ECS);
 
 	gizmos.push_back(transform_gizmo);
 	gizmos.push_back(scale_gizmo);
@@ -20,11 +32,11 @@ void EditorCamera::DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& se
 	// Rebind the framebuffer to the editor camera's FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, camera->outputFBO);
 
-	selected_entity_helper.ecs = &scene.Scene_ECS;
+	selected_entity_helper.registry = &scene.Scene_ECS.WorldRegistry;
 	selected_entity_helper.id = selected_entity;
 
 	// If there isnt an entity selected then skip drawing gizmos, reset framebuffer 
-	if (!is_entity_selected || scene.Scene_ECS.entities.find(selected_entity) == scene.Scene_ECS.entities.end()) { glDisable(GL_BLEND); glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
+	if (!is_entity_selected || scene.Scene_ECS.WorldRegistry.entities.find(selected_entity) == scene.Scene_ECS.WorldRegistry.entities.end()) { glDisable(GL_BLEND); glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -46,25 +58,30 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 	
 
 
-
-	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
-		glm::vec3 temp = Screen::ScreenToWorldRay(w_pos, w_size, camera);
-	}
-
 	// If you left click
 	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS && glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) { 
 		if (firstClick) {
 			firstClick = false;
 			if (Screen::IsMouseInRect(w_pos, w_size)) {
 				// Cast a ray from the mouse position
-				Screen::ScreenCastHit scHit = Screen::EntityAtMousePos(camera, scene, Screen::GetMousePosInViewport(w_pos, w_size, glm::vec2(camera->width, camera->height)));
+				Screen::ScreenCastHit scHit = Screen::EntityAtMousePos
+				(camera, scene, Screen::GetMousePosInViewport(w_pos, w_size, glm::vec2(camera->width, camera->height)), select_fbo, select_rbo, select_tex);
+				
+				Physics::RaycastHit rayHit = Physics::Raycast(Screen::ScreenToWorldRay(w_pos, w_size, camera), camera->farPlane);
 
-				if (scHit.hit) {
-					selected_entity = scHit.entity;
-					is_entity_selected = true;
+				if (!rayHit.isGizmo) {
+					if (scHit.hit) {
+						selected_entity = scHit.entity;
+						is_entity_selected = true;
+					}
+					else {
+						is_entity_selected = false;
+					}
 				}
 				else {
-					is_entity_selected = false;
+					// Do Gizmo stuff
+					EntityHelper gizmo(rayHit.entity, &scene.Scene_ECS.EditorRegistry);
+					gizmo.GetComponent<GizmoComponent>().isHovered = true;
 				}
 			}
 		}

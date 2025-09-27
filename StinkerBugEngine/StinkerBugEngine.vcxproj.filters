@@ -362,8 +362,11 @@
     <ClInclude Include="EntitySelector.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
-    <ClInclude Include="PhysicsFunctions.h">
+    <ClInclude Include="Physics.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GizmoComponent.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

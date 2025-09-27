@@ -9,38 +9,26 @@
 #include "Material.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "PhysicsFunctions.h"
+#include "Physics.h"
 
 namespace Screen
 {
-	struct ScreenCastHit {
-		bool hit = false;
-		Entity entity = 0;
-		float distance = 0.0f;
-	};
 
-
-	static inline ScreenCastHit EntityAtMousePos(Camera* camera, Scene& scene, glm::vec2 mousePos) {
-		ScreenCastHit result;
-		result.hit = false;
-
+	static inline void InitFBO(Camera* camera, unsigned int& fbo, unsigned int& rbo, unsigned int& tex) {
 		// Create FBO
-		GLuint fbo;
 		glGenFramebuffers(1, &fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 		// Create Texture and bind
-		GLuint tex;
 		glGenTextures(1, &tex);
 		glBindTexture(GL_TEXTURE_2D, tex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, camera->width, camera->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, camera->width, camera->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
 
 		// Create RBO for depth and stencil we need depth for 3D rendering)
-		GLuint rbo;
 		glGenRenderbuffers(1, &rbo);
 		glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, camera->width, camera->height);
@@ -50,20 +38,39 @@ namespace Screen
 		if (status != GL_FRAMEBUFFER_COMPLETE)
 			std::cout << "FBO incomplete: " << std::hex << status << std::dec << std::endl;
 
+
+		// All of the FBO data and such is sent back to the input params
+	}
+
+	struct ScreenCastHit {
+		bool hit = false;
+		Entity entity = 0;
+		float distance = 0.0f;
+	};
+
+
+
+	static inline ScreenCastHit EntityAtMousePos(Camera* camera, Scene& scene, glm::vec2 mousePos, unsigned int& fbo, unsigned int& rbo, unsigned int& tex) {
+		ScreenCastHit result;
+		result.hit = false;
+
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+		glBindTexture(GL_TEXTURE_2D, tex);
+
 		glViewport(0, 0, camera->width, camera->height);
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // white
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
 
 		Shader c_shader("ColToID.vert", "ColToID.frag");
 		Material id_material(c_shader, MaterialFlags_Depth);
 		glm::vec4 id_color = glm::vec4(0.0f);
 
-		for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
+		for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.components[typeid(MeshRenderer)]) {
 			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 			if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
-			Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
+			Transform& r_transform = scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(id);
 
 			id_color.r = ((id & 0x000000FF) >> 0) / 255.0f;
 			id_color.g = ((id & 0x0000FF00) >> 8) / 255.0f;
@@ -75,12 +82,11 @@ namespace Screen
 			renderer.model->render(&id_material, &r_transform, camera->transform, camera, nullptr);
 		}
 
-
 		// Read the pixel at the mouse position
-		GLubyte pixel[3];
-		glReadPixels(static_cast<GLint>(mousePos.x), static_cast<GLint>(mousePos.y), 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &pixel);
+		GLubyte pixel[4];
+		glReadPixels(static_cast<GLint>(mousePos.x), static_cast<GLint>(mousePos.y), 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &pixel);
 		
-		// if pixel is white (255, 255, 255) then its the LAST ID aka no entity (unless you have 16777215 entities) 
+		// if pixel is white (255, 255, 255) then its the LAST ID aka no entity (unless you have 16777215 (255^3) entities) 
 		if(pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255) {
 			result.hit = false;
 			result.entity = 0;
@@ -90,18 +96,9 @@ namespace Screen
 			result.entity = pickedID;
 		}
 
-
-		// Reset all the bindings 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-		// Delete all the buffers
-		glDeleteFramebuffers(1, &fbo);
-		glDeleteRenderbuffers(1, &rbo);
-		glDeleteTextures(1, &tex);
-		c_shader.Delete();
+		glBindTexture(GL_TEXTURE_2D, 0);
 
 		return result;
 	}
@@ -144,8 +141,8 @@ namespace Screen
 	}
 
 
-	static inline PhysicsFunctions::Ray ScreenToWorldRay(glm::vec2 rect_pos, glm::vec2 rect_size, Camera* camera) {
-		PhysicsFunctions::Ray ray = PhysicsFunctions::Ray();
+	static inline Physics::Ray ScreenToWorldRay(glm::vec2 rect_pos, glm::vec2 rect_size, Camera* camera) {
+		Physics::Ray ray = Physics::Ray();
 
 		glm::vec2 mouse_pos = GetMousePosInViewport(rect_pos, rect_size, glm::vec2(camera->width, camera->height));
 

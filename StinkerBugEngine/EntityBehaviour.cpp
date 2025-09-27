@@ -8,7 +8,7 @@
 
 void EntityBehaviour::Init() {
     auto& scene = SceneManager::getInstance().GetActiveScene();
-	entityHelper = new EntityHelper(entity, &scene.Scene_ECS);
+	entityHelper = new EntityHelper(entity, &scene.Scene_ECS.WorldRegistry);
 
     // Check if entity has Transform
     if (!entityHelper->HasComponent<Transform>()) {

@@ -8,12 +8,16 @@
 #include "Entity.h"
 
 
-namespace PhysicsFunctions {
+namespace Physics {
 
 	struct RaycastHit {
 		bool hit = false;
 		float distance = 0.0f;
+		glm::vec3 point;
 		Entity entity;
+
+		// Temporary maybe
+		bool isGizmo = false;
 	};
 
 	struct Ray {
