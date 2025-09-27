@@ -96,6 +96,7 @@
     <ClInclude Include="MeshRenderer.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="OskarComponent.h" />
+    <ClInclude Include="PhysicsFunctions.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

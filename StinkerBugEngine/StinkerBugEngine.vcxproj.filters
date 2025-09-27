@@ -362,6 +362,9 @@
     <ClInclude Include="EntitySelector.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
+    <ClInclude Include="PhysicsFunctions.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

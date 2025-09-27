@@ -34,6 +34,7 @@ public:
 	~Display();
 
 	int FrameRate;
+	double scroll = 0.0;
 };
 
 

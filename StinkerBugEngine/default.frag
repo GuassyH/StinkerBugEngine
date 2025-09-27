@@ -47,7 +47,6 @@ vec4 directionalLight(){
 	float specular = specAmount * specularLight;
 
 	vec4 finalCol = vec4(ambient);
-	// vec4 finalCol = lightColor * (diffuse + ambient) + (texture(specular0, texCoords).r * specular);
 	if(hasSpecular){
 		finalCol = (lightColor * diffuse) + (texture(specular0, texCoords).r * specular);
 	}else{
@@ -59,7 +58,7 @@ vec4 directionalLight(){
 };
 #endif
 
-#ifdef SHADOW
+#ifdef SHADOW // I need to somehow smoothe the lines
 float ShadowPCF(vec3 projCoords)
 {
     float shadow = 0.0;
@@ -80,14 +79,14 @@ float ShadowPCF(vec3 projCoords)
 
 void main(){
 	
-	vec4 diffuseMap = texture(diffuse0, texCoords);
+	vec4 baseColor = hasDiffuse ? texture(diffuse0, texCoords) : color;
 	vec4 lightVal = vec4(1.0);
 	float depthVal = 1.0;
-	float shadowVal = 1.0;
 
 	#ifdef DEPTH
-		depthVal = 1.0 - (min(length(camPos - crntPos), 1000.0) / 1000.0); // Seperates object a bit, temporaray
+		depthVal = 1.0 - (min(length(camPos - crntPos), 1000.0) / 1000.0); // Seperates object a bit, temporary
 	#endif
+
 
 
 	#ifdef LIT 
@@ -96,39 +95,19 @@ void main(){
 				lightVal = directionalLight(); 
 				vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
 				projCoords = projCoords * 0.5 + 0.5;
-				shadowVal = max(ShadowPCF(projCoords), 0.3); 
+				float shadow = max(ShadowPCF(projCoords), ambient); 
 
-				if(hasDiffuse){
-					fragColor = diffuseMap * color * min(lightVal, shadowVal) * depthVal;
-				}else{
-					fragColor = color * lightVal * (shadowVal + ((1-shadowVal) * shadowColor)) * depthVal;
-				}
-				if(shadowVal < 1.0){
-					fragColor *= shadowColor;
+				if(shadow < 1.0){
+					lightVal *= shadow;
+					lightVal.a = 1.0;
 				}
 			}else{
-				if(hasDiffuse){
-					fragColor = diffuseMap * color * depthVal * ambient;
-				}else{
-					fragColor = color * depthVal * ambient;
-				}
-			}
-		#endif
-		#ifndef SHADOW
-			if(hasDiffuse){
-				fragColor = diffuseMap * color * depthVal;
-			}else{
-				fragColor = color * depthVal;
+				lightVal *= ambient;
+				lightVal.a = 1.0;
 			}
 		#endif
 	#endif
 
-	#ifndef LIT
-		if(hasDiffuse){
-			fragColor = diffuseMap * color * depthVal;
-		}else{
-			fragColor = color * depthVal;
-		}
-	#endif
+	fragColor = baseColor * lightVal * depthVal;
 
 }

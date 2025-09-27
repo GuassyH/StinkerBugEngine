@@ -49,7 +49,7 @@ namespace Gizmos {
 
 			}
 		}
-	};
+	}; 
 
 	struct TransformHandle : public Gizmo {
 		GizmoObject arrowX;
@@ -76,7 +76,7 @@ namespace Gizmos {
 
             // X Arrow
             arrowX.mesh_renderer.model = new Model();
-            arrowX.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow.gltf");
+            arrowX.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
             arrowX.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
             arrowX.mesh_renderer.material->Color = x_color;
             arrowX.mesh_renderer.material->Color.a = transparency;
@@ -84,7 +84,7 @@ namespace Gizmos {
 
             // Y Arrow
             arrowY.mesh_renderer.model = new Model();
-            arrowY.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow.gltf");
+            arrowY.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
             arrowY.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
             arrowY.mesh_renderer.material->Color = y_color;
             arrowY.mesh_renderer.material->Color.a = transparency;
@@ -92,7 +92,7 @@ namespace Gizmos {
 
             // Z Arrow
             arrowZ.mesh_renderer.model = new Model();
-            arrowZ.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow.gltf");
+            arrowZ.mesh_renderer.model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
             arrowZ.mesh_renderer.material = new Material(MaterialFlags_NoDepthTest);
             arrowZ.mesh_renderer.material->Color = z_color;
             arrowZ.mesh_renderer.material->Color.a = transparency;

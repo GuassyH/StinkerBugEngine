@@ -11,7 +11,6 @@
 #include "EntityHelper.h"
 #include "FullScreenPass.h"
 
-inline glm::vec3 WorldUp = glm::vec3(0.0, 1.0, 0.0);
 
 Shader m_shadowMapShader;
 
@@ -22,7 +21,7 @@ Camera::Camera(int width, int height, Transform& t) {
 	Camera::width = width;
 	Camera::height = height;
 
-	glfwSetCursorPos(display.window, (width / 2), (height / 2));
+	glfwSetCursorPos(display.window, (width / 2.0f), (height / 2.0f));
 
 	m_shadowMapFBO.Init(8192, 8192);
 	m_shadowMapShader = Shader("ShadowMapFBO.vert", "ShadowMapFBO.frag");
@@ -44,7 +43,7 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	/// THIS IS WRONG!!! I forgot that rotation is in degrees not a vector, it works but i should change
-	view = glm::lookAt(transform->position, transform->position + transform->rotation, WorldUp);
+	view = glm::lookAt(transform->position, transform->position + transform->rotation, Constants::Dirs::Up);
 	projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 
 	forward = glm::normalize(transform->rotation);
@@ -111,7 +110,7 @@ void Camera::Render(Scene* scene) {
 		scene->main_light->GetComponent<Light>().vec_direction = direction;
 
 		glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 200.0f);
-		glm::mat4 lightView = glm::lookAt(transform->position - (direction * glm::vec3(100)), transform->position - (direction * glm::vec3(100)) + direction, WorldUp);
+		glm::mat4 lightView = glm::lookAt(transform->position - (direction * glm::vec3(100)), transform->position - (direction * glm::vec3(100)) + direction, Constants::Dirs::Up);
 		glm::mat4 light_VP = lightProj * lightView;
 		
 		scene->main_light->GetComponent<Light>().light_VP = light_VP;

@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Screen.h"
 
+
 void EditorCamera::AddGizmoEntities(Scene& scene) {
 	Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle();
 	Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle();
@@ -43,6 +44,13 @@ void EditorCamera::DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& se
 
 void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 	
+
+
+
+	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS) {
+		glm::vec3 temp = Screen::ScreenToWorldRay(w_pos, w_size, camera);
+	}
+
 	// If you left click
 	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS && glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) { 
 		if (firstClick) {
@@ -54,11 +62,9 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 				if (scHit.hit) {
 					selected_entity = scHit.entity;
 					is_entity_selected = true;
-					std::cout << "Mouse hit entity: " << scHit.entity << "\n";
 				}
 				else {
 					is_entity_selected = false;
-					std::cout << "Mouse did not hit any entity\n";
 				}
 			}
 		}
@@ -66,4 +72,78 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 	else {
 		firstClick = true;
 	}
+}
+
+
+
+void EditorCamera::Move() {
+	float deltaTime = DeltaTime::getInstance().get();
+	Display& display = Display::getInstance();
+	GLFWwindow* window = display.window;
+
+	vertical = 0.0;
+	horizontal = 0.0;
+	elevator = 0.0;
+
+	// Horizontal and Lateral Movement
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { vertical += 1.0; }
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) { vertical -= 1.0; }
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { horizontal -= 1.0; }
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { horizontal += 1.0; }
+
+	glm::vec3 proj_forward = glm::normalize(camera->forward * glm::vec3(1, 0, 1));
+
+	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { speedMul = 2.0f; }
+	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) { speedMul = 0.5f; }
+	else { speedMul = 1.0f; }
+
+	// Up & Down
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { elevator += 1; }
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { elevator -= 1; }
+
+	glm::vec3 dir = vertical * camera->forward + horizontal * camera->right + elevator * Constants::Dirs::Up;
+	if (glm::length(dir) > 0) { moveDir = glm::normalize(dir); }
+	else { moveDir = glm::vec3(0.0); }
+
+	this->transform->position += moveDir * moveSpeed * speedMul * deltaTime;
+
+}
+
+
+void EditorCamera::Look() {
+	float deltaTime = DeltaTime::getInstance().get();
+	Display& display = Display::getInstance();
+	GLFWwindow* window = display.window;
+
+	// Get mouse position in screen coords
+	double mouseX, mouseY;
+	glfwGetCursorPos(window, &mouseX, &mouseY);
+
+	// Compute mouse delta relative to image center
+	double centerX = glm::roundEven(w_pos.x + (w_size.x / 2.0f));
+	double centerY = glm::roundEven(w_pos.y + (w_size.y / 2.0f));
+
+	float deltaX = (float)(mouseX - centerX);
+	float deltaY = (float)(mouseY - centerY);
+
+	// Convert to [-1,1] range based on image size (optional)
+	deltaX /= w_size.x;
+	deltaY /= w_size.y;
+
+	// Apply sensitivity 
+	float rotX = -deltaY * sensitivity * 100.0f;
+	float rotY = -deltaX * sensitivity * 100.0f;
+
+	glm::vec3 newOrientation = glm::rotate(this->transform->rotation, glm::radians(rotX), glm::normalize(glm::cross(this->transform->rotation, Constants::Dirs::Up)));
+	if (!((glm::angle(newOrientation, Constants::Dirs::Up) <= glm::radians(5.0f)) || (glm::angle(newOrientation, -Constants::Dirs::Up) <= glm::radians(5.0f)))) {
+		this->transform->rotation = newOrientation;
+	}
+	this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(rotY), Constants::Dirs::Up);
+
+	// Scroll changes speed
+	if (display.scroll != 0) {
+		display.scroll > 0 ? moveSpeed += 0.5f : (moveSpeed > 0.5f ? moveSpeed -= 0.5f : moveSpeed = 0.5f);
+	}
+
+	glfwSetCursorPos(window, centerX, centerY);
 }

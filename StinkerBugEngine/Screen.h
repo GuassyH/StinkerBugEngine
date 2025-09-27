@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "PhysicsFunctions.h"
 
 namespace Screen
 {
@@ -17,6 +18,7 @@ namespace Screen
 		Entity entity = 0;
 		float distance = 0.0f;
 	};
+
 
 	static inline ScreenCastHit EntityAtMousePos(Camera* camera, Scene& scene, glm::vec2 mousePos) {
 		ScreenCastHit result;
@@ -139,6 +141,35 @@ namespace Screen
 
 		// std::cout << "Mouse Pos in Viewport: " << mouseX << ", " << mouseY << "\n";
 		return glm::vec2(static_cast<float>(mouseX), static_cast<float>(mouseY));
+	}
+
+
+	static inline PhysicsFunctions::Ray ScreenToWorldRay(glm::vec2 rect_pos, glm::vec2 rect_size, Camera* camera) {
+		PhysicsFunctions::Ray ray = PhysicsFunctions::Ray();
+
+		glm::vec2 mouse_pos = GetMousePosInViewport(rect_pos, rect_size, glm::vec2(camera->width, camera->height));
+
+		// Convert to NDC [-1, 1]
+		float x = (2.0f * mouse_pos.x) / camera->width - 1.0f;
+		float y = 1.0f - (2.0f * mouse_pos.y) / camera->height;
+
+		float fov = glm::radians(camera->FOVdeg);
+		float aspect = (float)camera->width / (float)camera->height;
+		float scale = tan(fov * 0.5f);
+
+		// Orthonormal basis
+		glm::vec3 forward = glm::normalize(camera->forward);
+		glm::vec3 right = glm::normalize(camera->right);
+		glm::vec3 up = glm::normalize(camera->localUp);
+
+		glm::vec3 rayDir = glm::normalize(forward + x * aspect * scale * right + y * scale * up);
+
+
+		ray.direction = rayDir;
+		ray.position = camera->transform->position;
+
+		Constants::DebugLog::Vec3("Cam Ray Dir", rayDir);
+		return ray;
 	}
 }
 

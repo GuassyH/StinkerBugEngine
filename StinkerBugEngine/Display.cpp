@@ -11,6 +11,11 @@ void frame_buffer_size_callback(GLFWwindow* window, int width, int height) {
 	std::cout << "window size is " << width << " x " << height << std::endl;
 }
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+	// Temporary
+	Display::getInstance().scroll = yoffset;
+}
+
 int Display::init(unsigned int windowWidth, unsigned int windowHeight, const char* title){
 	Display::windowWidth = windowWidth;
 	Display::windowHeight = windowHeight;
@@ -51,7 +56,8 @@ int Display::init(unsigned int windowWidth, unsigned int windowHeight, const cha
 	monitorHeight = mode->height;
 
 	glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
-	
+	glfwSetScrollCallback(window, scroll_callback);
+
 	// Culling stuff
 	glViewport(0, 0, windowWidth, windowHeight);
 	glEnable(GL_DEPTH_TEST);
@@ -84,6 +90,8 @@ void Display::EndFrame() {
 		nbFrames = 0;
 		lastTime += 1.0;
 	}
+
+	scroll = 0.0f;
 
 	if (glfwGetKey(window, GLFW_KEY_END) == GLFW_PRESS) { glfwSetWindowShouldClose(window, true); }
 	glfwPollEvents();
