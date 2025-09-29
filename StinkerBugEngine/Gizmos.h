@@ -4,6 +4,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <xutility>
 
 #include "MeshRenderer.h"
 #include "Transform.h"
@@ -14,6 +15,9 @@
 #include "ComponentsList.h"
 #include "Vertex.h"
 #include "Constants.h"
+
+#include "EntityBehaviour.h"
+#include "ArrowGizmo.h"
 
 namespace Gizmos {
 
@@ -35,11 +39,13 @@ namespace Gizmos {
 
 	struct GizmoObject {
         GizmoObject() = default;
+        ~GizmoObject() = default;
 
         EntityHelper* entity_helper = nullptr;
 		MeshRenderer* mr = nullptr;
 		Transform* t = nullptr;
         GizmoComponent* gc = nullptr;
+        EntityBehaviour* eb = nullptr;
 		glm::vec3 rotation_offset = glm::vec3(0.0f);
 		glm::vec3 position_offset = glm::vec3(0.0f);
 		bool needs_neg_z = false;
@@ -47,9 +53,11 @@ namespace Gizmos {
 
 	struct Gizmo {
         Gizmo() = default;
+        ~Gizmo() = default;
 
         std::vector<GizmoObject> objects;
-		void Draw(Camera* camera, Scene& scene, Transform* editor_transform, EntityHelper& selected_entity_helper) {
+		void Draw(Camera* camera, Scene& scene, Transform* editor_transform, EntityHelper& selected_entity_helper, bool local_space) // INTERACTABLE
+        {
 			glm::vec3 cam_to_entity = editor_transform->position + (glm::normalize(selected_entity_helper.GetComponent<Transform>().position - editor_transform->position) * 4.0f);
 		    
             for (GizmoObject& obj : objects) {
@@ -59,32 +67,67 @@ namespace Gizmos {
 			    obj.t->position = cam_to_entity + obj.position_offset;
 
                 // Set rotation
-			    glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
-			    obj.t->rotation = selected_entity_helper.GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
-
-                // Update transform
-			    obj.t->UpdateMatrix();
-                
-                // if the the object is hovered change to hovor color.
-                if (obj.gc->isHovered && obj.gc->interactable) {
-                    obj.mr->material->Color = obj.gc->hover_color;
+                if (local_space) {
+                    glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
+			        obj.t->rotation = selected_entity_helper.GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
                 }
                 else {
-                    obj.mr->material->Color = obj.gc->reg_color;
+                    obj.t->rotation = obj.rotation_offset;
+                }
+
+                
+                // if the the object is hovered change to hovor color.
+                if (obj.gc->isHovered && obj.gc->interactable) { obj.mr->material->Color = obj.gc->hover_color; }
+                else { obj.mr->material->Color = obj.gc->reg_color; }
+
+                if (obj.gc->interactable) {
+                    if (obj.gc->isHovered && obj.eb) {
+                        obj.eb->Update();
+                    }
+                }
+                else {
+                    if (obj.eb) {
+                        obj.eb->Update();
+                    }
                 }
 
                 // Render
+			    obj.t->UpdateMatrix();
                 obj.mr->model->render(obj.mr->material, obj.t, editor_transform, camera, nullptr);
 
                 
                 // If is hovered reset and set hovered to false
-                if (obj.gc->isHovered) {
+                if (obj.gc->isHovered && obj.gc->interactable) {
                     obj.mr->material->Color = obj.gc->reg_color;
                     obj.gc->isHovered = false;
                 }
 		    }
 		}
-	}; 
+        void Draw(Camera* camera, Scene& scene, Transform* editor_transform, bool local_space) // NON INTERACTIABLE
+        {
+            for (GizmoObject& obj : objects) {
+                if (!obj.mr || !obj.t || !obj.entity_helper || !obj.gc) { std::cout << "Gizmo Obj has nullptr" << std::endl; continue; }
+
+                obj.t->position = editor_transform->position;
+                obj.t->position.y = 0.0;
+                
+                if (obj.gc->interactable) {
+                    if (obj.gc->isHovered && obj.eb) {
+                        obj.eb->Update();
+                    }
+                }
+                else {
+                    if (obj.eb) {
+                        obj.eb->Update();
+                    }
+                }
+
+                // Render
+                obj.t->UpdateMatrix();
+                obj.mr->model->render(obj.mr->material, obj.t, editor_transform, camera, nullptr);
+            }
+        }
+    }; 
 
 	struct TransformHandle : public Gizmo {
         GizmoObject arrowX;
@@ -113,6 +156,10 @@ namespace Gizmos {
             arrowX.gc = &arrowX.entity_helper->AddComponent<GizmoComponent>();
             arrowY.gc = &arrowY.entity_helper->AddComponent<GizmoComponent>();
             arrowZ.gc = &arrowZ.entity_helper->AddComponent<GizmoComponent>();
+
+            arrowX.eb = &arrowX.entity_helper->AddComponent<ArrowGizmo>();
+            arrowY.eb = &arrowY.entity_helper->AddComponent<ArrowGizmo>();
+            arrowZ.eb = &arrowZ.entity_helper->AddComponent<ArrowGizmo>();
 
             arrowX.gc->reg_color = x_color;
             arrowY.gc->reg_color = y_color;
@@ -288,7 +335,32 @@ namespace Gizmos {
 
     };
 
-    
+    struct InfiniteGrid : public Gizmo {
+        GizmoObject infinite_grid;
+
+        InfiniteGrid(ECSystem& ecs) {
+            ECS_Registry& gizmo_register = ecs.EditorRegistry;
+
+            infinite_grid.entity_helper = new EntityHelper(createGizmo(gizmo_register, "infinite_grid"), &gizmo_register);
+
+            Shader grid_shader("editor_grid.vert", "editor_grid.frag");
+            Material grid_mat(grid_shader);
+
+            infinite_grid.mr = &infinite_grid.entity_helper->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(grid_mat));
+            infinite_grid.mr->raycastable = false;
+            infinite_grid.gc = &infinite_grid.entity_helper->AddComponent<GizmoComponent>();
+            infinite_grid.gc->interactable = false;
+            infinite_grid.t = &infinite_grid.entity_helper->GetComponent<Transform>();
+            infinite_grid.t->scale = glm::vec3(100.0f, 0.0f, 100.0f);
+            infinite_grid.gc->reg_color = glm::vec4(1.0f);
+            infinite_grid.gc->hover_color = glm::vec4(1.0f);
+
+            infinite_grid.rotation_offset = glm::vec3(0.0f);
+            infinite_grid.position_offset = glm::vec3(0.0f);
+
+            objects.push_back(infinite_grid);
+        }
+    };
 }
 
 

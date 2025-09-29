@@ -10,6 +10,7 @@
 #include "Display.h"
 #include "EntityHelper.h"
 #include "Gizmos.h"
+#include "Physics.h"
 
 class Scene;
 
@@ -19,24 +20,28 @@ private:
 	unsigned int select_rbo;
 	unsigned int select_tex;
 
+	bool firstClick = true;
+	bool interactingWithGizmo = false;
+	Physics::RaycastHit rayHit;
 public:
 	Transform* transform = nullptr;
 	Camera* camera = nullptr;
 	
 	EditorCamera() = default;
 	
-	
 	EntityHelper selected_entity_helper;
 	unsigned int selected_gizmo = 0;
-	std::vector<Gizmos::Gizmo> gizmos;
+	std::vector<Gizmos::Gizmo> pre_pass_gizmos;
+	std::vector<Gizmos::Gizmo> post_pass_gizmos;
 
-
-	bool firstClick = true;
 
 	void Init();
 	// TEMPORARY SOLUTION
 	void AddGizmoEntities(Scene& scene);
-	void DrawGizmos(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+
+	void PrePass(Scene& scene);
+	void Render(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
 	void SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
 	
 

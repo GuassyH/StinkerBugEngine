@@ -13,6 +13,7 @@ vec4 shadowColor = vec4(0.9, 0.9, 0.95, 1.0);
 
 uniform sampler2D diffuse0;
 uniform sampler2D specular0;
+
 uniform bool hasDiffuse;
 uniform bool hasSpecular;
 
@@ -23,9 +24,8 @@ uniform vec4 color;
 uniform float ambient = 0.2;
 
 in vec3 crntPos;
-in vec3 normal;
-in vec4 vertColor;
 in vec2 texCoords;
+in vec3 normal;
 
 out vec4 fragColor;
 
@@ -79,7 +79,7 @@ float ShadowPCF(vec3 projCoords)
 
 void main(){
 	
-	vec4 baseColor = hasDiffuse ? texture(diffuse0, texCoords) : color;
+	vec4 baseColor = hasDiffuse ? texture(diffuse0, texCoords) * color : color;
 	vec4 lightVal = vec4(1.0);
 	float depthVal = 1.0;
 
@@ -87,15 +87,14 @@ void main(){
 		depthVal = 1.0 - (min(length(camPos - crntPos), 1000.0) / 1000.0); // Seperates object a bit, temporary
 	#endif
 
-
-
 	#ifdef LIT 
 		#ifdef SHADOW
 			if(lightEnabled) { 
 				lightVal = directionalLight(); 
 				vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
 				projCoords = projCoords * 0.5 + 0.5;
-				float shadow = max(ShadowPCF(projCoords), ambient); 
+				bool outside = any(lessThan(projCoords.xy, vec2(0.0))) || any(greaterThan(projCoords.xy, vec2(1.0))) || projCoords.z > 1.0 || projCoords.z < 0.0;
+				float shadow = outside ? 1.0 : max(ShadowPCF(projCoords), ambient); 
 
 				if(shadow < 1.0){
 					lightVal *= shadow;
@@ -108,6 +107,7 @@ void main(){
 		#endif
 	#endif
 
+	// fragColor = vec4(normal, 1.0);
+	// fragColor = texture(normal0, texCoords);
 	fragColor = baseColor * lightVal * depthVal;
-
 }

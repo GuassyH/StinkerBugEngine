@@ -82,6 +82,9 @@
     <Filter Include="Source Files\Core\Rendering">
       <UniqueIdentifier>{8180086b-d12f-42ef-a92c-efb03e7b92e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\Editor">
+      <UniqueIdentifier>{06af272d-db01-4188-8a7a-90809c383ac1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -368,6 +371,12 @@
     <ClInclude Include="GizmoComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="GizmoBehaviour.h">
+      <Filter>Header Files\Core\UI\Gizmos</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrowGizmo.h">
+      <Filter>Header Files\Core\UI\Gizmos</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -388,11 +397,17 @@
     <None Include="ShadowMapFBO.vert">
       <Filter>Resource Files\Shaders\PostProcess</Filter>
     </None>
-    <None Include="ColToID.frag">
-      <Filter>Resource Files\Shaders\PostProcess</Filter>
+    <None Include="editor_grid.vert">
+      <Filter>Resource Files\Shaders\Editor</Filter>
     </None>
     <None Include="ColToID.vert">
       <Filter>Resource Files\Shaders\PostProcess</Filter>
+    </None>
+    <None Include="ColToID.frag">
+      <Filter>Resource Files\Shaders\PostProcess</Filter>
+    </None>
+    <None Include="editor_grid.frag">
+      <Filter>Resource Files\Shaders\Editor</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

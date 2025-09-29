@@ -17,7 +17,8 @@ public:
 	unsigned int m_width = 0;
 	unsigned int m_height = 0;
 	GLuint m_fbo = 0;
-	GLuint m_shadowMap = 0;
+	GLuint m_shadowMap = 0; // Tex
+	GLuint m_rbo = 0;
 }; 
 
 

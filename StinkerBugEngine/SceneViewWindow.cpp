@@ -11,16 +11,15 @@ void SceneViewWindow::Init() {
 	editorCamera = new EditorCamera();
 	editorCamera->Init();
 
+	editorCamera->transform->position = glm::vec3(0.0f, 5.0f, 10.0f);
+
 	editorCamera->camera->output_texture = cam_output;
 	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene());
 }
  
 
 void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
-	editorCamera->camera->UpdateMatrix(editorCamera->camera->width, editorCamera->camera->height);
-	editorCamera->camera->Render(&scene);
-	editorCamera->DrawGizmos(scene, is_entity_selected, selected_entity);
-	editorCamera->SelectObject(scene, is_entity_selected, selected_entity);
+	editorCamera->Render(scene, is_entity_selected, selected_entity);
 
 	std::ostringstream fps_text;	fps_text << display.FrameRate << "fps";
 

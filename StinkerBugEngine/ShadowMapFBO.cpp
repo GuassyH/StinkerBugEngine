@@ -1,4 +1,5 @@
 #include "ShadowMapFBO.h"
+#include "Screen.h"
 
 bool ShadowMapFBO::Init(unsigned int width, unsigned int height) {
     m_height = height;
@@ -35,6 +36,7 @@ bool ShadowMapFBO::Init(unsigned int width, unsigned int height) {
     }
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     return true;
 }
 

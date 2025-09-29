@@ -10,13 +10,14 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
+#include "Constants.h"
 
 #include "ShadowMapFBO.h"
 #include "Component.h"
 
 #include "Texture.h"
+#include "Transform.h"
 
-class Transform;
 class MeshRenderer;
 class Shader;
 class Light;
@@ -57,6 +58,9 @@ public:
 	ShadowMapFBO m_shadowMapFBO;
 	Texture* output_texture = nullptr;
 	Texture* old_output_texture = nullptr;
+
+	glm::mat4 getProjectionMat() { return glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane); }
+	glm::mat4 getViewMat(){ return glm::lookAt(transform->position, transform->position + transform->rotation, Constants::Dirs::Up); }
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Camera")) {

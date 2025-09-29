@@ -56,6 +56,7 @@
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArrowGizmo.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMovement.h" />
@@ -77,6 +78,7 @@
     <ClInclude Include="EntityHelper.h" />
     <ClInclude Include="EntitySelector.h" />
     <ClInclude Include="FullScreenPass.h" />
+    <ClInclude Include="GizmoBehaviour.h" />
     <ClInclude Include="GizmoComponent.h" />
     <ClInclude Include="Gizmos.h" />
     <ClInclude Include="HierarchyWindow.h" />
@@ -121,6 +123,8 @@
     <None Include="ColToID.vert" />
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="editor_grid.frag" />
+    <None Include="editor_grid.vert" />
     <None Include="ShadowMapFBO.frag" />
     <None Include="ShadowMapFBO.vert" />
     <None Include="skybox.frag" />

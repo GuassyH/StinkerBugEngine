@@ -20,6 +20,7 @@ class MeshRenderer : public Component{
 public:
 	Model* model = nullptr;
 	Material* material = nullptr;
+	bool raycastable = true;
 
 	MeshRenderer(Model& m, Material& mat) : model(&m), material(&mat) {}
 	MeshRenderer(Model* m, Material* mat) : model(m), material(mat) {}

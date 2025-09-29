@@ -42,6 +42,8 @@ int main(void) {
 	FullScreenPass skybox_pass(skybox_mat);
 	scene.passes.push_back(skybox_pass);
 
+
+
 	EntityHelper dir_light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS.WorldRegistry);
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(50.0f, 205.0f, 0.0f);

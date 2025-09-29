@@ -21,7 +21,7 @@
 #include "Light.h"
 
 class Model {
-private:
+protected:
 	std::vector<Mesh> meshes;
 	std::vector<Texture> textures_loaded;
 	std::string directory;
@@ -46,6 +46,8 @@ public:
 	void shadowPass(Material* material);
 	void render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light);
 	void cleanup();
+
+	std::vector<Mesh>& getMeshes() { return meshes; }
 };
 
 

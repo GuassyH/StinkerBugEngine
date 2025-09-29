@@ -46,7 +46,6 @@ void Mesh::shadowPass(Material* material) {
 }
 
 void Mesh::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light) {
-
 	Shader& shader = material->shader;
 
 	if (!&shader || !cam || !m_transform || !c_transform) { return; }
@@ -55,6 +54,7 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 	// Textures should only be done once per material but for now its here
 	unsigned int diffuseIdx = 0;
 	unsigned int specularIdx = 0;
+	unsigned int normalIdx = 0;
 
 	/// SINCE SHADOW MAP IS GL_TEXTURE0, START AT GL_TEXTURE1
 	for (unsigned int i = 0; i < textures.size(); i++) {
@@ -70,6 +70,9 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 		case aiTextureType_SPECULAR:
 			name = "specular" + std::to_string(specularIdx++);
 			break;
+		case aiTextureType_NORMALS:
+			name = "normal" + std::to_string(normalIdx++);
+			break;
 		}
 
 		// Set shader texture value
@@ -80,6 +83,7 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 
 	shader.SetInt("hasDiffuse", diffuseIdx > 0);
 	shader.SetInt("hasSpecular", specularIdx > 0);
+	shader.SetInt("hasNormal", normalIdx > 0);
 
 	// Reset active texture to shadowmap
 	cam->m_shadowMapFBO.BindForReading(GL_TEXTURE0);

@@ -1,6 +1,5 @@
 #include "Camera.h"
 
-#include "Constants.h"
 #include "Display.h"
 
 #include "SceneManager.h"
