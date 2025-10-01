@@ -17,6 +17,8 @@
 #include "SceneViewWindow.h"
 #include "GameWindow.h"
 
+#include "ECSystem.h"
+
 class Scene;
 struct Mesh;
 struct Material;
@@ -37,6 +39,8 @@ private:
 	GameWindow gameWindow;
 public:
 	static UI& getInstance() { static UI instance; return instance; }
+
+	ECSystem Editor_ECS;
 
 	void imgui_init();
 	void imgui_render(Scene& scene);

@@ -55,11 +55,11 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 void Camera::ShadowPass(glm::mat4 light_VP, Light* light) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
-	for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.GetComponentMap<MeshRenderer>()) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
 		
-		Transform& r_transform = scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(id);
+		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 		r_transform.UpdateMatrix();
 
 		m_shadowMapShader.Use();
@@ -79,11 +79,11 @@ void Camera::ShadowPass(glm::mat4 light_VP, Light* light) {
 void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
-	for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.GetComponentMap<MeshRenderer>()) {
+	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
 
-		Transform& r_transform = scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(id);
+		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 
 		renderer.model->render(renderer.material, &r_transform, transform, this, light);
 	}

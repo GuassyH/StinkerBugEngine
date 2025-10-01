@@ -15,10 +15,8 @@
 #include "Entity.h"
 #include "ComponentTypeID.h"
 
-class ECS_Registry {
+class ECSystem {
 public:
-	ECS_Registry() = default;
-
 	Entity nextEntity = 0;
 	std::unordered_set<Entity> entities;
 	std::unordered_map<Entity, std::string> entity_names;
@@ -181,13 +179,6 @@ public:
 			std::cout << "Component not found" << std::endl;
 		}
 	}
-};
-
-class ECSystem {
-public:
-	ECS_Registry WorldRegistry = ECS_Registry();
-	ECS_Registry EditorRegistry = ECS_Registry();
-
 
 	ECSystem() = default;
 	~ECSystem() = default;

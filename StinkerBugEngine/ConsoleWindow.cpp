@@ -2,7 +2,7 @@
 
 
 
-void ConsoleWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
+void ConsoleWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	//ImGui::SetNextWindowPos(ImVec2(350, display.windowHeight - 300));
 	//ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, 300));
 	ImGui::SetNextWindowPos(ImVec2(350, display.windowHeight - 300));

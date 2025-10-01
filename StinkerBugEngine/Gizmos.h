@@ -27,7 +27,7 @@ namespace Gizmos {
     static inline glm::vec4 z_color = glm::vec4(45.0f / 255.0f, 230.0f / 255.0f, 255.0f / 255.0f, gizmo_opacity);
     static inline glm::vec4 origo_color = glm::vec4(0.9f, 0.9f, 0.9f, gizmo_opacity);
 
-    inline Entity& createGizmo(ECS_Registry& gizmo_registry, const char* name) {
+    inline Entity& createGizmo(ECSystem& gizmo_registry, const char* name) {
         Entity& entity_id = gizmo_registry.nextEntity;	gizmo_registry.nextEntity++;
         gizmo_registry.component_bits[entity_id] = 0b0;
         gizmo_registry.entity_names[entity_id] = name;
@@ -140,14 +140,13 @@ namespace Gizmos {
         float transparency = 0.85f;
 
         TransformHandle(ECSystem& ecs) {
-            ECS_Registry& gizmo_register = ecs.EditorRegistry;
             arrowZ.needs_neg_z = true;
 
             // Initialize arrows
-            arrowX.entity_helper = new EntityHelper(createGizmo(gizmo_register, "arrowX"), &gizmo_register);
-            arrowY.entity_helper = new EntityHelper(createGizmo(gizmo_register, "arrowY"), &gizmo_register);
-            arrowZ.entity_helper = new EntityHelper(createGizmo(gizmo_register, "arrowZ"), &gizmo_register);
-            translate_origo_point.entity_helper = new EntityHelper(createGizmo(gizmo_register, "translate_origo_point"), &gizmo_register);
+            arrowX.entity_helper = new EntityHelper(createGizmo(ecs, "arrowX"), &ecs);
+            arrowY.entity_helper = new EntityHelper(createGizmo(ecs, "arrowY"), &ecs);
+            arrowZ.entity_helper = new EntityHelper(createGizmo(ecs, "arrowZ"), &ecs);
+            translate_origo_point.entity_helper = new EntityHelper(createGizmo(ecs, "translate_origo_point"), &ecs);
 
             arrowX.mr = &arrowY.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
             arrowY.mr = &arrowZ.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
@@ -214,16 +213,15 @@ namespace Gizmos {
         float transparency = 0.85f;
 
         ScaleHandle(ECSystem& ecs) {
-            ECS_Registry& gizmo_register = ecs.EditorRegistry;
             scaleZ.needs_neg_z = true;
 
 
             //  arrowZ.needs_neg_z = true;
             // Initialize arrows
-            scaleX.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scaleX"), &gizmo_register);
-            scaleY.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scaleY"), &gizmo_register);
-            scaleZ.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scaleZ"), &gizmo_register);
-            scale_origo_point.entity_helper = new EntityHelper(createGizmo(gizmo_register, "scale_origo_point"), &gizmo_register);
+            scaleX.entity_helper = new EntityHelper(createGizmo(ecs, "scaleX"), &ecs);
+            scaleY.entity_helper = new EntityHelper(createGizmo(ecs, "scaleY"), &ecs);
+            scaleZ.entity_helper = new EntityHelper(createGizmo(ecs, "scaleZ"), &ecs);
+            scale_origo_point.entity_helper = new EntityHelper(createGizmo(ecs, "scale_origo_point"), &ecs);
 
 
             
@@ -286,14 +284,13 @@ namespace Gizmos {
         float transparency = 0.85f;
 
         RotateHandle(ECSystem& ecs) {
-            ECS_Registry& gizmo_register = ecs.EditorRegistry;
             rotateZ.needs_neg_z = true;
 
             //  arrowZ.needs_neg_z = true;
             // Initialize arrows
-            rotateX.entity_helper = new EntityHelper(createGizmo(gizmo_register, "rotateX"), &gizmo_register);
-            rotateY.entity_helper = new EntityHelper(createGizmo(gizmo_register, "rotateY"), &gizmo_register);
-            rotateZ.entity_helper = new EntityHelper(createGizmo(gizmo_register, "rotateZ"), &gizmo_register);
+            rotateX.entity_helper = new EntityHelper(createGizmo(ecs, "rotateX"), &ecs);
+            rotateY.entity_helper = new EntityHelper(createGizmo(ecs, "rotateY"), &ecs);
+            rotateZ.entity_helper = new EntityHelper(createGizmo(ecs, "rotateZ"), &ecs);
 
             rotateX.mr = &rotateX.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
             rotateY.mr = &rotateY.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
@@ -339,9 +336,8 @@ namespace Gizmos {
         GizmoObject infinite_grid;
 
         InfiniteGrid(ECSystem& ecs) {
-            ECS_Registry& gizmo_register = ecs.EditorRegistry;
 
-            infinite_grid.entity_helper = new EntityHelper(createGizmo(gizmo_register, "infinite_grid"), &gizmo_register);
+            infinite_grid.entity_helper = new EntityHelper(createGizmo(ecs, "infinite_grid"), &ecs);
 
             Shader grid_shader("editor_grid.vert", "editor_grid.frag");
             Material grid_mat(grid_shader);

@@ -85,10 +85,10 @@ namespace Screen
 		Material id_material(c_shader, MaterialFlags_Depth);
 		glm::vec4 id_color = glm::vec4(0.0f);
 
-		for (auto& [id, components_renderer] : scene.Scene_ECS.WorldRegistry.components[typeid(MeshRenderer)]) {
+		for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
 			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 			if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
-			Transform& r_transform = scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(id);
+			Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 
 			id_color.r = ((id & 0x000000FF) >> 0) / 255.0f;
 			id_color.g = ((id & 0x0000FF00) >> 8) / 255.0f;

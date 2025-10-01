@@ -6,7 +6,7 @@
 #include "SceneManager.h"
 #include "Screen.h"
 
-void SceneViewWindow::Init() {
+void SceneViewWindow::Init(ECSystem& editor_ecs) {
 	cam_output = new Texture();
 	editorCamera = new EditorCamera();
 	editorCamera->Init();
@@ -14,11 +14,11 @@ void SceneViewWindow::Init() {
 	editorCamera->transform->position = glm::vec3(0.0f, 5.0f, 10.0f);
 
 	editorCamera->camera->output_texture = cam_output;
-	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene());
+	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene(), editor_ecs);
 }
  
 
-void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
+void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	std::ostringstream fps_text;	fps_text << display.FrameRate << "fps";
 
 
@@ -41,7 +41,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 	// Actual editor Camera
-	editorCamera->Render(scene, is_entity_selected, selected_entity);
+	editorCamera->Render(scene, is_entity_selected, selected_entity, editor_ecs);
 	if (editorCamera->camera->output_texture ) { 
 
 		ImVec2 windowSize = ImGui::GetContentRegionAvail();
@@ -106,7 +106,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	if (glfwGetKey(display.window, GLFW_KEY_F) == GLFW_PRESS) {
 		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
 			editorCamera->transform->position = 
-				scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
+				scene.Scene_ECS.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
 		}
 	}
 

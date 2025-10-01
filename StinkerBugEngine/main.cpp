@@ -43,16 +43,16 @@ int main(void) {
 	scene.passes.push_back(skybox_pass);
 
 
-	EntityHelper dir_light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS.WorldRegistry);
+	EntityHelper dir_light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS);
 	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.GetComponent<Transform>().rotation = glm::vec3(50.0f, 205.0f, 0.0f);
 
-	EntityHelper goblin(scene.CreateEntity("Big goblin"), &scene.Scene_ECS.WorldRegistry);
+	EntityHelper goblin(scene.CreateEntity("Big goblin"), &scene.Scene_ECS);
 	goblin.AddComponent<MeshRenderer>(new Model(glm::vec3(0.05f)), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
 	goblin.GetComponent<Transform>().scale = glm::vec3(0.05f);
 
-	EntityHelper Floor(scene.CreateEntity("Floor"), &scene.Scene_ECS.WorldRegistry);
+	EntityHelper Floor(scene.CreateEntity("Floor"), &scene.Scene_ECS);
 	Floor.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	Floor.GetComponent<Transform>().scale = glm::vec3(250.0f);
 	Floor.GetComponent<Transform>().position = glm::vec3(0.0f, -10.0f, 0.0f);

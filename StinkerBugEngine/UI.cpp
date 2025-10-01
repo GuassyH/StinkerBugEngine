@@ -24,7 +24,7 @@ void UI::imgui_init() {
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
-	sceneViewWindow.Init();
+	sceneViewWindow.Init(Editor_ECS);
 
 	std::cout << "\nImGui / UI initialized\n\n";
 }
@@ -41,12 +41,12 @@ void UI::imgui_render(Scene& scene) {
 
 
 	
-	gameWindow.Draw(scene, is_entity_selected, selected_entity);
-	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity);
-	topBarWindow.Draw(scene, is_entity_selected, selected_entity);
-	hierarchyWindow.Draw(scene, is_entity_selected, selected_entity);
-	inspectorWindow.Draw(scene, is_entity_selected, selected_entity);
-	consoleWindow.Draw(scene, is_entity_selected, selected_entity);
+	gameWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	topBarWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	hierarchyWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	inspectorWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	consoleWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
 
 	// ImGui::ShowDemoWindow();
 

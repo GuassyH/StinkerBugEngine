@@ -11,6 +11,7 @@
 #include "EntityHelper.h"
 #include "Gizmos.h"
 #include "Physics.h"
+#include "ECSystem.h"
 
 class Scene;
 
@@ -39,12 +40,12 @@ public:
 
 	void Init();
 	// TEMPORARY SOLUTION
-	void AddGizmoEntities(Scene& scene);
+	void AddGizmoEntities(Scene& scene, ECSystem& editor_ecs);
 
-	void PrePass(Scene& scene);
-	void Render(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
-	void PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
-	void SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void PrePass(Scene& scene, ECSystem& editor_ecs);
+	void Render(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
+	void PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
+	void SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 	
 
 	float moveSpeed = 2.0f;

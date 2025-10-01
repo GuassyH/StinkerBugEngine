@@ -36,15 +36,15 @@ namespace Physics {
 		return false;
 	}
 
-	static inline RaycastHit Raycast(glm::vec3 rayDir, glm::vec3 position, float distance, Camera* camera, glm::vec2 MouseNDC, ECS_Registry& registry_to_compare) {
+	static inline RaycastHit Raycast(glm::vec3 rayDir, glm::vec3 position, float distance, Camera* camera, glm::vec2 MouseNDC, ECSystem& ecs_to_compare) {
 		RaycastHit rayHit;
 		rayHit.direction = rayDir;
 		// How i understant it, go through each object. Check if the ray hits it, if so store it
 		// Then repeat for all objects, if its closer overwrite previous data
-		for (auto& [id, components_renderer] : registry_to_compare.GetComponentMap<MeshRenderer>()) {
+		for (auto& [id, components_renderer] : ecs_to_compare.GetComponentMap<MeshRenderer>()) {
 			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 			if (!renderer.model || !renderer.raycastable) { continue; }	// If there isnt a model skip
-			Transform& m_transform = registry_to_compare.GetComponent<Transform>(id);
+			Transform& m_transform = ecs_to_compare.GetComponent<Transform>(id);
 			Model& model = *renderer.model;
 
 			for (auto& mesh : model.getMeshes()) {
@@ -57,16 +57,16 @@ namespace Physics {
 		return rayHit;
 	}
 
-	static inline RaycastHit Raycast(Ray ray, float distance, Camera* camera, glm::vec2 MouseNDC, ECS_Registry& registry_to_compare) {
+	static inline RaycastHit Raycast(Ray ray, float distance, Camera* camera, glm::vec2 MouseNDC, ECSystem& ecs_to_compare) {
 		RaycastHit rayHit;
 		rayHit.direction = ray.direction;
 
 		// How i understant it, go through each object. Check if the ray hits it, if so store it
 		// Then repeat for all objects, if its closer overwrite previous data
-		for (auto& [id, components_renderer] : registry_to_compare.GetComponentMap<MeshRenderer>()) {
+		for (auto& [id, components_renderer] : ecs_to_compare.GetComponentMap<MeshRenderer>()) {
 			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 			if (!renderer.model || !renderer.raycastable) { continue; }	// If there isnt a model skip
-			Transform& m_transform = registry_to_compare.GetComponent<Transform>(id);
+			Transform& m_transform = ecs_to_compare.GetComponent<Transform>(id);
 			Model& model = *renderer.model;
 
 			for (auto& mesh : model.getMeshes()) {

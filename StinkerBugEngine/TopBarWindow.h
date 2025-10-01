@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Display.h"
 #include "Entity.h"
+#include "ECSystem.h"
 
 class TopBarWindow {
 private:
@@ -20,5 +21,5 @@ public:
 	bool next_frame = false;
 	bool scene_started = false;
 
-	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 };

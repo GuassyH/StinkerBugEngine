@@ -5,7 +5,7 @@
 #include "EntityHelper.h"
 
 /// THIS IS THE HIERARCHY
-void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
+void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	ImGui::SetNextWindowPos(ImVec2(0, 30));
 	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 30));
 	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
@@ -13,8 +13,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::Text("Entities");
 	ImGui::Separator();
 
-	for (auto ID : scene.Scene_ECS.WorldRegistry.entities) {
-		EntitySelector().Draw(scene, ID, is_entity_selected, selected_entity);
+	for (auto ID : scene.Scene_ECS.entities) {
+		EntitySelector().Draw(scene, ID, is_entity_selected, selected_entity, editor_ecs);
 	}
 
 
@@ -45,7 +45,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		ImGui::Separator();
 
 		if (ImGui::Button("Create Directional Light", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Light (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<Light>();
 			new_ntt.GetComponent<Light>().light_type = LightTypes::Directional;
 			new_ntt.GetComponent<Transform>().rotation = glm::vec3(25.0f, 205.0f, 0.0f);
@@ -54,16 +55,16 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Camera", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
-			scene.Scene_ECS.WorldRegistry.entity_names[new_ntt.id] = "Camera (" + std::to_string(new_ntt.id) + ")";
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Camera (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<Camera>(1920, 1080, new_ntt.GetComponent<Transform>());
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
-			scene.Scene_ECS.WorldRegistry.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
@@ -71,8 +72,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Sphere", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
-			scene.Scene_ECS.WorldRegistry.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::UVSphere()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
@@ -80,8 +81,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Plane", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
-			scene.Scene_ECS.WorldRegistry.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
@@ -97,7 +98,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		ImGui::Text("Change Object");
 		ImGui::Separator();
 		if (ImGui::Button("Delete")) {
-			scene.Scene_ECS.WorldRegistry.DestroyEntity(selected_entity);
+			scene.Scene_ECS.DestroyEntity(selected_entity);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();

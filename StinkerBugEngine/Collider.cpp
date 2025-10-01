@@ -6,7 +6,7 @@
 
 void Collider::Init() {
     auto& scene = SceneManager::getInstance().GetActiveScene();
-    entityHelper = new EntityHelper(entity, &scene.Scene_ECS.WorldRegistry);
+    entityHelper = new EntityHelper(entity, &scene.Scene_ECS);
 
     // Check if entity has Transform
     if (!entityHelper->HasComponent<Transform>()) {

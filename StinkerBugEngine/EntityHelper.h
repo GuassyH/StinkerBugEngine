@@ -11,33 +11,33 @@ public:
 	Entity id;
 
 	EntityHelper() = default;
-	EntityHelper(const Entity& id, ECS_Registry* reg) : id(id), registry(reg) {}
+	EntityHelper(const Entity& id, ECSystem* ecs) : id(id), ecs(ecs) {}
 	~EntityHelper() = default;
 
 	// For normal components
 	template<typename T, typename... Args>
 	T& AddComponent(Args&&... args)
 	{
-		return registry->AddComponent<T>(id, std::forward<Args>(args)...);
+		return ecs->AddComponent<T>(id, std::forward<Args>(args)...);
 	}
 
 
 	template<typename T>
 	T& GetComponent() {
-		return registry->GetComponent<T>(id);
+		return ecs->GetComponent<T>(id);
 	}
 
 	template<typename T>
 	void RemoveComponent() {
-		registry->RemoveComponent<T>(id);
+		ecs->RemoveComponent<T>(id);
 	}
 
 	template<typename T>
 	bool HasComponent() {
-		return registry->HasComponent<T>(id);
+		return ecs->HasComponent<T>(id);
 	}
 
-	ECS_Registry* registry;
+	ECSystem* ecs;
 };
 
 #endif

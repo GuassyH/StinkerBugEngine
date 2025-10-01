@@ -2,7 +2,7 @@
 
 
 
-void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
+void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	// Begin Game View window
 	// ImGui::SetNextWindowPos(ImVec2(350, 30));
 	// ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 330));

@@ -6,6 +6,7 @@
 #include "EntityHelper.h"
 #include "EditorCamera.h"
 #include "Texture.h"
+#include "ECSystem.h"
 
 class GameWindow {
 private:
@@ -15,5 +16,5 @@ private:
 	Display& display = Display::getInstance();
 public:
 	void Init();
-	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 };

@@ -2,7 +2,7 @@
 
 
 
-void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
+void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 
 	ImGui::SetNextWindowSize(ImVec2(display.windowWidth, 30));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));

@@ -4,6 +4,7 @@
 #include "Display.h"
 #include <string.h>
 #include "Entity.h"
+#include "ECSystem.h"
 
 class HierarchyWindow {
 private:
@@ -14,5 +15,5 @@ private:
 
 	Display& display = Display::getInstance();
 public:
-	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 };

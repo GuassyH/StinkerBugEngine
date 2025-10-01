@@ -5,6 +5,7 @@
 #include <string.h>
 #include "Entity.h"
 #include "ConsoleCapture.h"
+#include "ECSystem.h"
 
 class ConsoleWindow {
 private:
@@ -15,5 +16,5 @@ private:
 	ConsoleCapture consoleCapture;
 
 public:
-	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
+	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 };
