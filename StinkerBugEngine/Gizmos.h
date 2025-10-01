@@ -77,8 +77,8 @@ namespace Gizmos {
 
                 
                 // if the the object is hovered change to hovor color.
-                if (obj.gc->isHovered && obj.gc->interactable) { obj.mr->material->Color = obj.gc->hover_color; }
-                else { obj.mr->material->Color = obj.gc->reg_color; }
+                if (obj.gc->isHovered && obj.gc->interactable) { obj.mr->material->color = obj.gc->hover_color; }
+                else { obj.mr->material->color = obj.gc->reg_color; }
 
                 if (obj.gc->interactable) {
                     if (obj.gc->isHovered && obj.eb) {
@@ -98,7 +98,7 @@ namespace Gizmos {
                 
                 // If is hovered reset and set hovered to false
                 if (obj.gc->isHovered && obj.gc->interactable) {
-                    obj.mr->material->Color = obj.gc->reg_color;
+                    obj.mr->material->color = obj.gc->reg_color;
                     obj.gc->isHovered = false;
                 }
 		    }
@@ -187,7 +187,7 @@ namespace Gizmos {
             translate_origo_point.gc = &translate_origo_point.entity_helper->AddComponent<GizmoComponent>();
             translate_origo_point.gc->reg_color = origo_color;
             translate_origo_point.gc->interactable = false;
-            translate_origo_point.mr->material->Color.a = transparency;
+            translate_origo_point.mr->material->color.a = transparency;
             translate_origo_point.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.15f);
             translate_origo_point.t = &translate_origo_point.entity_helper->GetComponent<Transform>();
 

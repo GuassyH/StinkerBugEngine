@@ -28,6 +28,7 @@ public:
 	// Environment
 	float ambient = 0.3f;
 	EntityHelper* main_light = nullptr;
+	EntityHelper* main_camera = nullptr;
 	ECSystem Scene_ECS;
 	std::vector<FullScreenPass> passes;
 
@@ -37,6 +38,7 @@ public:
 	void UpdatePhysics();
 
 	bool HasMainLight();
+	bool HasMainCamera();
 
 	void StartEntityBehaviours();
 	void WakeEntityBehaviours();

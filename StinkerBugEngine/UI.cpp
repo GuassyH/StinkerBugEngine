@@ -21,6 +21,7 @@ void UI::imgui_init() {
 	custom_style->Colors[ImGuiCol_Header] = custom_style->Colors[ImGuiCol_Button];
 	custom_style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
 	custom_style->Colors[ImGuiCol_TitleBgActive] = custom_style->Colors[ImGuiCol_TitleBg];
+	custom_style->Colors[ImGuiCol_FrameBg] = ImVec4(0.2f, 0.2f, 0.26f, 1.0f);
 
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");

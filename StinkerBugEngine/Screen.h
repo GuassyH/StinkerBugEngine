@@ -95,7 +95,7 @@ namespace Screen
 			id_color.b = ((id & 0x00FF0000) >> 16) / 255.0f;
 			id_color.a = 1.0f;
 
-			id_material.Color = id_color;
+			id_material.color = id_color;
 
 			renderer.model->render(&id_material, &r_transform, camera->transform, camera, nullptr);
 		}

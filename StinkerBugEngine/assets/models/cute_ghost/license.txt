@@ -1,0 +1,11 @@
+Model Information:
+* title:	Cute ghost
+* source:	https://sketchfab.com/3d-models/cute-ghost-2c8c03bb0e5049529e653f9011a8fc90
+* author:	P3D (https://sketchfab.com/PelpesElSabio)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Cute ghost" (https://sketchfab.com/3d-models/cute-ghost-2c8c03bb0e5049529e653f9011a8fc90) by P3D (https://sketchfab.com/PelpesElSabio) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

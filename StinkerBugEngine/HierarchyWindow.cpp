@@ -6,8 +6,8 @@
 
 /// THIS IS THE HIERARCHY
 void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
-	ImGui::SetNextWindowPos(ImVec2(0, 40));
-	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 40));
+	ImGui::SetNextWindowPos(ImVec2(0, 30));
+	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 30));
 	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 	ImGui::Text("Entities");
@@ -65,7 +65,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
 			scene.Scene_ECS.WorldRegistry.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
@@ -74,7 +74,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
 			scene.Scene_ECS.WorldRegistry.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::UVSphere()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
@@ -83,7 +83,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS.WorldRegistry);
 			scene.Scene_ECS.WorldRegistry.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
 			new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.id;
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();

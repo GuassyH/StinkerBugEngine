@@ -23,67 +23,83 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 	std::ostringstream fps_text;	fps_text << display.FrameRate << "fps";
 
-	ImGui::SetNextWindowPos(ImVec2(350, 40));
-	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 340));
+	// Begin SceneViewWindow
+	ImGui::SetNextWindowPos(ImVec2(350, 30));
+	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 330));
 	ImGui::Begin("Scene View", &opened);
 
 
-	if (!editorCamera->camera->output_texture ) { ImGui::End(); std::cout << "No output texture!\n"; return; }
+	// Scene View Selectables
+	ImGui::SetCursorPos(ImVec2(0, 22));
+	ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetWindowSize().x, 20), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
+	
+	ImGui::Selectable("Grid", &editorCamera->showGrid, ImGuiSelectableFlags_None, ImVec2(30, 20));
+	ImGui::SameLine();
+	// Next ting
 
+	ImGui::EndChild();
 
-	ImVec2 windowSize = ImGui::GetContentRegionAvail();
-	ImVec2 windowPos = ImGui::GetWindowPos(); // top-left of the window in screen coordinates
+	// Actual editor Camera
+	if (editorCamera->camera->output_texture ) { 
 
-	// Camera aspect ratio (width / height)
-	float cameraAspect = (float)editorCamera->camera->width / (float)editorCamera->camera->height;
-	float windowAspect = windowSize.x / windowSize.y;
+		ImVec2 windowSize = ImGui::GetContentRegionAvail();
+		ImVec2 windowPos = ImGui::GetWindowPos(); // top-left of the window in screen coordinates
 
-	ImVec2 imageSize;
+		// Camera aspect ratio (width / height)
+		float cameraAspect = (float)editorCamera->camera->width / (float)editorCamera->camera->height;
+		float windowAspect = windowSize.x / windowSize.y;
 
-	if (windowAspect > cameraAspect) {
-		// Window is wider than camera -> match height
-		imageSize.y = windowSize.y;
-		imageSize.x = windowSize.y * cameraAspect;
-	}
-	else {
-		// Window is taller than camera -> match width
-		imageSize.x = windowSize.x;
-		imageSize.y = windowSize.x / cameraAspect;
-	}
+		ImVec2 imageSize;
 
-	ImVec2 imagePosInWindow;
-	imagePosInWindow.x = ((windowSize.x - imageSize.x) * 0.5f) + ImGui::GetCursorPosX();
-	imagePosInWindow.y = ((windowSize.y - imageSize.y) * 0.5f) + ImGui::GetCursorPosY();
-
-
-	ImGui::SetCursorPosX(imagePosInWindow.x);
-	ImGui::SetCursorPosY(imagePosInWindow.y);
-
-	if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
-		editorCamera->w_size.x = imageSize.x;
-		editorCamera->w_size.y = imageSize.y;
-		
-		editorCamera->w_pos.x = windowPos.x + imagePosInWindow.x;
-		editorCamera->w_pos.y = windowPos.y + imagePosInWindow.y;
-
-		if (firstRightClick) {
-			glfwSetCursorPos(display.window, glm::roundEven((imageSize.x / 2.0f) + windowPos.x + imagePosInWindow.x), glm::roundEven((imageSize.y / 2.0f) + windowPos.y + imagePosInWindow.y));
+		if (windowAspect > cameraAspect) {
+			// Window is wider than camera -> match height
+			imageSize.y = windowSize.y;
+			imageSize.x = windowSize.y * cameraAspect;
 		}
-		glfwSetInputMode(display.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
-		ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+		else {
+			// Window is taller than camera -> match width
+			imageSize.x = windowSize.x;
+			imageSize.y = windowSize.x / cameraAspect;
+		}
 
-		editorCamera->Move();
-		editorCamera->Look();
+		ImVec2 imagePosInWindow;
+		imagePosInWindow.x = ((windowSize.x - imageSize.x) * 0.5f) + ImGui::GetCursorPosX();
+		imagePosInWindow.y = ((windowSize.y - imageSize.y) * 0.5f) + ImGui::GetCursorPosY();
 
-		firstRightClick = false;
+
+		ImGui::SetCursorPosX(imagePosInWindow.x);
+		ImGui::SetCursorPosY(imagePosInWindow.y);
+
+		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
+			editorCamera->w_size.x = imageSize.x;
+			editorCamera->w_size.y = imageSize.y;
+		
+			editorCamera->w_pos.x = windowPos.x + imagePosInWindow.x;
+			editorCamera->w_pos.y = windowPos.y + imagePosInWindow.y;
+
+			if (firstRightClick) {
+				glfwSetCursorPos(display.window, glm::roundEven((imageSize.x / 2.0f) + windowPos.x + imagePosInWindow.x), glm::roundEven((imageSize.y / 2.0f) + windowPos.y + imagePosInWindow.y));
+			}
+			glfwSetInputMode(display.window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+			ImGui::SetMouseCursor(ImGuiMouseCursor_None);
+
+			editorCamera->Move();
+			editorCamera->Look();
+
+			firstRightClick = false;
+		}
+		else {
+			glfwSetInputMode(display.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
+			firstRightClick = true;
+		}
+
+		ImGui::Image((ImTextureID)(intptr_t)cam_output->ID, imageSize, ImVec2(0, 1), ImVec2(1, 0));
+	
 	}
 	else {
-		glfwSetInputMode(display.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		ImGui::SetMouseCursor(ImGuiMouseCursor_Arrow);
-		firstRightClick = true;
+		ImGui::End(); std::cout << "No output texture!\n";
 	}
-
-	ImGui::Image((ImTextureID)(intptr_t)cam_output->ID, imageSize, ImVec2(0, 1), ImVec2(1, 0));
 
 	ImGui::End();
 }

@@ -189,9 +189,6 @@ bool Camera::CheckOuputFBO(bool forceRewrite) {
 	Screen::InitFBO(this, outputFBO, outputRBO, output_texture->ID);
 
 	// std::cout << "shadow fbo tex: " << m_shadowMapFBO.m_shadowMap << " - output_tex: " << output_texture->ID << "\n";
-
-	// unbind to be safe
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	return true;
 }
 

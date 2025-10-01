@@ -38,8 +38,11 @@ void EditorCamera::PrePass(Scene& scene) {
 	// Rebind the framebuffer to the editor camera's FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, camera->outputFBO);
 
-	for (auto& p_gizmo : pre_pass_gizmos) {
-		p_gizmo.Draw(camera, scene, transform, true);
+	// DUMB SHOULD BE PER GIZMO WHICH SHOULD HAVE A "SHOW"
+	if (showGrid) {
+		for (auto& p_gizmo : pre_pass_gizmos) {
+			p_gizmo.Draw(camera, scene, transform, true);
+		}
 	}
 
 	glEnable(GL_CULL_FACE);

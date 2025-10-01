@@ -9,8 +9,8 @@ char buff[255];
 char* new_name;
 void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
 
-	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 350, 40));
-	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 40));
+	ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 350, 30));
+	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 30));
 	ImGui::Begin("Entity Inspector", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
 
 	if (scene.Scene_ECS.WorldRegistry.entities.find(selected_entity) != scene.Scene_ECS.WorldRegistry.entities.end() && is_entity_selected) {
@@ -79,7 +79,7 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 				if (ImGui::Button("Mesh Renderer", ImVec2(235, 20))) {
 					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS.WorldRegistry);
 					new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-					new_ntt.GetComponent<MeshRenderer>().material->Color = Constants::Colors::White;
+					new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();
 					new_ntt.~EntityHelper();
 				}

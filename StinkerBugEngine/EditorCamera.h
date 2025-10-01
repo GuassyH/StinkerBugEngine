@@ -35,6 +35,8 @@ public:
 	std::vector<Gizmos::Gizmo> post_pass_gizmos;
 
 
+	bool showGrid = true;
+
 	void Init();
 	// TEMPORARY SOLUTION
 	void AddGizmoEntities(Scene& scene);

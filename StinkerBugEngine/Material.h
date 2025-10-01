@@ -17,7 +17,7 @@ enum MaterialFlags_ {
 
 class Material {
 public:
-	glm::vec4 Color = glm::vec4(0.8, 0.8, 0.8, 1.0);
+	glm::vec4 color = glm::vec4(1.0);
 	Shader shader;
 	uint32_t flags;
 

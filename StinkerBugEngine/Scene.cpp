@@ -93,7 +93,12 @@ void Scene::UpdatePhysics() {
 
 // Check if a main light exists (directional light)
 bool Scene::HasMainLight() {
-	return (main_light && Scene_ECS.WorldRegistry.components[typeid(Light)].find(main_light->id) != Scene_ECS.WorldRegistry.components[typeid(Light)].end());
+	return (main_light && Scene_ECS.WorldRegistry.GetComponentMap<Light>().find(main_light->id) != Scene_ECS.WorldRegistry.GetComponentMap<Light>().end());
+}
+
+// Check if a main camera exists (directional light)
+bool Scene::HasMainCamera() {
+	return (main_camera && Scene_ECS.WorldRegistry.GetComponentMap<Camera>().find(main_light->id) != Scene_ECS.WorldRegistry.GetComponentMap<Camera>().end());
 }
 
 // Render each camera
@@ -103,7 +108,7 @@ void Scene::Render() {
 	main_light->registry = &Scene_ECS.WorldRegistry;
 	main_light->id = 0;
 
-	for (auto& [id, lightPtr] : Scene_ECS.WorldRegistry.components[typeid(Light)])
+	for (auto& [id, lightPtr] : Scene_ECS.WorldRegistry.GetComponentMap<Light>())
 	{
 		Light* light = dynamic_cast<Light*>(lightPtr.get());
 		if (light->light_type == LightTypes::Directional) {
@@ -112,7 +117,7 @@ void Scene::Render() {
 		}
 	}
 
-	for (auto& [id, camPtr] : Scene_ECS.WorldRegistry.components[typeid(Camera)]) {
+	for (auto& [id, camPtr] : Scene_ECS.WorldRegistry.GetComponentMap<Camera>()) {
 		Camera* c = dynamic_cast<Camera*>(camPtr.get());
 		c->UpdateMatrix(display.windowWidth, display.windowHeight);
 		c->Render(this);

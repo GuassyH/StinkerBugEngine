@@ -100,7 +100,7 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 	
 	// Others
 	shader.SetVec3("camPos", c_transform->position);
-	shader.SetVec4("color", material->Color);
+	shader.SetVec4("color", material->color);
 
 	// Light properties
 	glm::vec3 l_dir;
