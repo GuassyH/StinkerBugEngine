@@ -8,14 +8,14 @@ void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::Begin("Top_ToolbarWindow", &opened, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
 	ImGui::SetCursorPos(ImVec2(0, 0));
-	ImGui::BeginChild("Top_Toolbar", ImVec2(ImGui::GetWindowSize().x, 30), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar);
+	ImGui::BeginChild("Top_Toolbar", ImVec2(ImGui::GetWindowSize().x, 30), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-	ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 75, 5));
-	ImGui::Selectable("Play", &play_scene, ImGuiSelectableFlags_None, ImVec2(50, 30));
+	ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 45, 5));
+	ImGui::Selectable(">", &play_scene, ImGuiSelectableFlags_None, ImVec2(30, 30));
 	ImGui::SameLine();
-	ImGui::Selectable("Pause", &pause_scene, ImGuiSelectableFlags_None, ImVec2(50, 30));
+	ImGui::Selectable("||", &pause_scene, ImGuiSelectableFlags_None, ImVec2(30, 30));
 	ImGui::SameLine(); 
-	if (ImGui::Selectable("Next", &next_frame, ImGuiSelectableFlags_None, ImVec2(50, 30))) {
+	if (ImGui::Selectable(">++", &next_frame, ImGuiSelectableFlags_None, ImVec2(30, 30))) {
 		if (play_scene) {
 			if (!scene_started) {
 				scene.StartEntityBehaviours();

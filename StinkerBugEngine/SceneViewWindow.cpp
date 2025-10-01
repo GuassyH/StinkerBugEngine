@@ -19,27 +19,29 @@ void SceneViewWindow::Init() {
  
 
 void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity) {
-	editorCamera->Render(scene, is_entity_selected, selected_entity);
-
 	std::ostringstream fps_text;	fps_text << display.FrameRate << "fps";
+
 
 	// Begin SceneViewWindow
 	ImGui::SetNextWindowPos(ImVec2(350, 30));
 	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 330));
-	ImGui::Begin("Scene View", &opened);
+	ImGui::Begin("Scene View", &opened, ImGuiWindowFlags_NoScrollWithMouse);
 
 
 	// Scene View Selectables
 	ImGui::SetCursorPos(ImVec2(0, 22));
-	ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetWindowSize().x, 20), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
+	ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetWindowSize().x, 20), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	
 	ImGui::Selectable("Grid", &editorCamera->showGrid, ImGuiSelectableFlags_None, ImVec2(30, 20));
 	ImGui::SameLine();
-	// Next ting
+	ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 50);
+	ImGui::Selectable("Stats", &showStats, ImGuiSelectableFlags_None, ImVec2(35, 20)); // SHOULD BE MENU?
 
 	ImGui::EndChild();
 
+
 	// Actual editor Camera
+	editorCamera->Render(scene, is_entity_selected, selected_entity);
 	if (editorCamera->camera->output_texture ) { 
 
 		ImVec2 windowSize = ImGui::GetContentRegionAvail();
@@ -99,6 +101,13 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	}
 	else {
 		ImGui::End(); std::cout << "No output texture!\n";
+	}
+
+	if (glfwGetKey(display.window, GLFW_KEY_F) == GLFW_PRESS) {
+		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
+			editorCamera->transform->position = 
+				scene.Scene_ECS.WorldRegistry.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
+		}
 	}
 
 	ImGui::End();

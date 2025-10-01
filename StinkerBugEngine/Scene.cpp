@@ -98,27 +98,39 @@ bool Scene::HasMainLight() {
 
 // Check if a main camera exists (directional light)
 bool Scene::HasMainCamera() {
-	return (main_camera && Scene_ECS.WorldRegistry.GetComponentMap<Camera>().find(main_light->id) != Scene_ECS.WorldRegistry.GetComponentMap<Camera>().end());
+	return (main_camera && Scene_ECS.WorldRegistry.GetComponentMap<Camera>().find(main_camera->id) != Scene_ECS.WorldRegistry.GetComponentMap<Camera>().end());
 }
 
 // Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
-	if (!main_light) { main_light = new EntityHelper(); }
-	main_light->registry = &Scene_ECS.WorldRegistry;
-	main_light->id = 0;
+	if (!main_light) {
+		main_light = new EntityHelper();
+		main_light->registry = &Scene_ECS.WorldRegistry;
+		main_light->id = 0;
+	}
 
-	for (auto& [id, lightPtr] : Scene_ECS.WorldRegistry.GetComponentMap<Light>())
-	{
-		Light* light = dynamic_cast<Light*>(lightPtr.get());
-		if (light->light_type == LightTypes::Directional) {
-			main_light->id = id;
-			continue;
+	if (!HasMainLight()) {
+		for (auto& [id, lightPtr] : Scene_ECS.WorldRegistry.GetComponentMap<Light>()) {
+			Light* light = dynamic_cast<Light*>(lightPtr.get());
+			if (light->light_type == LightTypes::Directional) {
+				main_light->id = id;
+				break;
+			}
 		}
 	}
 
+	if (!main_camera) { 
+		main_camera = new EntityHelper();
+		main_camera->registry = &Scene_ECS.WorldRegistry;
+		main_camera->id = 0;
+	}
 	for (auto& [id, camPtr] : Scene_ECS.WorldRegistry.GetComponentMap<Camera>()) {
 		Camera* c = dynamic_cast<Camera*>(camPtr.get());
+		if (!HasMainCamera()) {
+			std::cout << "new cam id set: " << id << "\n";
+			main_camera->id = id;
+		}
 		c->UpdateMatrix(display.windowWidth, display.windowHeight);
 		c->Render(this);
 	}

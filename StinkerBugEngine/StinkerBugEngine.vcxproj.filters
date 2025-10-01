@@ -153,9 +153,6 @@
     <ClCompile Include="FullScreenPass.cpp">
       <Filter>Source Files\Componentesque</Filter>
     </ClCompile>
-    <ClCompile Include="ShadowMapFBO.cpp">
-      <Filter>Source Files\Componentesque</Filter>
-    </ClCompile>
     <ClCompile Include="SceneViewWindow.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
@@ -190,6 +187,15 @@
       <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="EntitySelector.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowMapFBO.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleWindow.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWindow.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -376,6 +382,12 @@
     </ClInclude>
     <ClInclude Include="ArrowGizmo.h">
       <Filter>Header Files\Core\UI\Gizmos</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

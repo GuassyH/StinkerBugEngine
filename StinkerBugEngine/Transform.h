@@ -48,7 +48,7 @@ public:
 	const glm::mat4& GetModelMatrix() const { return modelMatrix; }
 	const glm::mat4& GetRotationMatrix() const { return rotationMatrix; }
 
-	glm::vec3 DegToRad() {
+	glm::vec3 DegToVec() {
 		float pitch = glm::radians(rotation.x);
 		float yaw = glm::radians(rotation.y);
 
@@ -60,8 +60,8 @@ public:
 		return direction;
 	}
 
-	void RadToDeg(const glm::vec3& rad) {
-		rotation = glm::degrees(rad);
+	glm::vec3 VecToDeg(const glm::vec3& rad) {
+		return glm::degrees(rad);
 	}
 
 	virtual void DrawOnInspector() override {

@@ -7,24 +7,13 @@
 #include "EditorCamera.h"
 #include "Texture.h"
 
-class SceneViewWindow {
+class GameWindow {
 private:
 	bool opened = true;
 	bool closed = false;
 
-	bool firstRightClick = true;
-	bool firstLeftClick = true;
-
-	bool showStats = false;
-
 	Display& display = Display::getInstance();
 public:
-
-	EditorCamera* editorCamera = nullptr;
-	Texture* cam_output = nullptr;
-
-	SceneViewWindow() = default;
 	void Init();
 	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity);
-	
 };

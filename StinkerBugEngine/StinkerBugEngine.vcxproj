@@ -23,6 +23,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="ColliderFunctions.cpp" />
+    <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
@@ -30,6 +31,7 @@
     <ClCompile Include="EntityBehaviour.cpp" />
     <ClCompile Include="EntitySelector.cpp" />
     <ClCompile Include="FullScreenPass.cpp" />
+    <ClCompile Include="GameWindow.cpp" />
     <ClCompile Include="HierarchyWindow.cpp" />
     <ClCompile Include="imgui\imgui.cpp" />
     <ClCompile Include="imgui\imgui_demo.cpp" />
@@ -67,6 +69,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="ComponentsList.h" />
     <ClInclude Include="ConsoleCapture.h" />
+    <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="DeltaTime.h" />
     <ClInclude Include="Display.h" />
@@ -78,6 +81,7 @@
     <ClInclude Include="EntityHelper.h" />
     <ClInclude Include="EntitySelector.h" />
     <ClInclude Include="FullScreenPass.h" />
+    <ClInclude Include="GameWindow.h" />
     <ClInclude Include="GizmoBehaviour.h" />
     <ClInclude Include="GizmoComponent.h" />
     <ClInclude Include="Gizmos.h" />

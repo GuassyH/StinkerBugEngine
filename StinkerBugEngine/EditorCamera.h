@@ -35,7 +35,7 @@ public:
 	std::vector<Gizmos::Gizmo> post_pass_gizmos;
 
 
-	bool showGrid = true;
+	bool showGrid = false;
 
 	void Init();
 	// TEMPORARY SOLUTION

@@ -6,11 +6,16 @@
 #include "imgui_impl_opengl3.h"
 
 #include "Display.h"
-#include "ConsoleCapture.h"
 #include "Entity.h"
 
-#include "SceneViewWindow.h"
 #include "TopBarWindow.h"
+#include "ConsoleWindow.h"
+
+#include "HierarchyWindow.h"
+#include "InspectorWindow.h"
+
+#include "SceneViewWindow.h"
+#include "GameWindow.h"
 
 class Scene;
 struct Mesh;
@@ -24,9 +29,12 @@ private:
 	UI() = default;
 	Display& display = Display::getInstance();
 
-	ConsoleCapture consoleCapture;
-	SceneViewWindow sceneViewWindow;
 	TopBarWindow topBarWindow;
+	ConsoleWindow consoleWindow;
+	HierarchyWindow hierarchyWindow;
+	InspectorWindow inspectorWindow;
+	SceneViewWindow sceneViewWindow;
+	GameWindow gameWindow;
 public:
 	static UI& getInstance() { static UI instance; return instance; }
 
@@ -34,7 +42,6 @@ public:
 	void imgui_render(Scene& scene);
 	void imgui_shutdown();
 
-	void Console();
 };
 
 

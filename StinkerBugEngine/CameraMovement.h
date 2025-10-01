@@ -23,6 +23,9 @@ public:
 	bool focusMouse = true;
 	Camera* camera = nullptr;
 
+	glm::vec2 w_size;
+	glm::vec2 w_pos;
+
 	void Move() {
 		float deltaTime = DeltaTime::getInstance().get();
 		Display& display = Display::getInstance();
@@ -51,6 +54,7 @@ public:
 			if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { elevator += 1; }
 			if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { elevator -= 1; }
 
+			// Use cam forward for freecam
 			glm::vec3 dir = vertical * proj_forward + horizontal * camera->right + elevator * Constants::Dirs::Up;
 			if (glm::length(dir) > 0) { moveDir = glm::normalize(dir); }
 			else { moveDir = glm::vec3(0.0); }
@@ -66,33 +70,33 @@ public:
 		Display& display = Display::getInstance();
 		GLFWwindow* window = display.window;
 
+		double mouseX, mouseY;
+		glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-			if (firstClick) {
-				glfwSetCursorPos(window, (camera->width / 2), (camera->height / 2));
-				focusMouse = !focusMouse;
-				firstClick = false;
-			}
+		double centerX = glm::roundEven(w_pos.x + (w_size.x / 2.0f));
+		double centerY = glm::roundEven(w_pos.y + (w_size.y / 2.0f));
+
+		float deltaX = (float)(mouseX - centerX) / w_size.x;
+		float deltaY = (float)(mouseY - centerY) / w_size.y;
+
+		float rotX = -deltaY * sensitivity * 100.0f;
+		float rotY = -deltaX * sensitivity * 100.0f;
+
+		// Apply rotations to Euler angles
+		transform->rotation.x -= rotX; // pitch
+		transform->rotation.y += rotY; // yaw
+
+		// Clamp pitch to avoid flipping
+		if (transform->rotation.x > 89.0f) transform->rotation.x = 89.0f;
+		if (transform->rotation.x < -89.0f) transform->rotation.x = -89.0f;
+
+		// Scroll wheel speed adjust
+		if (display.scroll != 0) {
+			moveSpeed = glm::max(0.5f, moveSpeed + (display.scroll > 0 ? 0.5f : -0.5f));
 		}
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE) { firstClick = true; }
-
-		if (focusMouse) {
-			double mouseX;
-			double mouseY;
-			glfwGetCursorPos(window, &mouseX, &mouseY);
-
-			float rotX = sensitivity * ((float)(mouseY - (camera->height / 2)) / (float)camera->height) * 100;
-			float rotY = sensitivity * ((float)(mouseX - (camera->width / 2)) / (float)camera->width) * 100;
 
 
-			glm::vec3 newOrientation = glm::rotate(this->transform->rotation, glm::radians(-rotX), glm::normalize(glm::cross(this->transform->rotation, Constants::Dirs::Up)));
-			if (!((glm::angle(newOrientation, Constants::Dirs::Up) <= glm::radians(5.0f)) || (glm::angle(newOrientation, -Constants::Dirs::Up) <= glm::radians(5.0f)))) {
-				this->transform->rotation = newOrientation;
-			}
-			this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(-rotY), Constants::Dirs::Up);
-
-			glfwSetCursorPos(window, (camera->width / 2.0f), (camera->height / 2.0f));
-		}
+		glfwSetCursorPos(window, centerX, centerY);
 	}
 
 	void Start() override {

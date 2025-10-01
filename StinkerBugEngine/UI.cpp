@@ -5,8 +5,6 @@
 #include "Scene.h"
 #include "Material.h"
 
-#include "HierarchyWindow.h"
-#include "InspectorWindow.h"
 /// CORE
 
 void UI::imgui_init() {
@@ -43,11 +41,12 @@ void UI::imgui_render(Scene& scene) {
 
 
 	
+	gameWindow.Draw(scene, is_entity_selected, selected_entity);
 	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity);
 	topBarWindow.Draw(scene, is_entity_selected, selected_entity);
-	HierarchyWindow().Draw(scene, is_entity_selected, selected_entity);
-	InspectorWindow().Draw(scene, is_entity_selected, selected_entity);
-	Console();
+	hierarchyWindow.Draw(scene, is_entity_selected, selected_entity);
+	inspectorWindow.Draw(scene, is_entity_selected, selected_entity);
+	consoleWindow.Draw(scene, is_entity_selected, selected_entity);
 
 	// ImGui::ShowDemoWindow();
 
@@ -65,23 +64,3 @@ void UI::imgui_shutdown() {
 
 /// END OF CORE
 
-
-
-
-/// CONSOLE OUTPUT
-void UI::Console() {
-	bool opened = true;
-	ImGui::SetNextWindowPos(ImVec2(350, display.windowHeight - 300));
-	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, 300));
-	ImGui::Begin("Console", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
-
-	const auto& lines = consoleCapture.GetLines();
-	for (const auto& line : lines) {
-		ImGui::TextUnformatted(line.c_str());
-	}
-	if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
-		ImGui::SetScrollHereY(1.0f);
-
-
-	ImGui::End();
-}

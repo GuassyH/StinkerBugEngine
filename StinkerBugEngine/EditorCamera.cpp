@@ -149,8 +149,6 @@ void EditorCamera::Move() {
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) { horizontal -= 1.0; }
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) { horizontal += 1.0; }
 
-	glm::vec3 proj_forward = glm::normalize(camera->forward * glm::vec3(1, 0, 1));
-
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { speedMul = 2.0f; }
 	else if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) { speedMul = 0.5f; }
 	else { speedMul = 1.0f; }
@@ -173,35 +171,31 @@ void EditorCamera::Look() {
 	Display& display = Display::getInstance();
 	GLFWwindow* window = display.window;
 
-	// Get mouse position in screen coords
 	double mouseX, mouseY;
 	glfwGetCursorPos(window, &mouseX, &mouseY);
 
-	// Compute mouse delta relative to image center
 	double centerX = glm::roundEven(w_pos.x + (w_size.x / 2.0f));
 	double centerY = glm::roundEven(w_pos.y + (w_size.y / 2.0f));
 
-	float deltaX = (float)(mouseX - centerX);
-	float deltaY = (float)(mouseY - centerY);
+	float deltaX = (float)(mouseX - centerX) / w_size.x;
+	float deltaY = (float)(mouseY - centerY) / w_size.y;
 
-	// Convert to [-1,1] range based on image size (optional)
-	deltaX /= w_size.x;
-	deltaY /= w_size.y;
-
-	// Apply sensitivity 
 	float rotX = -deltaY * sensitivity * 100.0f;
 	float rotY = -deltaX * sensitivity * 100.0f;
 
-	glm::vec3 newOrientation = glm::rotate(this->transform->rotation, glm::radians(rotX), glm::normalize(glm::cross(this->transform->rotation, Constants::Dirs::Up)));
-	if (!((glm::angle(newOrientation, Constants::Dirs::Up) <= glm::radians(5.0f)) || (glm::angle(newOrientation, -Constants::Dirs::Up) <= glm::radians(5.0f)))) {
-		this->transform->rotation = newOrientation;
-	}
-	this->transform->rotation = glm::rotate(this->transform->rotation, glm::radians(rotY), Constants::Dirs::Up);
+	// Apply rotations to Euler angles
+	transform->rotation.x -= rotX; // pitch
+	transform->rotation.y += rotY; // yaw
 
-	// Scroll changes speed
+	// Clamp pitch to avoid flipping
+	if (transform->rotation.x > 89.0f) transform->rotation.x = 89.0f;
+	if (transform->rotation.x < -89.0f) transform->rotation.x = -89.0f;
+
+	// Scroll wheel speed adjust
 	if (display.scroll != 0) {
-		display.scroll > 0 ? moveSpeed += 0.5f : (moveSpeed > 0.5f ? moveSpeed -= 0.5f : moveSpeed = 0.5f);
+		moveSpeed = glm::max(0.5f, moveSpeed + (display.scroll > 0 ? 0.5f : -0.5f));
 	}
+
 
 	glfwSetCursorPos(window, centerX, centerY);
 }

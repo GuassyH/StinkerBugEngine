@@ -42,10 +42,10 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	/// THIS IS WRONG!!! I forgot that rotation is in degrees not a vector, it works but i should change
-	view = glm::lookAt(transform->position, transform->position + transform->rotation, Constants::Dirs::Up);
+	view = glm::lookAt(transform->position, transform->position + transform->DegToVec(), Constants::Dirs::Up);
 	projection = glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
 
-	forward = glm::normalize(transform->rotation);
+	forward = glm::normalize(transform->DegToVec());
 	localUp = glm::normalize(glm::cross(right, forward));
 	right = glm::normalize(glm::cross(forward, Constants::Dirs::Up));
 
@@ -104,11 +104,12 @@ void Camera::Render(Scene* scene) {
 		l_transform = &scene->main_light->GetComponent<Transform>();
 
 
-		glm::vec3 direction = l_transform->DegToRad();
+		glm::vec3 direction = l_transform->DegToVec();
 
 		scene->main_light->GetComponent<Light>().vec_direction = direction;
 
-		glm::mat4 lightProj = glm::ortho(-30.0f, 30.0f, -30.0f, 30.0f, 0.1f, 200.0f);
+		float light_map_size = 100.0f;
+		glm::mat4 lightProj = glm::ortho(-light_map_size, light_map_size, -light_map_size, light_map_size, 0.1f, 200.0f);
 		glm::mat4 lightView = glm::lookAt(transform->position - (direction * glm::vec3(100)), transform->position - (direction * glm::vec3(100)) + direction, Constants::Dirs::Up);
 		glm::mat4 light_VP = lightProj * lightView;
 		
