@@ -9,7 +9,7 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 	
 	ImGui::SetNextWindowPos(ImVec2(350 + ((display.windowWidth - 700) * 0.5f), display.windowHeight - 300));
 	ImGui::SetNextWindowSize(ImVec2((display.windowWidth - 700) * 0.5f, 300));
-	ImGui::Begin("Game View", &opened, ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::Begin("Game View", &opened, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
 	if (!scene.HasMainCamera()) {
 		ImGui::End();

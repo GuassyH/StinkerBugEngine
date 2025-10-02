@@ -89,6 +89,21 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			new_ntt.~EntityHelper();
 			ImGui::CloseCurrentPopup();
 		}
+		
+		ImGui::Separator();
+
+		if (ImGui::Button("Create Goblin", ImVec2(180, 20))) {
+			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
+			scene.Scene_ECS.entity_names[new_ntt.id] = "Goblin (" + std::to_string(new_ntt.id) + ")";
+			new_ntt.AddComponent<MeshRenderer>(new Model(glm::vec3(0.05f)), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
+			new_ntt.GetComponent<Transform>().scale = glm::vec3(0.05f);
+			selected_entity = new_ntt.id;
+			new_ntt.~EntityHelper();
+			ImGui::CloseCurrentPopup();
+		}
+
+
 		ImGui::EndPopup();
 	}
 

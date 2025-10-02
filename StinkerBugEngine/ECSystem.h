@@ -42,7 +42,7 @@ public:
 		}
 	}
 
-
+	
 
 	void AddComponentBit(uint32_t id, Entity entity) {
 		uint32_t& original_bits = component_bits[entity];

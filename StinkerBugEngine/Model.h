@@ -34,6 +34,7 @@ public:
 	const char* name = "new_model";
 	glm::vec3 model_scale = glm::vec3(1.0f);
 
+
 	Model() = default;
 	Model(Mesh& mesh);
 	Model(const Constants::Shapes::Shape& shape);
@@ -48,6 +49,7 @@ public:
 	void cleanup();
 
 	std::vector<Mesh>& getMeshes() { return meshes; }
+	std::string getDirectory() { return directory; }
 };
 
 

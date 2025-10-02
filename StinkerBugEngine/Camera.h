@@ -39,6 +39,8 @@ public:
 	int width = 1920;
 	int height = 1080;
 
+	bool renderShadows = true;
+
 	glm::mat4 CameraMatrix = glm::mat4(1.0); // M -> *VP*
 
 	glm::vec3 forward = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -64,6 +66,9 @@ public:
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Camera")) {
+
+			ImGui::Checkbox("Render Shadows", &renderShadows);
+			ImGui::Spacing();	ImGui::Spacing();
 			ImGui::DragFloat("FOV", &FOVdeg, 0.1f, 0.0f, 120.0f);
 			ImGui::DragFloat("Near Plane", &nearPlane, 0.1f, 0.1f, 2000);
 			ImGui::DragFloat("Far Plane", &farPlane, 0.1f, 0.1f, 2000);

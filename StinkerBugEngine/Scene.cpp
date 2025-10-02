@@ -126,13 +126,18 @@ void Scene::Render() {
 		main_camera->id = 0;
 	}
 	for (auto& [id, camPtr] : Scene_ECS.GetComponentMap<Camera>()) {
-		Camera* c = dynamic_cast<Camera*>(camPtr.get());
 		if (!HasMainCamera()) {
 			std::cout << "new cam id set: " << id << "\n";
 			main_camera->id = id;
 		}
-		c->UpdateMatrix(display.windowWidth, display.windowHeight);
-		c->Render(this);
+		 //Camera* c = dynamic_cast<Camera*>(camPtr.get());
+		 //c->UpdateMatrix(display.windowWidth, display.windowHeight);
+		 //c->Render(this);
+	}
+
+	if (HasMainCamera()) {
+		main_camera->GetComponent<Camera>().UpdateMatrix(display.windowWidth, display.windowHeight);
+		main_camera->GetComponent<Camera>().Render(this);
 	}
 }
 

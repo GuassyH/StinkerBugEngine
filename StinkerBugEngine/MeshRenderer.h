@@ -21,6 +21,7 @@ public:
 	Model* model = nullptr;
 	Material* material = nullptr;
 	bool raycastable = true;
+	bool shadowCaster = true;
 
 	MeshRenderer(Model& m, Material& mat) : model(&m), material(&mat) {}
 	MeshRenderer(Model* m, Material* mat) : model(m), material(mat) {}
@@ -28,13 +29,16 @@ public:
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Mesh Renderer")) {
-			
+			ImGui::Checkbox("Shadow Caster", &shadowCaster);
+			ImGui::Checkbox("Raycast Target", &raycastable);
+
 			if (model) {
 				ImGui::Text("Model: %s", model->name);
 			}
 			else {
 				ImGui::Text("Model: None");
 			}
+
 			if (material) {
 				ImGui::ColorEdit4("Color", &material->color.r);
 				if (ImGui::Selectable("Lit", material->HasFlag(MaterialFlags_Lit), ImGuiSelectableFlags_None, ImVec2(50, 20))) {
@@ -61,12 +65,9 @@ public:
 						material->AddFlag(MaterialFlags_Shadow);
 					}
 				}
-
 				if(ImGui::Button("Recompile Shader")) {
 					material->Recompile();
 				}
-				// ImGui::Checkbox("Lit", &material->Lit);
-				// ImGui::Checkbox("Depth", &material->Depth);
 			}
 			else {
 				ImGui::Text("Material: None");

@@ -30,7 +30,12 @@ public:
 	EntityHelper* main_light = nullptr;
 	EntityHelper* main_camera = nullptr;
 	ECSystem Scene_ECS;
+
+	Shader skybox_shader = Shader("skybox.vert", "skybox.frag");
+	Material skybox_mat = Material(skybox_shader);
+	FullScreenPass skybox_pass = FullScreenPass(skybox_mat);
 	std::vector<FullScreenPass> passes;
+	
 
 	void Render();
 	void CheckCollisions(uint32_t id);

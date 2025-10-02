@@ -21,7 +21,8 @@ Camera::Camera(int width, int height, Transform& t) {
 	Camera::height = height;
 
 	glfwSetCursorPos(display.window, (width / 2.0f), (height / 2.0f));
-
+	
+	// Should maybe be case by case
 	m_shadowMapFBO.Init(8192, 8192);
 	m_shadowMapShader = Shader("ShadowMapFBO.vert", "ShadowMapFBO.frag");
 	transform = &t;
@@ -53,12 +54,15 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 }
 
 void Camera::ShadowPass(glm::mat4 light_VP, Light* light) {
+	if (!renderShadows) { return; }
+	
 	Scene& scene = SceneManager::getInstance().GetActiveScene();
 
 	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
-		
+		if (!renderer.shadowCaster) { continue; }
+
 		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 		r_transform.UpdateMatrix();
 
@@ -92,7 +96,7 @@ void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 
 void Camera::Render(Scene* scene) {
 
-	glClearColor(0.6f, 0.6f, 0.6f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.13f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -142,6 +146,12 @@ void Camera::Render(Scene* scene) {
 	}
 
 
+	if (scene->HasMainLight()) {
+		scene->skybox_pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+	}
+	else {
+		scene->skybox_pass.Draw(*this, nullptr, nullptr);
+	}
 
 	for (FullScreenPass pass : scene->passes) {
 		if (scene->HasMainLight()) {

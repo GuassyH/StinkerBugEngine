@@ -77,7 +77,7 @@ void Display::BeginFrame() {
 	currentTime = glfwGetTime();
 	nbFrames++;
 
-	glClearColor(0.7, 0.5, 1.0, 1.0);
+	glClearColor(0.1f, 0.1f, 0.13f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glViewport(0, 0, windowWidth, windowHeight); // Should i do this?
 }

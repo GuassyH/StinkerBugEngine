@@ -57,11 +57,12 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 	unsigned int normalIdx = 0;
 
 	/// SINCE SHADOW MAP IS GL_TEXTURE0, START AT GL_TEXTURE1
+	// Loop through each texture and assign it to its sampler2D in the materials
 	for (unsigned int i = 0; i < textures.size(); i++) {
 		// activate texture slot
 		glActiveTexture(GL_TEXTURE1 + i); // Activate the texture unit first
 
-		// retrieve texture number (the N in diffuse_textureN)
+		// retrieve texture number (the 0 in diffuse0)
 		std::string name;
 		switch (textures[i].type) {
 		case aiTextureType_DIFFUSE:

@@ -12,6 +12,7 @@ void SceneViewWindow::Init(ECSystem& editor_ecs) {
 	editorCamera->Init();
 
 	editorCamera->transform->position = glm::vec3(0.0f, 5.0f, 10.0f);
+	editorCamera->transform->rotation = glm::vec3(0.0f, 180.0f, 0.0f);
 
 	editorCamera->camera->output_texture = cam_output;
 	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene(), editor_ecs);
@@ -25,7 +26,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	// Begin SceneViewWindow
 	ImGui::SetNextWindowPos(ImVec2(350, 30));
 	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 330));
-	ImGui::Begin("Scene View", &opened, ImGuiWindowFlags_NoScrollWithMouse);
+	ImGui::Begin("Scene View", &opened, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
 
 
 	// Scene View Selectables
@@ -33,6 +34,8 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetWindowSize().x, 20), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	
 	ImGui::Selectable("Grid", &editorCamera->showGrid, ImGuiSelectableFlags_None, ImVec2(30, 20));
+	ImGui::SameLine();
+	ImGui::Selectable("Render Shadows", &editorCamera->camera->renderShadows, ImGuiSelectableFlags_None, ImVec2(100, 20));
 	ImGui::SameLine();
 	ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 50);
 	ImGui::Selectable("Stats", &showStats, ImGuiSelectableFlags_None, ImVec2(35, 20)); // SHOULD BE MENU?
