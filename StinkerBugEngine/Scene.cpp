@@ -104,13 +104,13 @@ bool Scene::HasMainCamera() {
 // Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
-	if (!main_light) {
-		main_light = new EntityHelper();
-		main_light->ecs = &Scene_ECS;
-		main_light->id = 0;
-	}
 
 	if (!HasMainLight()) {
+		if (!main_light) {
+			main_light = new EntityHelper();
+			main_light->ecs = &Scene_ECS;
+			main_light->id = 0;
+		}
 		for (auto& [id, lightPtr] : Scene_ECS.GetComponentMap<Light>()) {
 			Light* light = dynamic_cast<Light*>(lightPtr.get());
 			if (light->light_type == LightTypes::Directional) {
@@ -119,24 +119,18 @@ void Scene::Render() {
 			}
 		}
 	}
-
-	if (!main_camera) { 
-		main_camera = new EntityHelper();
-		main_camera->ecs = &Scene_ECS;
-		main_camera->id = 0;
-	}
-	for (auto& [id, camPtr] : Scene_ECS.GetComponentMap<Camera>()) {
-		if (!HasMainCamera()) {
-			std::cout << "new cam id set: " << id << "\n";
-			main_camera->id = id;
+	if (!HasMainCamera()) {
+		if (!main_camera) { 
+			main_camera = new EntityHelper();
+			main_camera->ecs = &Scene_ECS;
+			main_camera->id = 0;
 		}
-		 //Camera* c = dynamic_cast<Camera*>(camPtr.get());
-		 //c->UpdateMatrix(display.windowWidth, display.windowHeight);
-		 //c->Render(this);
-	}
-
-	if (HasMainCamera()) {
-		main_camera->GetComponent<Camera>().UpdateMatrix(display.windowWidth, display.windowHeight);
+		for (auto& [id, camPtr] : Scene_ECS.GetComponentMap<Camera>()) {
+			std::cout << "new main_cam id set: " << id << "\n";
+			main_camera->id = id;
+			break;
+		}
+	}else{
 		main_camera->GetComponent<Camera>().Render(this);
 	}
 }

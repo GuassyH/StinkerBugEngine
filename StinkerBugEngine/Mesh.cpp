@@ -38,11 +38,9 @@ void Mesh::RecalculateMesh() {
 	EBO1.Unbind();
 }
 
-void Mesh::shadowPass(Material* material) {
-	if (material && material->HasFlag(MaterialFlags_Shadow)) { 
-		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
-	}
+void Mesh::shadowPass() {
+	VAO1.Bind();
+	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }
 
 void Mesh::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light) {
@@ -93,8 +91,6 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 	shader.SetInt("ShadowMap", 0);
 	
 	// Set matrices
-	if (light)  { shader.SetMat4("light_VP", light->light_VP); }
-	else		{ shader.SetMat4("light_VP", glm::mat4(1.0f)); }
 	shader.SetMat4("modelMatrix", m_transform->GetModelMatrix());
 	shader.SetMat4("rotationMatrix", m_transform->GetRotationMatrix());
 	shader.SetMat4("camMatrix", cam->CameraMatrix);
@@ -116,10 +112,14 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 		l_col = glm::vec3(1.0f);
 	}
 
-	// set dir light uniforms
-	shader.SetVec3("lightDir", l_dir);
-	shader.SetVec4("lightColor", glm::vec4(l_col, 1.0f));
-	shader.SetBool("lightEnabled", light != nullptr);
+	if (material->HasFlag(MaterialFlags_Lit)) {
+		// set dir light uniforms
+		if (light)  { shader.SetMat4("light_VP", light->light_VP); }
+		else		{ shader.SetMat4("light_VP", glm::mat4(1.0f)); }
+		shader.SetVec3("lightDir", l_dir);
+		shader.SetVec4("lightColor", glm::vec4(l_col, 1.0f));
+		shader.SetBool("lightEnabled", light != nullptr);
+	}
 	shader.SetFloat("ambient", SceneManager::getInstance().GetActiveScene().ambient);
 
 	VAO1.Bind();

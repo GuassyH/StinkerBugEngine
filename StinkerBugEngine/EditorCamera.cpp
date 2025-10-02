@@ -51,8 +51,6 @@ void EditorCamera::PrePass(Scene& scene, ECSystem& editor_ecs) {
 }
 
 void EditorCamera::Render(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
-	camera->UpdateMatrix(camera->width, camera->height);
-
 	camera->Render(&scene);
 	PrePass(scene, editor_ecs);
 	PostPass(scene, is_entity_selected, selected_entity, editor_ecs);

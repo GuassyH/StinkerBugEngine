@@ -66,6 +66,7 @@ int main(void) {
 		active_scene->Render();
 
 		ui.imgui_render(*active_scene);
+
 		display.EndFrame();
 	}
 

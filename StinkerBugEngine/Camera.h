@@ -49,11 +49,11 @@ public:
 
 	Camera() = default;
 	Camera(int width, int height, Transform& t);
-	void UpdateMatrix(int windowWidth, int windowHeight);
+	void UpdateMatrix();
 
 
-	void ShadowPass(glm::mat4 light_VP, Light* light);
-	void LightingPass(glm::mat4 light_VP, Light* light);
+	void ShadowPass(Scene* scene, glm::mat4 light_VP, Light* light);
+	void LightingPass(Scene* scene, glm::mat4 light_VP, Light* light);
 	void Render(Scene* scene);
 	bool CheckOuputFBO(bool forceRewrite);
 

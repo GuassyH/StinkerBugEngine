@@ -32,7 +32,7 @@ public:
 
 	void RecalculateMesh();
 
-	void shadowPass(Material* material);
+	void shadowPass();
 	void render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light);
 
 	void cleanup();

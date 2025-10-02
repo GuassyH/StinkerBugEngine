@@ -29,14 +29,7 @@ Camera::Camera(int width, int height, Transform& t) {
 }
 
 
-void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
-	// set the width to the windowWidth etc, helps for setting glm::perspective if window size changes
-	Camera::width = windowWidth;
-	Camera::height = windowHeight;
-
-	Camera::FOVdeg = FOVdeg;
-	Camera::farPlane = farPlane;
-	Camera::nearPlane = nearPlane;
+void Camera::UpdateMatrix() {
 
 	// Initialise the matrices
 	glm::mat4 view = glm::mat4(1.0f);
@@ -53,41 +46,35 @@ void Camera::UpdateMatrix(int windowWidth, int windowHeight) {
 	CameraMatrix = projection * view;
 }
 
-void Camera::ShadowPass(glm::mat4 light_VP, Light* light) {
+void Camera::ShadowPass(Scene* scene, glm::mat4 light_VP, Light* light) {
 	if (!renderShadows) { return; }
-	
-	Scene& scene = SceneManager::getInstance().GetActiveScene();
-
-	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
+	for (auto& [id, components_renderer] : scene->Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
-		if (!renderer.shadowCaster) { continue; }
+		if (!renderer.shadowCaster || !renderer.material->HasFlag(MaterialFlags_Shadow)) { continue; }
 
-		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
+		Transform& r_transform = scene->Scene_ECS.GetComponent<Transform>(id);
 		r_transform.UpdateMatrix();
 
 		m_shadowMapShader.Use();
-
 
 		// Set the shadow maps light world view proj matrix
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_VP"), 1, GL_FALSE, glm::value_ptr(light_VP));
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
 
 		// Render the scene through the light view
-		renderer.model->shadowPass(renderer.material);
+		renderer.model->shadowPass();
 	}
 
 }
 
 
-void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
-	Scene& scene = SceneManager::getInstance().GetActiveScene();
-
-	for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
+void Camera::LightingPass(Scene* scene, glm::mat4 light_VP, Light* light) {
+	for (auto& [id, components_renderer] : scene->Scene_ECS.GetComponentMap<MeshRenderer>()) {
 		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
 
-		Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
+		Transform& r_transform = scene->Scene_ECS.GetComponent<Transform>(id);
 
 		renderer.model->render(renderer.material, &r_transform, transform, this, light);
 	}
@@ -95,9 +82,9 @@ void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 
 
 void Camera::Render(Scene* scene) {
+	UpdateMatrix();
 
 	glClearColor(0.1f, 0.1f, 0.13f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
@@ -122,7 +109,7 @@ void Camera::Render(Scene* scene) {
 		// Bind shadow map and draw scene to it
 		m_shadowMapFBO.BindForWriting();
 		glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
-		ShadowPass(light_VP, &scene->main_light->GetComponent<Light>());
+		ShadowPass(scene, light_VP, &scene->main_light->GetComponent<Light>());
 	}
 
 
@@ -148,28 +135,24 @@ void Camera::Render(Scene* scene) {
 
 	if (scene->HasMainLight()) {
 		scene->skybox_pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+		
+		for (FullScreenPass pass : scene->passes) {
+			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+		}
+
+		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
+		LightingPass(scene, light_VP, &scene->main_light->GetComponent<Light>());
 	}
 	else {
 		scene->skybox_pass.Draw(*this, nullptr, nullptr);
-	}
-
-	for (FullScreenPass pass : scene->passes) {
-		if (scene->HasMainLight()) {
+		
+		for (FullScreenPass pass : scene->passes) {
 			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
 		}
-		else {
-			pass.Draw(*this, nullptr, nullptr);
-		}
+		
+		LightingPass(scene, light_VP, nullptr);
 	}
 
-	if (scene->HasMainLight()) {
-		// Do lighting pass and bind to base FBO (0) Technically dont bind shadowFBO now but its wtv
-		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-		LightingPass(light_VP, &scene->main_light->GetComponent<Light>());
-	}
-	else {
-		LightingPass(light_VP, nullptr);
-	}
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

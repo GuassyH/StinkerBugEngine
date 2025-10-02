@@ -23,6 +23,7 @@ FullScreenPass::FullScreenPass(Material& material) : material(&material) {
 
 	FullScreenPass::material->RemoveFlag(MaterialFlags_Lit);
 	FullScreenPass::material->RemoveFlag(MaterialFlags_Depth);
+	FullScreenPass::material->RemoveFlag(MaterialFlags_Shadow);
 	FullScreenPass::material->AddFlag(MaterialFlags_FullscreenPass);
 	
 	for (auto& vert : vertices) {
