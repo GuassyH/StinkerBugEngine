@@ -65,7 +65,21 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 		// Render the scene through the light view
 		call.renderer->model->shadowPass();
 	}
+	for (auto& call : Renderer::getInstance().transparent_meshes) {
+		if (!call.renderer->model || !call.renderer->material) { continue; }	// If there isnt a model and material then skip
+		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow)) { continue; }
 
+		call.transform->UpdateMatrix();
+
+		m_shadowMapShader.Use();
+
+		// Set the shadow maps light world view proj matrix
+		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_VP"), 1, GL_FALSE, glm::value_ptr(light_VP));
+		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(call.transform->GetModelMatrix()));
+
+		// Render the scene through the light view
+		call.renderer->model->shadowPass();
+	}
 }
 
 
@@ -78,11 +92,9 @@ void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 	Renderer::getInstance().sortTransparentMeshes(transform->position);
 
 	// Transparent Not fully working
-	glDepthMask(GL_FALSE);
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
 		call.renderer->model->render(call.renderer->material, call.transform, transform, this, light);
 	}
-	glDepthMask(GL_TRUE);
 }
 
 
@@ -98,7 +110,6 @@ void Camera::Render(Scene* scene) {
 
 	if (scene->HasMainLight()) { 
 		l_transform = &scene->main_light->GetComponent<Transform>();
-
 
 		glm::vec3 direction = l_transform->DegToVec();
 
@@ -188,7 +199,6 @@ bool Camera::CheckOuputFBO(bool forceRewrite) {
 
 	Screen::InitFBO(this, outputFBO, outputRBO, output_texture->ID);
 
-	// std::cout << "shadow fbo tex: " << m_shadowMapFBO.m_shadowMap << " - output_tex: " << output_texture->ID << "\n";
 	return true;
 }
 

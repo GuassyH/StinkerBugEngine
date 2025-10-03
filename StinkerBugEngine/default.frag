@@ -80,7 +80,8 @@ float ShadowPCF(vec3 projCoords)
 
 
 void main(){
-	
+	// if(color.a == 0.0 && isTransparent) { discard; }
+
 	vec4 baseColor = hasDiffuse ? texture(diffuse0, texCoords) * color : color;
 	vec4 lightVal = vec4(1.0);
 	float depthVal = 1.0;

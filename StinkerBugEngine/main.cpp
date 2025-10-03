@@ -6,6 +6,7 @@
 #include "FullScreenPass.h"
 #include "SceneManager.h"
 #include "Constants.h"
+#include "Renderer.h"
 #include "Display.h"
 #include "Screen.h"
 #include "Scene.h"
@@ -28,6 +29,7 @@ int main(void) {
 	if (display.Init(1920, 1080, "Stinker Bug Engine") == -1) { std::cout << "Display failed init" << std::endl; return -1; }
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
+	Renderer& renderer = Renderer::getInstance();
 
 	SceneManager& sceneManager = SceneManager::getInstance();
 	Scene scene;

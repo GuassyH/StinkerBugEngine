@@ -14,6 +14,7 @@
 
 #include "Entity.h"
 #include "ComponentTypeID.h"
+#include "Renderer.h"
 
 class ECSystem {
 public:
@@ -29,6 +30,11 @@ public:
 
 
 	void DestroyEntity(Entity id) {
+		bool update_renderer = false;
+		if (GetComponentMap<MeshRenderer>().find(id) != GetComponentMap<MeshRenderer>().end()) {
+			update_renderer = true;
+		}
+	
 		// remove all tracked things
 		entities.erase(id);
 		entity_names.erase(id);
@@ -39,6 +45,11 @@ public:
 		// erase from component maps
 		for (auto& [typeIdx, map] : components) {
 			map.erase(id);
+		}
+
+		if (update_renderer) {
+			Renderer::getInstance().rebuildMeshLists(components);
+			std::cout << "Updating Renderer Mesh List" << std::endl;
 		}
 	}
 
@@ -148,7 +159,7 @@ public:
 
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T>&& std::is_base_of_v<Component, T>, T&>
+	std::enable_if_t<!std::is_base_of_v<EntityBehaviour, T> && !std::is_base_of_v<Collider, T> && std::is_base_of_v<Component, T>, T&>
 		AddComponent(const Entity id, Args&&... args)
 	{
 		auto& map = GetComponentMap<T>();
@@ -158,6 +169,13 @@ public:
 		// std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 
 		map[id] = std::make_shared<T>(std::forward<Args>(args)...);
+	
+		if constexpr (std::is_base_of_v<MeshRenderer, T>) {
+			Renderer::getInstance().rebuildMeshLists(components);
+
+			std::cout << "Updating Renderer Mesh List" << std::endl;
+		}
+		
 		return GetComponent<T>(id);
 	}
 
@@ -173,6 +191,12 @@ public:
 			map.erase(id);
 
 			RemoveComponentBit(ComponentBit<T>(), id);
+
+			if constexpr (std::is_base_of_v<MeshRenderer, T>) {
+				Renderer::getInstance().rebuildMeshLists(components);
+				std::cout << "Updating Renderer Mesh List" << std::endl;
+			}
+
 			std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 		}
 		else {
@@ -182,7 +206,6 @@ public:
 
 	ECSystem() = default;
 	~ECSystem() = default;
-
 };
 
 

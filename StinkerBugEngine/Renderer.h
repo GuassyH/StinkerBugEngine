@@ -3,11 +3,14 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 
 #include "MeshRenderer.h"
 #include "Transform.h"
 #include "glm/glm.hpp"
-#include "Scene.h"
+#include <typeindex>
+#include <typeinfo>
+
 
 struct ObjectCall {
 	MeshRenderer* renderer;
@@ -28,30 +31,36 @@ public:
 		transparent_meshes.clear();
 	}
 
-	void calculateOpaqueMeshes(Scene& scene) {
-		for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
-			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-			if (!renderer.model || !renderer.material || renderer.material->HasFlag(MaterialFlags_Transparent)) { continue; }	// If there isnt a model and material then skip
+    void rebuildMeshLists(std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>>& components) {
+        opaque_meshes.clear();
+        transparent_meshes.clear();
 
-			Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
-			ObjectCall new_call{ &renderer, &r_transform };
-			opaque_meshes.push_back(new_call);
-		}
-	}
+        auto& meshMap = components[std::type_index(typeid(MeshRenderer))];
+        auto& transformMap = components[std::type_index(typeid(Transform))];
 
-	void calculateTransparentMeshes(Scene& scene) {
-		for (auto& [id, components_renderer] : scene.Scene_ECS.GetComponentMap<MeshRenderer>()) {
-			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-			if (!renderer.model || !renderer.material || !renderer.material->HasFlag(MaterialFlags_Transparent)) { continue; }	// If there isnt a model and material then skip
+        for (auto& [id, compPtr] : meshMap) {
+            if (!compPtr) continue;
 
-			Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
-			ObjectCall new_call{ &renderer, &r_transform };
-			opaque_meshes.push_back(new_call);
-		}
-	}
+            auto rendererPtr = std::static_pointer_cast<MeshRenderer>(compPtr);
+            if (!rendererPtr->model || !rendererPtr->material) continue;
+
+            auto itT = transformMap.find(id);
+            if (itT == transformMap.end() || !itT->second) continue;
+            auto transformPtr = std::static_pointer_cast<Transform>(itT->second);
+
+            ObjectCall new_call{ rendererPtr.get(), transformPtr.get() };
+
+            if (rendererPtr->material->HasFlag(MaterialFlags_Transparent)) {
+                transparent_meshes.push_back(new_call);
+            }
+            else {
+                opaque_meshes.push_back(new_call);
+            }
+        }
+    }
 
 	void sortTransparentMeshes(glm::vec3& origo) {
-		std::sort(transparent_meshes.begin(), transparent_meshes.end(), [origo](const ObjectCall& a, const ObjectCall& b) {
+		std::sort(transparent_meshes.begin(), transparent_meshes.end(), [&origo](const ObjectCall& a, const ObjectCall& b) {
 			float da = glm::length2(origo - a.transform->position);
 			float db = glm::length2(origo - b.transform->position);
 			return da > db;
