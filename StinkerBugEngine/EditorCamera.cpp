@@ -32,8 +32,6 @@ void EditorCamera::AddGizmoEntities(Scene& scene, ECSystem& editor_ecs) {
 
 
 void EditorCamera::PrePass(Scene& scene, ECSystem& editor_ecs) {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
 	glDisable(GL_CULL_FACE);
 	// Rebind the framebuffer to the editor camera's FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, camera->outputFBO);
@@ -47,7 +45,6 @@ void EditorCamera::PrePass(Scene& scene, ECSystem& editor_ecs) {
 
 	glEnable(GL_CULL_FACE);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDisable(GL_BLEND);
 }
 
 void EditorCamera::Render(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
@@ -58,9 +55,6 @@ void EditorCamera::Render(Scene& scene, bool& is_entity_selected, Entity& select
 }
 
 void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
-
 	// Rebind the framebuffer to the editor camera's FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, camera->outputFBO);
 	
@@ -68,7 +62,7 @@ void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& sele
 	selected_entity_helper.id = selected_entity;
 
 	// If there isnt an entity selected then skip drawing gizmos, reset framebuffer 
-	if (!is_entity_selected || scene.Scene_ECS.entities.find(selected_entity) == scene.Scene_ECS.entities.end()) { glDisable(GL_BLEND); glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
+	if (!is_entity_selected || scene.Scene_ECS.entities.find(selected_entity) == scene.Scene_ECS.entities.end()) { glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -83,7 +77,6 @@ void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& sele
 
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDisable(GL_BLEND);
 }
 
 void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
@@ -100,8 +93,8 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS && 
 		glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) { 
 		if (!rayHit.isGizmo) {
-			if (firstClick) {
-				firstClick = false;
+			if (firstLeftClick) {
+				firstLeftClick = false;
 				if (Screen::IsMouseInRect(w_pos, w_size)) {
 					// Cast a ray from the mouse position
 					Screen::ScreenCastHit scHit = Screen::EntityAtMousePos
@@ -118,16 +111,16 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 			}
 		}
 		else {
-			if (firstClick) {
+			if (firstLeftClick) {
 				// Do Gizmo stuff
 				EntityHelper gizmo(rayHit.entity, &editor_ecs);
 				gizmo.GetComponent<GizmoComponent>().isHovered = true;
-				firstClick = false;
+				firstLeftClick = false;
 				interactingWithGizmo = true;
 			}
 		}
 	}
-	else { interactingWithGizmo = false; firstClick = true; }
+	else { interactingWithGizmo = false; firstLeftClick = true; }
 
 }
 
@@ -165,6 +158,7 @@ void EditorCamera::Move() {
 
 
 void EditorCamera::Look() {
+
 	float deltaTime = DeltaTime::getInstance().get();
 	Display& display = Display::getInstance();
 	GLFWwindow* window = display.window;

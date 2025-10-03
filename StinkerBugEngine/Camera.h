@@ -52,8 +52,8 @@ public:
 	void UpdateMatrix();
 
 
-	void ShadowPass(Scene* scene, glm::mat4 light_VP, Light* light);
-	void LightingPass(Scene* scene, glm::mat4 light_VP, Light* light);
+	void ShadowPass(glm::mat4 light_VP);
+	void LightingPass(glm::mat4 light_VP, Light* light);
 	void Render(Scene* scene);
 	bool CheckOuputFBO(bool forceRewrite);
 

@@ -25,6 +25,8 @@ public:
 		modelMatrix(1.0f), rotationMatrix(1.0f) {
 	}
 
+	Transform* parent = nullptr;
+
 	glm::vec3 position = glm::vec3(0.0);
 	glm::vec3 rotation = glm::vec3(0.0);
 	glm::vec3 scale = glm::vec3(1.0);

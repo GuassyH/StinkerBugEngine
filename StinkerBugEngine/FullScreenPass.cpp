@@ -35,7 +35,6 @@ void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) 
 	material->shader.Use();
 
 
-
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenWidth"), camera.width);
 	glUniform1i(glGetUniformLocation(material->shader.ID, "screenHeight"), camera.height);
 
@@ -64,10 +63,12 @@ void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) 
 	glUniform4f(glGetUniformLocation(material->shader.ID, "sunColor"), l_col.r, l_col.g, l_col.b, 1.0f);
 
 	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 
 
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 
+	glEnable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 }

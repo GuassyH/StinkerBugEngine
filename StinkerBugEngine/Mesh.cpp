@@ -44,10 +44,9 @@ void Mesh::shadowPass() {
 }
 
 void Mesh::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light) {
-	Shader& shader = material->shader;
 
-	if (!&shader || !cam || !m_transform || !c_transform) { return; }
-	shader.Use();
+	if (!material || !cam || !m_transform || !c_transform) { return; }
+	material->Use();
 
 	// Textures should only be done once per material but for now its here
 	unsigned int diffuseIdx = 0;
@@ -64,6 +63,7 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 		std::string name;
 		switch (textures[i].type) {
 		case aiTextureType_DIFFUSE:
+			if (textures[i].numColCh = 4) { material->AddFlag(MaterialFlags_Transparent); }
 			name = "diffuse" + std::to_string(diffuseIdx++);
 			break;
 		case aiTextureType_SPECULAR:
@@ -75,29 +75,30 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 		}
 
 		// Set shader texture value
-		shader.SetInt(name.c_str(), i + 1); // Set the sampler to the correct texture unit
+		material->shader.SetInt(name.c_str(), i + 1); // Set the sampler to the correct texture unit
 		// Bind
 		textures[i].Bind();
 	}
 
-	shader.SetInt("hasDiffuse", diffuseIdx > 0);
-	shader.SetInt("hasSpecular", specularIdx > 0);
-	shader.SetInt("hasNormal", normalIdx > 0);
+	material->shader.SetInt("hasDiffuse", diffuseIdx > 0);
+	material->shader.SetInt("hasSpecular", specularIdx > 0);
+	material->shader.SetInt("hasNormal", normalIdx > 0);
+	material->shader.SetInt("isTransparent", material->HasFlag(MaterialFlags_Transparent));
 
 	// Reset active texture to shadowmap
 	cam->m_shadowMapFBO.BindForReading(GL_TEXTURE0);
 
 	// Set uniforms, ILL CHANGE THIS TO BE MORE EFFICIENT LATER
-	shader.SetInt("ShadowMap", 0);
-	
+	material->shader.SetInt("ShadowMap", 0);
+
 	// Set matrices
-	shader.SetMat4("modelMatrix", m_transform->GetModelMatrix());
-	shader.SetMat4("rotationMatrix", m_transform->GetRotationMatrix());
-	shader.SetMat4("camMatrix", cam->CameraMatrix);
-	
+	material->shader.SetMat4("modelMatrix", m_transform->GetModelMatrix());
+	material->shader.SetMat4("rotationMatrix", m_transform->GetRotationMatrix());
+	material->shader.SetMat4("camMatrix", cam->CameraMatrix);
+
 	// Others
-	shader.SetVec3("camPos", c_transform->position);
-	shader.SetVec4("color", material->color);
+	material->shader.SetVec3("camPos", c_transform->position);
+	material->shader.SetVec4("color", material->color);
 
 	// Light properties
 	glm::vec3 l_dir;
@@ -114,13 +115,13 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 
 	if (material->HasFlag(MaterialFlags_Lit)) {
 		// set dir light uniforms
-		if (light)  { shader.SetMat4("light_VP", light->light_VP); }
-		else		{ shader.SetMat4("light_VP", glm::mat4(1.0f)); }
-		shader.SetVec3("lightDir", l_dir);
-		shader.SetVec4("lightColor", glm::vec4(l_col, 1.0f));
-		shader.SetBool("lightEnabled", light != nullptr);
+		if (light) { material->shader.SetMat4("light_VP", light->light_VP); }
+		else { material->shader.SetMat4("light_VP", glm::mat4(1.0f)); }
+		material->shader.SetVec3("lightDir", l_dir);
+		material->shader.SetVec4("lightColor", glm::vec4(l_col, 1.0f));
+		material->shader.SetBool("lightEnabled", light != nullptr);
 	}
-	shader.SetFloat("ambient", SceneManager::getInstance().GetActiveScene().ambient);
+	material->shader.SetFloat("ambient", SceneManager::getInstance().GetActiveScene().ambient);
 
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);

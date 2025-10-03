@@ -27,7 +27,7 @@ public:
 	Display(const Display&) = delete;
 	Display& operator=(const Display&) = delete;
 
-	int init(unsigned int windowWidth, unsigned int windowHeight, const char* title);
+	int Init(unsigned int windowWidth, unsigned int windowHeight, const char* title);
 	void BeginFrame();
 	void EndFrame();
 	void SetSize(unsigned int width, unsigned int height);

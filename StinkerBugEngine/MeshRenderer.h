@@ -27,6 +27,8 @@ public:
 	MeshRenderer(Model* m, Material* mat) : model(m), material(mat) {}
 	MeshRenderer() = default; // still allow default construction
 
+	bool trnsprncy = false;
+
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Mesh Renderer")) {
 			ImGui::Checkbox("Shadow Caster", &shadowCaster);
@@ -67,6 +69,14 @@ public:
 				}
 				if(ImGui::Button("Recompile Shader")) {
 					material->Recompile();
+				}
+				ImGui::Checkbox("Transparent", &trnsprncy);
+
+				if (trnsprncy) {
+					material->AddFlag(MaterialFlags_Transparent);
+				}
+				else {
+					material->RemoveFlag(MaterialFlags_Transparent);
 				}
 			}
 			else {

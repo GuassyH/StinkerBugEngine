@@ -16,6 +16,7 @@ uniform sampler2D specular0;
 
 uniform bool hasDiffuse;
 uniform bool hasSpecular;
+uniform bool isTransparent;
 
 uniform bool lightEnabled;
 
@@ -114,4 +115,5 @@ void main(){
 	#endif
 
 	fragColor = baseColor * lightVal * depthVal;
+	fragColor.a = isTransparent ? fragColor.a : 1.0;
 }

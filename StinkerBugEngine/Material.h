@@ -12,7 +12,8 @@ enum MaterialFlags_ {
 	MaterialFlags_Depth = 1 << 2,
 	MaterialFlags_NoDepthTest = 1 << 3,
 	MaterialFlags_Shadow = 1 << 4,
-	MaterialFlags_FullscreenPass = 1 << 5
+	MaterialFlags_FullscreenPass = 1 << 5,
+	MaterialFlags_Transparent = 1 << 6,
 };
 
 class Material {
@@ -36,6 +37,10 @@ public:
 
 	void Recompile() {
 		shader.Recompile(this);
+	}
+
+	void Use() {
+		shader.Use();
 	}
 
 	Material(uint32_t new_flags = 0) {

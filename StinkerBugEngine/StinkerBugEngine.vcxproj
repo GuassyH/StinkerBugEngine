@@ -104,6 +104,7 @@
     <ClInclude Include="Model.h" />
     <ClInclude Include="OskarComponent.h" />
     <ClInclude Include="Physics.h" />
+    <ClInclude Include="Renderer.h" />
     <ClInclude Include="RigidBody.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.h" />

@@ -389,6 +389,9 @@
     <ClInclude Include="GameWindow.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

@@ -11,6 +11,8 @@
 #include "FullScreenPass.h"
 #include "Screen.h"
 
+#include "Renderer.h"
+
 Shader m_shadowMapShader;
 
 Camera::Camera(int width, int height, Transform& t) {
@@ -46,38 +48,41 @@ void Camera::UpdateMatrix() {
 	CameraMatrix = projection * view;
 }
 
-void Camera::ShadowPass(Scene* scene, glm::mat4 light_VP, Light* light) {
+void Camera::ShadowPass(glm::mat4 light_VP) {
 	if (!renderShadows) { return; }
-	for (auto& [id, components_renderer] : scene->Scene_ECS.GetComponentMap<MeshRenderer>()) {
-		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
-		if (!renderer.shadowCaster || !renderer.material->HasFlag(MaterialFlags_Shadow)) { continue; }
+	for (auto& call : Renderer::getInstance().opaque_meshes) {
+		if (!call.renderer->model || !call.renderer->material) { continue; }	// If there isnt a model and material then skip
+		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow)) { continue; }
 
-		Transform& r_transform = scene->Scene_ECS.GetComponent<Transform>(id);
-		r_transform.UpdateMatrix();
+		call.transform->UpdateMatrix();
 
 		m_shadowMapShader.Use();
 
 		// Set the shadow maps light world view proj matrix
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "light_VP"), 1, GL_FALSE, glm::value_ptr(light_VP));
-		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(r_transform.GetModelMatrix()));
+		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(call.transform->GetModelMatrix()));
 
 		// Render the scene through the light view
-		renderer.model->shadowPass();
+		call.renderer->model->shadowPass();
 	}
 
 }
 
 
-void Camera::LightingPass(Scene* scene, glm::mat4 light_VP, Light* light) {
-	for (auto& [id, components_renderer] : scene->Scene_ECS.GetComponentMap<MeshRenderer>()) {
-		MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
-		if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
-
-		Transform& r_transform = scene->Scene_ECS.GetComponent<Transform>(id);
-
-		renderer.model->render(renderer.material, &r_transform, transform, this, light);
+void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
+	// Opaque
+	for (auto& call : Renderer::getInstance().opaque_meshes) {
+		call.renderer->model->render(call.renderer->material, call.transform, transform, this, light);
 	}
+
+	Renderer::getInstance().sortTransparentMeshes(transform->position);
+
+	// Transparent Not fully working
+	glDepthMask(GL_FALSE);
+	for (auto& call : Renderer::getInstance().transparent_meshes) {
+		call.renderer->model->render(call.renderer->material, call.transform, transform, this, light);
+	}
+	glDepthMask(GL_TRUE);
 }
 
 
@@ -109,7 +114,7 @@ void Camera::Render(Scene* scene) {
 		// Bind shadow map and draw scene to it
 		m_shadowMapFBO.BindForWriting();
 		glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
-		ShadowPass(scene, light_VP, &scene->main_light->GetComponent<Light>());
+		ShadowPass(light_VP);
 	}
 
 
@@ -133,6 +138,7 @@ void Camera::Render(Scene* scene) {
 	}
 
 
+	// should do opaque then transparent stuff
 	if (scene->HasMainLight()) {
 		scene->skybox_pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
 		
@@ -141,7 +147,7 @@ void Camera::Render(Scene* scene) {
 		}
 
 		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-		LightingPass(scene, light_VP, &scene->main_light->GetComponent<Light>());
+		LightingPass(light_VP, &scene->main_light->GetComponent<Light>());
 	}
 	else {
 		scene->skybox_pass.Draw(*this, nullptr, nullptr);
@@ -150,7 +156,7 @@ void Camera::Render(Scene* scene) {
 			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
 		}
 		
-		LightingPass(scene, light_VP, nullptr);
+		LightingPass(light_VP, nullptr);
 	}
 
 	

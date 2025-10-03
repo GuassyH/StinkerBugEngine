@@ -21,7 +21,8 @@ private:
 	unsigned int select_rbo;
 	unsigned int select_tex;
 
-	bool firstClick = true;
+	bool firstLeftClick = true;
+	bool firstRightClick = true;
 	bool interactingWithGizmo = false;
 	Physics::RaycastHit rayHit;
 public:

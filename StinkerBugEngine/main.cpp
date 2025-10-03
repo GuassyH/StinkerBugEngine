@@ -25,7 +25,7 @@
 
 int main(void) {
 	Display& display = Display::getInstance();
-	if (display.init(1920, 1080, "Stinker Bug Engine") == -1) { std::cout << "Display failed init" << std::endl; return -1; }
+	if (display.Init(1920, 1080, "Stinker Bug Engine") == -1) { std::cout << "Display failed init" << std::endl; return -1; }
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 

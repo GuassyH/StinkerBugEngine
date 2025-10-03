@@ -17,7 +17,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	Display::getInstance().scroll = yoffset;
 }
 
-int Display::init(unsigned int windowWidth, unsigned int windowHeight, const char* title){
+int Display::Init(unsigned int windowWidth, unsigned int windowHeight, const char* title){
 	Display::windowWidth = windowWidth;
 	Display::windowHeight = windowHeight;
 	Display::title = title;
@@ -90,6 +90,8 @@ void Display::BeginFrame() {
 
 	glClearColor(0.1f, 0.1f, 0.13f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 	glViewport(0, 0, windowWidth, windowHeight); // Should i do this?
 }
 
