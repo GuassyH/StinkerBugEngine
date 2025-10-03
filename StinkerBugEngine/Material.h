@@ -21,7 +21,6 @@ public:
 	Shader shader;
 	uint32_t flags;
 
-
 	// Texture diffuse0;
 	// Texture specular0;
 
@@ -39,18 +38,11 @@ public:
 		shader.Recompile(this);
 	}
 
-	Material() {
-		flags = 0;
-		shader = Shader("default.vert", "default.frag", this);
-	}
-	Material(uint32_t new_flags) {
+	Material(uint32_t new_flags = 0) {
 		flags = new_flags;
 		shader = Shader("default.vert", "default.frag", this);
 	}
-	Material(Shader& shader) : flags(0), shader(shader) {
-		shader.Recompile(this);
-	}
-	Material(Shader& shader, uint32_t new_flags) : flags(new_flags), shader(shader) {
+	Material(Shader& shader, uint32_t new_flags = 0) : flags(new_flags), shader(shader) {
 		shader.Recompile(this);
 	}
 	~Material() = default;

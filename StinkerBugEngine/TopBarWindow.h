@@ -4,6 +4,7 @@
 #include "Display.h"
 #include "Entity.h"
 #include "ECSystem.h"
+#include "Texture.h"
 
 class TopBarWindow {
 private:
@@ -13,6 +14,9 @@ private:
 	bool firstRightClick = true;
 	bool firstLeftClick = true;
 
+	Texture PlayTexture;
+	Texture PauseTexture;
+	Texture NextTexture;
 
 	Display& display = Display::getInstance();
 public:
@@ -21,5 +25,6 @@ public:
 	bool next_frame = false;
 	bool scene_started = false;
 
+	void Init();
 	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 };

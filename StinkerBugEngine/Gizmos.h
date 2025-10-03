@@ -170,15 +170,15 @@ namespace Gizmos {
             arrowZ.t = &arrowZ.entity_helper->GetComponent<Transform>();
 
             // X Arrow
-            arrowX.mr->model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
+            arrowX.mr->model->loadModel("assets/models/editor/gizmos/arrow/arrow_cubed.gltf");
             arrowX.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Y Arrow
-            arrowY.mr->model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
+            arrowY.mr->model->loadModel("assets/models/editor/gizmos/arrow/arrow_cubed.gltf");
             arrowY.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Z Arrow
-            arrowZ.mr->model->loadModel("assets/models/gizmos/arrow/arrow_cubed.gltf");
+            arrowZ.mr->model->loadModel("assets/models/editor/gizmos/arrow/arrow_cubed.gltf");
             arrowZ.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Ball in the middle 
@@ -244,15 +244,15 @@ namespace Gizmos {
             scaleZ.t = &scaleZ.entity_helper->GetComponent<Transform>();
 
             // X Arrow
-            scaleX.mr->model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
+            scaleX.mr->model->loadModel("assets/models/editor/gizmos/scale_handle/scale_handle.gltf");
             scaleX.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Y Arrow
-            scaleY.mr->model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
+            scaleY.mr->model->loadModel("assets/models/editor/gizmos/scale_handle/scale_handle.gltf");
             scaleY.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Z Arrow
-            scaleZ.mr->model->loadModel("assets/models/gizmos/scale_handle/scale_handle.gltf");
+            scaleZ.mr->model->loadModel("assets/models/editor/gizmos/scale_handle/scale_handle.gltf");
             scaleZ.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Ball in the middle
@@ -309,15 +309,15 @@ namespace Gizmos {
             rotateZ.t = &rotateZ.entity_helper->GetComponent<Transform>();
 
             // X Arrow
-            rotateX.mr->model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateX.mr->model->loadModel("assets/models/editor/gizmos/rotation_wheel/rotation_wheel.gltf");
             rotateX.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Y Arrow
-            rotateY.mr->model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateY.mr->model->loadModel("assets/models/editor/gizmos/rotation_wheel/rotation_wheel.gltf");
             rotateY.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             // Z Arrow
-            rotateZ.mr->model->loadModel("assets/models/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateZ.mr->model->loadModel("assets/models/editor/gizmos/rotation_wheel/rotation_wheel.gltf");
             rotateZ.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.5f);
 
             rotateX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);

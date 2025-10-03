@@ -12,6 +12,7 @@ uniform mat4 camMatrix; // proj * view
 uniform mat4 rotationMatrix;
 uniform mat4 light_VP;
 
+out vec3 vertNormal;
 out vec2 texCoords;
 out vec4 shadowFragPos;
 out vec3 normal;

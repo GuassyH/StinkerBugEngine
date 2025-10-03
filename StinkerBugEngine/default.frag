@@ -25,6 +25,7 @@ uniform float ambient = 0.2;
 
 in vec3 crntPos;
 in vec2 texCoords;
+in vec3 vertNormal;
 in vec3 normal;
 
 out vec4 fragColor;
@@ -83,6 +84,7 @@ void main(){
 	vec4 lightVal = vec4(1.0);
 	float depthVal = 1.0;
 
+
 	#ifdef DEPTH
 		depthVal = 1.0 - (min(length(camPos - crntPos), 1000.0) / 1000.0); // Seperates object a bit, temporary
 	#endif
@@ -91,7 +93,11 @@ void main(){
 		#ifdef SHADOW
 			if(lightEnabled) { 
 				lightVal = directionalLight(); 
+				// it looks worse with?
+				// vec3 shadowAcneBias = lightDir * 0.001;				
+				vec3 shadowAcneBias = vec3(0);				
 				vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
+				projCoords += shadowAcneBias;
 				projCoords = projCoords * 0.5 + 0.5;
 				bool outside = any(lessThan(projCoords.xy, vec2(0.0))) || any(greaterThan(projCoords.xy, vec2(1.0))) || projCoords.z > 1.0 || projCoords.z < 0.0;
 				float shadow = outside ? 1.0 : max(ShadowPCF(projCoords), ambient); 
@@ -107,7 +113,5 @@ void main(){
 		#endif
 	#endif
 
-	// fragColor = vec4(normal, 1.0);
-	// fragColor = texture(normal0, texCoords);
 	fragColor = baseColor * lightVal * depthVal;
 }

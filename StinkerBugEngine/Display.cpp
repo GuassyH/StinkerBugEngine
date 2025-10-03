@@ -1,4 +1,5 @@
 #include "Display.h"
+#include "Texture.h"
 
 double currentTime;
 double lastTime;
@@ -66,6 +67,16 @@ int Display::init(unsigned int windowWidth, unsigned int windowHeight, const cha
 	glCullFace(GL_BACK);
 
 	Display::SetSize(windowWidth, windowHeight);
+	
+	// Icon!!
+	GLFWimage icon_image = GLFWimage();
+	int icon_size_x, icon_size_y, numColCh;
+	icon_image.pixels = stbi_load("assets/textures/editor/StinkerBugIcon.png", &icon_size_x, &icon_size_y, &numColCh, 4);
+	icon_image.height = icon_size_y;
+	icon_image.width = icon_size_x;
+
+	glfwSetWindowIcon(window, 1, &icon_image);
+
 
 	std::cout << "Display / GLFW initialized\n";
 

@@ -1,7 +1,7 @@
 #include "Texture.h"
 
 
-// Normal Texture
+// Blank Texture slot with width
 Texture::Texture(int width, int height) : directory("null"), path("null"), type(aiTextureType_DIFFUSE), imgHeight(height), imgWidth(width), numColCh(8), ID(0) {
 	glGenTextures(1, &ID);
 	glBindTexture(GL_TEXTURE_2D, ID);
@@ -14,7 +14,7 @@ Texture::Texture(int width, int height) : directory("null"), path("null"), type(
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-Texture::Texture(std::string dir, std::string path, aiTextureType type) : directory(dir), path(path), type(type), imgWidth(1), imgHeight(1), numColCh(1), ID(0) {}
+
 
 void Texture::Bind() {
 	glBindTexture(GL_TEXTURE_2D, ID);
@@ -24,7 +24,7 @@ void Texture::Generate() {
 	glGenTextures(1, &ID);
 }
 
-void Texture::Load(bool flip) {
+void Texture::Load(bool flip, GLenum filter_type) {
 	stbi_set_flip_vertically_on_load(flip);
 	unsigned char* bytes = stbi_load((directory + "/" + path).c_str(), &imgWidth, &imgHeight, &numColCh, 0);
 
@@ -39,6 +39,12 @@ void Texture::Load(bool flip) {
 		colorMode = GL_RED;
 		break;
 	case 2:
+		colorMode = GL_RG;
+		break;
+	case 3:
+		colorMode = GL_RGB;
+		break;
+	case 4:
 		colorMode = GL_RGBA;
 		break;
 	}
@@ -48,8 +54,8 @@ void Texture::Load(bool flip) {
 		glTexImage2D(GL_TEXTURE_2D, 0, colorMode, imgWidth, imgHeight, 0, colorMode, GL_UNSIGNED_BYTE, bytes);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter_type);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter_type);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

@@ -19,11 +19,11 @@ public:
 	void Bind();
 	void Generate();
 	void Delete();
-	void Load(bool flip);
+	void Load(bool flip, GLenum filter_type = GL_LINEAR_MIPMAP_LINEAR);
 
-	Texture() : directory("null"), path("null"), type(aiTextureType_DIFFUSE), imgHeight(1), imgWidth(1), numColCh(8), ID(0) {};
+	Texture() : directory("null"), path("null"), type(aiTextureType_DIFFUSE), imgHeight(1), imgWidth(1), numColCh(4), ID(0) {};
 	Texture(int imgWidth, int imgHeight);
-	Texture(std::string dir, std::string path, aiTextureType type = aiTextureType_DIFFUSE);
+	Texture(std::string dir, std::string path, aiTextureType type = aiTextureType_DIFFUSE) : directory(dir), path(path), type(type), imgWidth(1), imgHeight(1), numColCh(3), ID(0) {}
 	
 	// model loading
 

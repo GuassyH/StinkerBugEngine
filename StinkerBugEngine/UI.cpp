@@ -24,6 +24,7 @@ void UI::imgui_init() {
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
+	topBarWindow.Init();
 	sceneViewWindow.Init(Editor_ECS);
 
 	std::cout << "\nImGui / UI initialized\n\n";
