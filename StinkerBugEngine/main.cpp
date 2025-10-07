@@ -49,7 +49,6 @@ int main(void) {
 	main_camera.GetComponent<Transform>().position = glm::vec3(0.0f, 0.0f, 10.0f);
 
 
-
 	EntityHelper goblin(scene.CreateEntity("Goblin Guy"), &scene.Scene_ECS);
 	goblin.AddComponent<MeshRenderer>(new Model(glm::vec3(0.05f)), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");

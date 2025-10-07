@@ -56,6 +56,7 @@ int Display::Init(unsigned int windowWidth, unsigned int windowHeight, const cha
 	monitorWidth = mode->width;
 	monitorHeight = mode->height;
 
+	// Set Frame Buffer Size Callback
 	glfwSetFramebufferSizeCallback(window, frame_buffer_size_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 

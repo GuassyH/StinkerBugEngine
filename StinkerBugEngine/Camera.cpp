@@ -51,7 +51,6 @@ void Camera::UpdateMatrix() {
 void Camera::ShadowPass(glm::mat4 light_VP) {
 	if (!renderShadows) { return; }
 	for (auto& call : Renderer::getInstance().opaque_meshes) {
-		if (!call.renderer->model || !call.renderer->material) { continue; }	// If there isnt a model and material then skip
 		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow)) { continue; }
 
 		call.transform->UpdateMatrix();
@@ -66,7 +65,6 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 		call.renderer->model->shadowPass();
 	}
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
-		if (!call.renderer->model || !call.renderer->material) { continue; }	// If there isnt a model and material then skip
 		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow)) { continue; }
 
 		call.transform->UpdateMatrix();

@@ -5,6 +5,7 @@
 #include "ComponentTypeID.h"
 #include "Display.h"
 #include "EntityHelper.h"
+#include "Scene.h"
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
@@ -104,7 +105,7 @@ bool Scene::HasMainCamera() {
 // Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
-
+	Renderer::getInstance().rebuildMeshLists(Scene_ECS.components);
 
 	if (!HasMainLight()) {
 		if (!main_light) {

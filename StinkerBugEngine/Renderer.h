@@ -7,6 +7,8 @@
 
 #include "MeshRenderer.h"
 #include "Transform.h"
+#include "GizmoComponent.h"
+
 #include "glm/glm.hpp"
 #include <typeindex>
 #include <typeinfo>
@@ -19,12 +21,14 @@ struct ObjectCall {
 
 class Renderer {
 private:
-	Renderer() = default;
+    Renderer() = default;
+    Renderer(const Renderer&) = delete;
+    Renderer& operator=(const Renderer&) = delete;
 public:
 	static Renderer& getInstance() { static Renderer instance; return instance; }
 
 	std::vector<ObjectCall> opaque_meshes;
-	std::vector<ObjectCall> transparent_meshes;
+    std::vector<ObjectCall> transparent_meshes;
 
 	void clearMeshes() {
 		opaque_meshes.clear();
@@ -32,14 +36,15 @@ public:
 	}
 
     void rebuildMeshLists(std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>>& components) {
-        opaque_meshes.clear();
-        transparent_meshes.clear();
+
+        clearMeshes();
 
         auto& meshMap = components[std::type_index(typeid(MeshRenderer))];
         auto& transformMap = components[std::type_index(typeid(Transform))];
 
         for (auto& [id, compPtr] : meshMap) {
             if (!compPtr) continue;
+            if (components[std::type_index(typeid(GizmoComponent))].find(id) != components[std::type_index(typeid(GizmoComponent))].end()) { continue; }
 
             auto rendererPtr = std::static_pointer_cast<MeshRenderer>(compPtr);
             if (!rendererPtr->model || !rendererPtr->material) continue;
@@ -47,6 +52,9 @@ public:
             auto itT = transformMap.find(id);
             if (itT == transformMap.end() || !itT->second) continue;
             auto transformPtr = std::static_pointer_cast<Transform>(itT->second);
+
+            // Could perform frustum culling here
+
 
             ObjectCall new_call{ rendererPtr.get(), transformPtr.get() };
 

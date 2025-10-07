@@ -32,6 +32,7 @@ namespace Gizmos {
         gizmo_registry.component_bits[entity_id] = 0b0;
         gizmo_registry.entity_names[entity_id] = name;
         gizmo_registry.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
+        gizmo_registry.AddComponent<GizmoComponent>(entity_id);
         gizmo_registry.entities.insert(entity_id);
         return entity_id;
     }
@@ -152,13 +153,13 @@ namespace Gizmos {
             arrowY.mr = &arrowZ.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
             arrowZ.mr = &arrowX.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
 
-            arrowX.gc = &arrowX.entity_helper->AddComponent<GizmoComponent>();
-            arrowY.gc = &arrowY.entity_helper->AddComponent<GizmoComponent>();
-            arrowZ.gc = &arrowZ.entity_helper->AddComponent<GizmoComponent>();
-
             arrowX.eb = &arrowX.entity_helper->AddComponent<ArrowGizmo>();
             arrowY.eb = &arrowY.entity_helper->AddComponent<ArrowGizmo>();
             arrowZ.eb = &arrowZ.entity_helper->AddComponent<ArrowGizmo>();
+
+            arrowX.gc = &arrowX.entity_helper->GetComponent<GizmoComponent>();
+            arrowY.gc = &arrowY.entity_helper->GetComponent<GizmoComponent>();
+            arrowZ.gc = &arrowZ.entity_helper->GetComponent<GizmoComponent>();
 
             arrowX.gc->reg_color = x_color;
             arrowY.gc->reg_color = y_color;
@@ -183,7 +184,7 @@ namespace Gizmos {
 
             // Ball in the middle 
             translate_origo_point.mr = &translate_origo_point.entity_helper->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_NoDepthTest));
-            translate_origo_point.gc = &translate_origo_point.entity_helper->AddComponent<GizmoComponent>();
+            translate_origo_point.gc = &translate_origo_point.entity_helper->GetComponent<GizmoComponent>();
             translate_origo_point.gc->reg_color = origo_color;
             translate_origo_point.gc->interactable = false;
             translate_origo_point.mr->material->color.a = transparency;
@@ -229,10 +230,9 @@ namespace Gizmos {
             scaleY.mr = &scaleY.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
             scaleZ.mr = &scaleZ.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
 
-
-            scaleX.gc = &scaleX.entity_helper->AddComponent<GizmoComponent>();
-            scaleY.gc = &scaleY.entity_helper->AddComponent<GizmoComponent>();
-            scaleZ.gc = &scaleZ.entity_helper->AddComponent<GizmoComponent>();
+            scaleX.gc = &scaleX.entity_helper->GetComponent<GizmoComponent>();
+            scaleY.gc = &scaleY.entity_helper->GetComponent<GizmoComponent>();
+            scaleZ.gc = &scaleZ.entity_helper->GetComponent<GizmoComponent>();
 
             scaleX.gc->reg_color = x_color;
             scaleY.gc->reg_color = y_color;
@@ -257,7 +257,7 @@ namespace Gizmos {
 
             // Ball in the middle
             scale_origo_point.mr = &scale_origo_point.entity_helper->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_NoDepthTest));
-            scale_origo_point.gc = &scale_origo_point.entity_helper->AddComponent<GizmoComponent>();
+            scale_origo_point.gc = &scale_origo_point.entity_helper->GetComponent<GizmoComponent>();
             scale_origo_point.gc->reg_color = origo_color;
             scale_origo_point.gc->interactable = false;
             scale_origo_point.entity_helper->GetComponent<Transform>().scale = glm::vec3(0.15f);
@@ -296,9 +296,9 @@ namespace Gizmos {
             rotateY.mr = &rotateY.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
             rotateZ.mr = &rotateZ.entity_helper->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_NoDepthTest));
 
-            rotateX.gc = &rotateX.entity_helper->AddComponent<GizmoComponent>();
-            rotateY.gc = &rotateY.entity_helper->AddComponent<GizmoComponent>();
-            rotateZ.gc = &rotateZ.entity_helper->AddComponent<GizmoComponent>();
+            rotateX.gc = &rotateX.entity_helper->GetComponent<GizmoComponent>();
+            rotateY.gc = &rotateY.entity_helper->GetComponent<GizmoComponent>();
+            rotateZ.gc = &rotateZ.entity_helper->GetComponent<GizmoComponent>();
 
             rotateX.gc->reg_color = x_color;
             rotateY.gc->reg_color = y_color;
@@ -344,7 +344,7 @@ namespace Gizmos {
 
             infinite_grid.mr = &infinite_grid.entity_helper->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(grid_mat));
             infinite_grid.mr->raycastable = false;
-            infinite_grid.gc = &infinite_grid.entity_helper->AddComponent<GizmoComponent>();
+            infinite_grid.gc = &infinite_grid.entity_helper->GetComponent<GizmoComponent>();
             infinite_grid.gc->interactable = false;
             infinite_grid.t = &infinite_grid.entity_helper->GetComponent<Transform>();
             infinite_grid.t->scale = glm::vec3(100.0f, 0.0f, 100.0f);

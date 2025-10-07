@@ -32,7 +32,9 @@ public:
 	void DestroyEntity(Entity id) {
 		bool update_renderer = false;
 		if (GetComponentMap<MeshRenderer>().find(id) != GetComponentMap<MeshRenderer>().end()) {
-			update_renderer = true;
+			if (components[std::type_index(typeid(GizmoComponent))].find(id) == components[std::type_index(typeid(GizmoComponent))].end()) {
+				update_renderer = true;
+			}
 		}
 	
 		// remove all tracked things
@@ -49,7 +51,6 @@ public:
 
 		if (update_renderer) {
 			Renderer::getInstance().rebuildMeshLists(components);
-			std::cout << "Updating Renderer Mesh List" << std::endl;
 		}
 	}
 
@@ -166,16 +167,10 @@ public:
 		if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return *std::static_pointer_cast<T>(map.find(id)->second); }
 
 		AddComponentBit(ComponentBit<T>(), id);
-		// std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 
 		map[id] = std::make_shared<T>(std::forward<Args>(args)...);
 	
-		if constexpr (std::is_base_of_v<MeshRenderer, T>) {
-			Renderer::getInstance().rebuildMeshLists(components);
 
-			std::cout << "Updating Renderer Mesh List" << std::endl;
-		}
-		
 		return GetComponent<T>(id);
 	}
 
@@ -192,12 +187,6 @@ public:
 
 			RemoveComponentBit(ComponentBit<T>(), id);
 
-			if constexpr (std::is_base_of_v<MeshRenderer, T>) {
-				Renderer::getInstance().rebuildMeshLists(components);
-				std::cout << "Updating Renderer Mesh List" << std::endl;
-			}
-
-			std::cout << entity_names[id] << " - " << std::bitset<32>(component_bits[id]) << "\n";
 		}
 		else {
 			std::cout << "Component not found" << std::endl;
