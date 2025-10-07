@@ -8,6 +8,8 @@
 #include "Texture.h"
 #include "ECSystem.h"
 
+#include "imgui_internal.h"
+
 class SceneViewWindow {
 private:
 	bool opened = true;

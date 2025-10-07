@@ -4,12 +4,16 @@
 
 void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	// Begin Game View window
-	// ImGui::SetNextWindowPos(ImVec2(350, 30));
-	// ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 330));
-	
-	//ImGui::SetNextWindowPos(ImVec2(350 + ((display.windowWidth - 700) * 0.5f), display.windowHeight - 300));
-	//ImGui::SetNextWindowSize(ImVec2((display.windowWidth - 700) * 0.5f, 300));
 	ImGui::Begin("Game View");
+
+	ImGuiWindow* window = ImGui::GetCurrentWindow();
+	if (!window || !window->Active || !window->WasActive || window->Hidden == true)
+	{
+		ImGui::End();
+		return;
+	}
+
+
 
 	if (!scene.HasMainCamera()) {
 		ImGui::End();

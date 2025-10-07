@@ -28,7 +28,7 @@ void UI::imgui_init() {
 	sceneViewWindow.Init(Editor_ECS);
 
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	
+	io.ConfigDockingAlwaysTabBar = true;
 
 
 	std::cout << "\nImGui / UI initialized\n\n";
@@ -44,7 +44,7 @@ void UI::imgui_render(Scene& scene) {
 	int mode = 0;
 	glfwGetInputMode(display.window, mode);
 
-	// topBarWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	topBarWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
 
 
 	static bool opt_fullscreen = true;
@@ -54,13 +54,18 @@ void UI::imgui_render(Scene& scene) {
 	if (opt_fullscreen)
 	{
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->WorkPos);
-		ImGui::SetNextWindowSize(viewport->WorkSize);
+		// Temp size adjustment to account for top bar
+		ImVec2 workPos = viewport->WorkPos; workPos.y += 5;
+		ImVec2 workSize = viewport->WorkSize; workSize.y -= 5;
+		ImGui::SetNextWindowPos(workPos);
+		ImGui::SetNextWindowSize(workSize);
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		window_flags |= ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar |
+			ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+			ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus |
+			ImGuiWindowFlags_NoNavFocus;
 
 	}
 	ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
@@ -68,12 +73,14 @@ void UI::imgui_render(Scene& scene) {
 	if (opt_fullscreen)
 		ImGui::PopStyleVar(2);
 
+
 	// Create the dockspace
 	ImGuiIO& io = ImGui::GetIO();
 	if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 	{
 		ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+
 	}
 
 
@@ -83,11 +90,12 @@ void UI::imgui_render(Scene& scene) {
 	inspectorWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
 	consoleWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
 
-	// ImGui::ShowDemoWindow();
 	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	// io.IniFilename = "layout.ini";
 }
 
 

@@ -7,6 +7,7 @@
 #include "EditorCamera.h"
 #include "Texture.h"
 #include "ECSystem.h"
+#include "imgui_internal.h"
 
 class GameWindow {
 private:
