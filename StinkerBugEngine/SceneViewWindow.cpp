@@ -24,9 +24,9 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 	// Begin SceneViewWindow
-	ImGui::SetNextWindowPos(ImVec2(350, 30));
-	ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 330));
-	ImGui::Begin("Scene View", &opened, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoCollapse);
+	//ImGui::SetNextWindowPos(ImVec2(350, 30));
+	//ImGui::SetNextWindowSize(ImVec2(display.windowWidth - 700, display.windowHeight - 330));
+	ImGui::Begin("Scene View");
 
 
 	// Scene View Selectables

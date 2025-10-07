@@ -6,9 +6,9 @@
 
 /// THIS IS THE HIERARCHY
 void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
-	ImGui::SetNextWindowPos(ImVec2(0, 30));
-	ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 30));
-	ImGui::Begin("Hierarchy Menu", &opened, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize);
+	//ImGui::SetNextWindowPos(ImVec2(0, 30));
+	//ImGui::SetNextWindowSize(ImVec2(350, display.windowHeight - 30));
+	ImGui::Begin("Hierarchy Menu");
 
 	ImGui::Text("Entities");
 	ImGui::Separator();
