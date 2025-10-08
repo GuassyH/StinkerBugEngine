@@ -44,6 +44,7 @@ public:
 
 	bool HasMainLight();
 	bool HasMainCamera();
+	void CheckMains();
 
 	void StartEntityBehaviours();
 	void WakeEntityBehaviours();

@@ -34,7 +34,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 	// Scene View Selectables
-	ImGui::SetCursorPos(ImVec2(0, 22));
+	ImGui::SetCursorPos(ImVec2(0, 18));
 	ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetWindowSize().x, 20), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 	
 	ImGui::Selectable("Grid", &editorCamera->showGrid, ImGuiSelectableFlags_None, ImVec2(30, 20));
@@ -48,6 +48,8 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 	// Actual editor Camera
+	editorCamera->camera->width = ImGui::GetWindowWidth();
+	editorCamera->camera->height = ImGui::GetWindowHeight();
 	editorCamera->Render(scene, is_entity_selected, selected_entity, editor_ecs);
 	if (editorCamera->camera->output_texture ) { 
 
@@ -71,13 +73,16 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			imageSize.y = windowSize.x / cameraAspect;
 		}
 
+		imageSize = ImGui::GetWindowSize();
+		imageSize.y -= 1;
+
 		ImVec2 imagePosInWindow;
 		imagePosInWindow.x = ((windowSize.x - imageSize.x) * 0.5f) + ImGui::GetCursorPosX();
 		imagePosInWindow.y = ((windowSize.y - imageSize.y) * 0.5f) + ImGui::GetCursorPosY();
 
 
-		ImGui::SetCursorPosX(imagePosInWindow.x);
-		ImGui::SetCursorPosY(imagePosInWindow.y);
+		// ImGui::SetCursorPos(ImVec2(0, 18));
+		ImGui::SetCursorPos(ImVec2(0, 0));
 
 		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
 			editorCamera->w_size.x = imageSize.x;
@@ -104,7 +109,6 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		}
 
 		ImGui::Image((ImTextureID)(intptr_t)cam_output->ID, imageSize, ImVec2(0, 1), ImVec2(1, 0));
-	
 	}
 	else {
 		ImGui::End(); std::cout << "No output texture!\n";
@@ -112,9 +116,12 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 	if (glfwGetKey(display.window, GLFW_KEY_F) == GLFW_PRESS) {
 		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
-			editorCamera->transform->position = 
-				scene.Scene_ECS.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
+			editorCamera->transform->position = scene.Scene_ECS.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
 		}
+	}
+
+	if (ImGui::IsWindowHovered()) {
+		editorCamera->SelectObject(scene, is_entity_selected, selected_entity, editor_ecs);
 	}
 
 	ImGui::End();

@@ -21,6 +21,8 @@ void UI::imgui_init() {
 	custom_style->Colors[ImGuiCol_TitleBgActive] = custom_style->Colors[ImGuiCol_TitleBg];
 	custom_style->Colors[ImGuiCol_FrameBg] = ImVec4(0.2f, 0.2f, 0.26f, 1.0f);
 
+	custom_style->WindowPadding = ImVec2(1.0, 1.0);
+
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
 
@@ -55,8 +57,8 @@ void UI::imgui_render(Scene& scene) {
 	{
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
 		// Temp size adjustment to account for top bar
-		ImVec2 workPos = viewport->WorkPos; workPos.y += 5;
-		ImVec2 workSize = viewport->WorkSize; workSize.y -= 5;
+		ImVec2 workPos = viewport->WorkPos; workPos.y += 15;
+		ImVec2 workSize = viewport->WorkSize; workSize.y -= 15;
 		ImGui::SetNextWindowPos(workPos);
 		ImGui::SetNextWindowSize(workSize);
 		ImGui::SetNextWindowViewport(viewport->ID);

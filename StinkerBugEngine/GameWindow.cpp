@@ -39,10 +39,11 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 		return;
 	}
 
-
 	if (!camera.output_texture) {
 		camera.output_texture = new Texture(1920, 1080);
 	}
+
+	camera.Render(&scene);
 
 	ImVec2 windowSize = ImGui::GetContentRegionAvail();
 	ImVec2 windowPos = ImGui::GetWindowPos(); // top-left of the window in screen coordinates

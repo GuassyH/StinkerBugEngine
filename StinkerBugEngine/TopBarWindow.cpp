@@ -22,19 +22,21 @@ void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected
 	ImGui::SetCursorPos(ImVec2(0, 0));
 	ImGui::BeginChild("Top_Toolbar", ImVec2(ImGui::GetWindowSize().x, 30), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
-
-	ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 52, 3));
-	if(ImGui::ImageButton("PlayButton", (ImTextureID)(intptr_t)PlayTexture.ID, ImVec2(PlayTexture.imgWidth, PlayTexture.imgHeight), ImVec2(0,0), ImVec2(1,1))) {
+	ImGuiStyle* custom_style = &ImGui::GetStyle();
+	ImVec2 org_pad = custom_style->ItemSpacing;
+	custom_style->ItemSpacing = ImVec2(0.0, 0.0);
+	ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 30, 3));
+	if(ImGui::ImageButton("PlayButton", (ImTextureID)(intptr_t)PlayTexture.ID, ImVec2(20, 20), ImVec2(0,0), ImVec2(1,1))) {
 		play_scene = play_scene ? false : true;
 	}
 
 	ImGui::SameLine();
-	if (ImGui::ImageButton("PauseButton", (ImTextureID)(intptr_t)PauseTexture.ID, ImVec2(PauseTexture.imgWidth, PauseTexture.imgHeight), ImVec2(0, 0), ImVec2(1, 1))) {
+	if (ImGui::ImageButton("PauseButton", (ImTextureID)(intptr_t)PauseTexture.ID, ImVec2(20, 20), ImVec2(0, 0), ImVec2(1, 1))) {
 		pause_scene = pause_scene ? false : true;
 	}
 
-	ImGui::SameLine(); 
-	if (ImGui::ImageButton("NextButton", (ImTextureID)(intptr_t)NextTexture.ID, ImVec2(NextTexture.imgWidth, NextTexture.imgHeight))) {
+	ImGui::SameLine();
+	if (ImGui::ImageButton("NextButton", (ImTextureID)(intptr_t)NextTexture.ID, ImVec2(20, 20))) {
 		if (play_scene) {
 			if (!scene_started) {
 				scene.StartEntityBehaviours();
@@ -61,6 +63,9 @@ void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected
 	else {
 		scene_started = false;
 	}
+
+	custom_style->ItemSpacing = org_pad;
+
 
 	ImGui::EndChild();
 	ImGui::End();

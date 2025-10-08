@@ -51,7 +51,6 @@ void EditorCamera::Render(Scene& scene, bool& is_entity_selected, Entity& select
 	camera->Render(&scene);
 	PrePass(scene, editor_ecs);
 	PostPass(scene, is_entity_selected, selected_entity, editor_ecs);
-	SelectObject(scene, is_entity_selected, selected_entity, editor_ecs);
 }
 
 void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {

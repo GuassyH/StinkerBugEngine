@@ -97,16 +97,13 @@ bool Scene::HasMainLight() {
 	return (main_light && Scene_ECS.GetComponentMap<Light>().find(main_light->id) != Scene_ECS.GetComponentMap<Light>().end());
 }
 
-// Check if a main camera exists (directional light)
+// Check if a main camera exists
 bool Scene::HasMainCamera() {
 	return (main_camera && Scene_ECS.GetComponentMap<Camera>().find(main_camera->id) != Scene_ECS.GetComponentMap<Camera>().end());
 }
 
-// Render each camera
-void Scene::Render() {
-	Display& display = Display::getInstance();
-	Renderer::getInstance().rebuildMeshLists(Scene_ECS.components);
-
+// Check all mains and set needed data
+void Scene::CheckMains() {
 	if (!HasMainLight()) {
 		if (!main_light) {
 			main_light = new EntityHelper();
@@ -122,7 +119,7 @@ void Scene::Render() {
 		}
 	}
 	if (!HasMainCamera()) {
-		if (!main_camera) { 
+		if (!main_camera) {
 			main_camera = new EntityHelper();
 			main_camera->ecs = &Scene_ECS;
 			main_camera->id = 0;
@@ -132,9 +129,17 @@ void Scene::Render() {
 			main_camera->id = id;
 			break;
 		}
-	}else{
-		main_camera->GetComponent<Camera>().Render(this);
 	}
+}
+
+// Render each camera
+void Scene::Render() {
+	Display& display = Display::getInstance();
+	Renderer::getInstance().rebuildMeshLists(Scene_ECS.components);
+
+	CheckMains();
+	
+	// main_camera->GetComponent<Camera>().Render(this);
 }
 
 // Call the EntityBehaviours Start
