@@ -2,7 +2,7 @@
 #define TRANSFORM_COMPONENT_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "ComponentCore.h"
+#include "Component.h"
 
 #include <glm/glm.hpp>
 #include "glm/matrix.hpp"
@@ -14,7 +14,7 @@
 
 
 
-class Transform : public ComponentCore {
+class Transform : public Component {
 private:
 	glm::mat4 modelMatrix = glm::mat4(1.0);
 	glm::mat4 rotationMatrix = glm::mat4(1.0);

@@ -31,7 +31,7 @@ Entity& Scene::CreateEntity(std::string name) {
 
 
 // Resolve collision (apply forces)
-void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2) {
+void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, RigidBody& rb2) {
 	if (collision_info.normal != glm::vec3(0.0)) {
 		glm::vec3 relative_velocity = rb1.velocity - rb2.velocity;
 		float vel_along_normal = glm::dot(relative_velocity, collision_info.normal);
@@ -51,8 +51,8 @@ void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Trans
 		// positional corrections
 		if (invMass1 + invMass2 > 0) {
 			glm::vec3 correction = collision_info.normal * collision_info.penetration / (invMass1 + invMass2);
-			if (!rb1.isKinematic) { t1.position -= correction * invMass1; }
-			if (!rb2.isKinematic) { t2.position += correction * invMass2; }
+			if (!rb1.isKinematic) { rb1.transform->position -= correction * invMass1; }
+			if (!rb2.isKinematic) { rb2.transform->position += correction * invMass2; }
 		}
 	}
 }
@@ -68,7 +68,7 @@ void Scene::CheckCollisions(uint32_t id) {
 				if (Scene_ECS.GetComponentMap<RigidBody>().find(id2) != Scene_ECS.GetComponentMap<RigidBody>().end()) {
 					CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
 					if (collision_info.did_collide) {
-						ResolveCollision(collision_info, Scene_ECS.GetComponent<RigidBody>(id), Scene_ECS.GetComponent<Transform>(id), Scene_ECS.GetComponent<RigidBody>(id2), Scene_ECS.GetComponent<Transform>(id2));
+						ResolveCollision(collision_info, Scene_ECS.GetComponent<RigidBody>(id), Scene_ECS.GetComponent<RigidBody>(id2));
 					}
 				}
 			}
@@ -87,8 +87,7 @@ void Scene::UpdatePhysics() {
 		if (rb.isKinematic) { continue; }
 		rb.velocity -= (rb.velocity * rb.drag) * deltaTime.get();
 
-		Transform& transform = Scene_ECS.GetComponent<Transform>(id);
-		transform.position += rb.velocity * deltaTime.get();
+		rb.transform->position += rb.velocity * deltaTime.get();
 	}
 }
 
@@ -135,7 +134,6 @@ void Scene::CheckMains() {
 // Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
-	// Renderer::getInstance().rebuildMeshLists(Scene_ECS.components);
 
 	CheckMains();
 	

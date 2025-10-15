@@ -70,7 +70,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
 			editorCamera->w_size.x = imageSize.x;
-			editorCamera->w_size.y = imageSize.y - 20;
+			editorCamera->w_size.y = imageSize.y;
 		
 			// Due to the toolbar this is inaccurate, needs fixing
 			editorCamera->w_pos.x = (windowPos.x + imagePosInWindow.x);

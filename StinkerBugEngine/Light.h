@@ -19,7 +19,6 @@ public:
 	LightTypes light_type = LightTypes::Spotlight;
 	glm::mat4 light_VP = glm::mat4(1.0f);
 	glm::vec4 color = glm::vec4(1.0f);
-	glm::vec3 vec_direction;
 
 	// Spotlight
 	float distance;

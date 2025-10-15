@@ -43,9 +43,9 @@ void Mesh::shadowPass() {
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }
 
-void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, std::shared_ptr<Transform> c_transform, Camera* cam, Light* light) {
+void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, Camera* cam, Light* light) {
 
-	if (!material || !cam || !m_transform || !c_transform) { return; }
+	if (!material || !cam || !m_transform || !cam->transform) { return; }
 	material->Use();
 
 	// Textures should only be done once per material but for now its here
@@ -97,7 +97,7 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 	material->shader.SetMat4("camMatrix", cam->CameraMatrix);
 
 	// Others
-	material->shader.SetVec3("camPos", c_transform->position);
+	material->shader.SetVec3("camPos", cam->transform->position);
 	material->shader.SetVec4("color", material->color);
 
 	// Light properties
@@ -105,7 +105,7 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 	glm::vec3 l_col;
 
 	if (light) {
-		l_dir = light->vec_direction;
+		l_dir = light->transform->DegToVec();
 		l_col = light->color;
 	}
 	else {

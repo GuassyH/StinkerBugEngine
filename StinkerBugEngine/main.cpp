@@ -19,9 +19,6 @@
 #include "Entity.h"
 #include "Model.h"
 
-#include "CameraMovement.h"
-#include "JumpMechanic.h"
-#include "SphereMove.h"
 
 int main(void) {
 	Display& display = Display::getInstance();
@@ -55,6 +52,7 @@ int main(void) {
 	Floor.AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Plane()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	Floor.GetComponent<Transform>().scale = glm::vec3(250.0f);
 	Floor.GetComponent<Transform>().position = glm::vec3(0.0f, -10.0f, 0.0f);
+	
 
 	Scene* active_scene = &sceneManager.GetActiveScene();
 	while (!glfwWindowShouldClose(display.window)) {

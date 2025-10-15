@@ -14,7 +14,6 @@
 #include "Collider.h"
 
 #include "Component.h"
-#include "ComponentCore.h"
 #include "Entity.h"
 #include "ComponentTypeID.h"
 #include "Renderer.h"
@@ -31,7 +30,7 @@ public:
 	std::unordered_map<Entity, std::shared_ptr<EntityBehaviour>> entity_behaviours;
 
 	std::unordered_map<Entity, uint32_t> component_bits;
-	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<ComponentCore>>> components;
+	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components;
 
 
 	void DestroyEntity(Entity& id) {
@@ -82,7 +81,7 @@ public:
 
 
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<ComponentCore, T>, bool> HasComponent(const Entity id) {
+	std::enable_if_t<std::is_base_of_v<Component, T>, bool> HasComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			auto it = colliders.find(id);
 			return (it != colliders.end());
@@ -98,12 +97,12 @@ public:
 	}
 
 	template<typename T>
-	std::unordered_map<Entity, std::shared_ptr<ComponentCore>>& GetComponentMap() {
+	std::unordered_map<Entity, std::shared_ptr<Component>>& GetComponentMap() {
 		return components[std::type_index(typeid(T))];
 	}
 
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<ComponentCore, T>, T&> GetComponent(const Entity id) {
+	std::enable_if_t<std::is_base_of_v<Component, T>, T&> GetComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			auto it = colliders.find(id);
 			if (it == colliders.end()) throw std::runtime_error("Collider not found for entity " + std::to_string(id));
@@ -132,7 +131,7 @@ public:
 	}
 
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<ComponentCore, T>, std::shared_ptr<T>> GetComponentPtr(const Entity id) // Return the std::shared_ptr
+	std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> GetComponentPtr(const Entity id) // Return the std::shared_ptr
 	{
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			auto it = colliders.find(id);
@@ -159,15 +158,17 @@ public:
 
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<ComponentCore, T>, T&> AddComponent(const Entity id, Args&&... args)
+	std::enable_if_t<std::is_base_of_v<Component, T>, T&> AddComponent(const Entity id, Args&&... args)
 	{
 		// Pointer to the container we'll use
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			colliders[id] = std::make_shared<T>(std::forward<Args>(args)...);
+			colliders[id]->entity = id;
 			colliders[id]->Init();
 		}
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) {
 			entity_behaviours[id] = std::make_shared<T>(std::forward<Args>(args)...);
+			entity_behaviours[id]->entity = id;
 			entity_behaviours[id]->Init();
 		}
 		else {
@@ -186,7 +187,7 @@ public:
 		GetComponent<T>(id).entity = id;
 		if constexpr (std::is_base_of_v<Component, T>) {
 			if (HasComponent<Transform>(id)) {
-				std::shared_ptr<ComponentCore> comp_ptr = GetComponentPtr<T>(id);
+				std::shared_ptr<Component> comp_ptr = GetComponentPtr<T>(id);
 				auto component_expanded = std::static_pointer_cast<Component>(comp_ptr);
 				if (!component_expanded) throw std::runtime_error("Invalid component cast");
 				component_expanded->transform = GetComponentPtr<Transform>(id);
@@ -201,7 +202,7 @@ public:
 
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<ComponentCore, T>, std::shared_ptr<T>> AddComponentPtr(const Entity id, Args&&... args) // Returns shared_ptr
+	std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> AddComponentPtr(const Entity id, Args&&... args) // Returns shared_ptr
 	{
 		AddComponent<T>(id);
 
@@ -210,7 +211,7 @@ public:
 
 
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<ComponentCore, T>, void> RemoveComponent(const Entity id) {
+	std::enable_if_t<std::is_base_of_v<Component, T>, void> RemoveComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) { colliders.erase(id); return; }
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) { entity_behaviours.erase(id); return; }
 

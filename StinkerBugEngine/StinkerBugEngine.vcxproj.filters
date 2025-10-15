@@ -398,9 +398,6 @@
     <ClInclude Include="AssetWindow.h">
       <Filter>Header Files\Core\UI</Filter>
     </ClInclude>
-    <ClInclude Include="ComponentCore.h">
-      <Filter>Header Files\Components</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

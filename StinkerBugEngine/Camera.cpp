@@ -83,14 +83,14 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 	// Opaque
 	for (auto& call : Renderer::getInstance().opaque_meshes) {
-		call.renderer->model->render(call.renderer->material, call.transform, transform, this, light);
+		call.renderer->model->render(call.renderer->material, call.transform, this, light);
 	}
 
 	Renderer::getInstance().sortTransparentMeshes(transform->position);
 
 	// Transparent Not fully working
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
-		call.renderer->model->render(call.renderer->material, call.transform, transform, this, light);
+		call.renderer->model->render(call.renderer->material, call.transform, this, light);
 	}
 }
 
@@ -111,7 +111,7 @@ void Camera::Render(Scene* scene) {
 
 		glm::vec3 direction = l_transform->DegToVec();
 
-		scene->main_light->GetComponent<Light>().vec_direction = direction;
+		scene->main_light->GetComponent<Light>().transform->DegToVec() = direction;
 
 		float light_map_size = 50.0f;
 		glm::mat4 lightProj = glm::ortho(-light_map_size, light_map_size, -light_map_size, light_map_size, 0.1f, 200.0f);

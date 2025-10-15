@@ -123,7 +123,7 @@ namespace Screen
 
 			id_material.color = id_color;
 
-			renderer.model->render(id_mat_ptr, scene.Scene_ECS.GetComponentPtr<Transform>(id), camera->transform, camera, nullptr);
+			renderer.model->render(id_mat_ptr, scene.Scene_ECS.GetComponentPtr<Transform>(id), camera, nullptr);
 		}
 
 		// Read the pixel at the mouse position

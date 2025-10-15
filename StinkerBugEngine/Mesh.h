@@ -33,7 +33,7 @@ public:
 	void RecalculateMesh();
 
 	void shadowPass();
-	void render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, std::shared_ptr<Transform> c_transform, Camera* cam, Light* light);
+	void render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, Camera* cam, Light* light);
 
 	void cleanup();
 

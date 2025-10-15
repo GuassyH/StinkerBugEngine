@@ -16,7 +16,6 @@ class EntityHelper;
 class EntityBehaviour : public Component {
 public:
 	std::shared_ptr<EntityHelper> entityHelper = nullptr;
-	std::shared_ptr<Transform> transform = nullptr;
 
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;

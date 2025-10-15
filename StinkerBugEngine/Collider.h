@@ -6,7 +6,6 @@
 
 #include "Component.h"
 #include "glm/glm.hpp"
-#include "Transform.h"
 #include "CollisionInfo.h"
 
 class EntityHelper;
@@ -15,8 +14,8 @@ class BoxCollider;
 
 class Collider : public Component {
 public:
-	EntityHelper* entityHelper = nullptr;
-    Transform* transform = nullptr;
+    std::shared_ptr<EntityHelper> entityHelper = nullptr;
+
 
     float radius = 0.5f;
     glm::vec3 offset = glm::vec3(0.0f);

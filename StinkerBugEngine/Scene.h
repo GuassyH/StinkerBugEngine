@@ -39,7 +39,7 @@ public:
 
 	void Render();
 	void CheckCollisions(uint32_t id);
-	void ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Transform& t1, RigidBody& rb2, Transform& t2);
+	void ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, RigidBody& rb2);
 	void UpdatePhysics();
 
 	bool HasMainLight();

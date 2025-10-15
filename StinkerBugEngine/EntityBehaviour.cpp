@@ -12,8 +12,7 @@ void EntityBehaviour::Init() {
 
     // Check if entity has Transform
     if (!entityHelper->HasComponent<Transform>()) {
-        std::cout << "Entity " << std::to_string(entity) << " does not have a Transform component!" << std::endl;
+        std::cout << "EntityBehaviour for Entity " << std::to_string(entity) << " does not have a Transform component!" << std::endl;
         return;
     }
-    transform = entityHelper->GetComponentPtr<Transform>();
 }

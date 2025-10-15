@@ -6,12 +6,11 @@
 
 void Collider::Init() {
     auto& scene = SceneManager::getInstance().GetActiveScene();
-    entityHelper = new EntityHelper(entity, &scene.Scene_ECS);
+    entityHelper = std::make_shared<EntityHelper>(entity, &scene.Scene_ECS);
 
     // Check if entity has Transform
     if (!entityHelper->HasComponent<Transform>()) {
-        std::cout << "Entity does not have a Transform component!" << std::endl;
+        std::cout << "Collider for Entity " << std::to_string(entity) << " does not have a Transform component!" << std::endl;
         return;
     }
-    transform = &entityHelper->GetComponent<Transform>();
 }

@@ -35,7 +35,7 @@ public:
 		transparent_meshes.clear();
 	}
 
-    void rebuildMeshLists(std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<ComponentCore>>>& components) {
+    void rebuildMeshLists(std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>>& components) {
 
         clearMeshes();
 
