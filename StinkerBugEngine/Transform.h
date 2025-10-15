@@ -12,7 +12,7 @@
 #include <glm/gtx/vector_angle.hpp>
 #include <iostream>
 
-
+#include "ECSystem.h"
 
 class Transform : public Component {
 private:
@@ -25,7 +25,7 @@ public:
 		modelMatrix(1.0f), rotationMatrix(1.0f) {
 	}
 
-	Transform* parent = nullptr;
+	Transform* parent = nullptr;;
 
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 rotation = glm::vec3(0.0f);

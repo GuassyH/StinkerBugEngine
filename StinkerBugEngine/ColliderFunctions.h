@@ -2,6 +2,7 @@
 #define COLLIDER_FUNCTIONS_H
 
 #include "CollisionInfo.h"
+#include "Transform.h"
 
 class Collider;
 class SphereCollider;

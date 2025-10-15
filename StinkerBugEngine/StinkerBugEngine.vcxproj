@@ -28,6 +28,7 @@
     <ClCompile Include="dependencies\include\glad.c" />
     <ClCompile Include="Display.cpp" />
     <ClCompile Include="EBO.cpp" />
+    <ClCompile Include="ECSystem.cpp" />
     <ClCompile Include="EditorCamera.cpp" />
     <ClCompile Include="EntityBehaviour.cpp" />
     <ClCompile Include="EntitySelector.cpp" />
@@ -45,6 +46,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="SceneManager.cpp" />
     <ClCompile Include="SceneViewWindow.cpp" />

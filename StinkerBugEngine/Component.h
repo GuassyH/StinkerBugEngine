@@ -9,15 +9,18 @@
 
 #include <memory>
 
+class ECSystem;
 class Transform;
 
 class Component {
 public:	
 	Entity entity = 0;
 	std::shared_ptr<Transform> transform = nullptr;
+	ECSystem* parent_ecs;
 
 	Component() = default;
 	virtual ~Component() = default;
+	virtual void Init() {}
 	virtual void DrawOnInspector() {}
 	virtual void DrawGizmo() {}
 };

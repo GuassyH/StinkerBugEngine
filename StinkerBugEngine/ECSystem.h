@@ -10,15 +10,15 @@
 #include <typeinfo>
 #include <memory>
 
-#include "EntityBehaviour.h"
-#include "Collider.h"
-
 #include "Component.h"
 #include "Entity.h"
 #include "ComponentTypeID.h"
 #include "Renderer.h"
-#include "MeshRenderer.h"
-#include "Transform.h"
+
+class MeshRenderer;
+class Transform;
+class EntityBehaviour;
+class Collider;
 
 class ECSystem {
 public:
@@ -33,34 +33,8 @@ public:
 	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components;
 
 
-	void DestroyEntity(Entity& id) {
-		bool update_renderer = false;
-		if (GetComponentMap<MeshRenderer>().find(id) != GetComponentMap<MeshRenderer>().end()) {
-			if (components[std::type_index(typeid(GizmoComponent))].find(id) == components[std::type_index(typeid(GizmoComponent))].end()) {
-				update_renderer = true;
-			}
-		}
-	
-		// remove all tracked things
-		entities.erase(id);
-		entity_names.erase(id);
-		colliders.erase(id);
-		entity_behaviours.erase(id);
-		component_bits.erase(id);
-
-		// erase from component maps
-		for (auto& [typeIdx, map] : components) {
-			map.erase(id);
-		}
-
-		if (update_renderer) {
-			Renderer::getInstance().rebuildMeshLists(components);
-		}
-	}
-
-	void DuplicateEntity(Entity& id) {
-
-	}
+	void DestroyEntity(Entity& id);
+	void DuplicateEntity(Entity& id);
 
 	void AddComponentBit(uint32_t id, Entity entity) {
 		uint32_t& original_bits = component_bits[entity];
@@ -81,7 +55,8 @@ public:
 
 
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<Component, T>, bool> HasComponent(const Entity id) {
+	std::enable_if_t<std::is_base_of_v<Component, T>, bool> 
+		HasComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			auto it = colliders.find(id);
 			return (it != colliders.end());
@@ -97,12 +72,14 @@ public:
 	}
 
 	template<typename T>
-	std::unordered_map<Entity, std::shared_ptr<Component>>& GetComponentMap() {
+	std::unordered_map<Entity, std::shared_ptr<Component>>& 
+		GetComponentMap() {
 		return components[std::type_index(typeid(T))];
 	}
 
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<Component, T>, T&> GetComponent(const Entity id) {
+	std::enable_if_t<std::is_base_of_v<Component, T>, T&> 
+		GetComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			auto it = colliders.find(id);
 			if (it == colliders.end()) throw std::runtime_error("Collider not found for entity " + std::to_string(id));
@@ -131,7 +108,8 @@ public:
 	}
 
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> GetComponentPtr(const Entity id) // Return the std::shared_ptr
+	std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> 
+		GetComponentPtr(const Entity id) // Return the std::shared_ptr
 	{
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			auto it = colliders.find(id);
@@ -158,18 +136,15 @@ public:
 
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<Component, T>, T&> AddComponent(const Entity id, Args&&... args)
+	std::enable_if_t<std::is_base_of_v<Component, T>, T&> 
+		AddComponent(const Entity id, Args&&... args)
 	{
 		// Pointer to the container we'll use
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			colliders[id] = std::make_shared<T>(std::forward<Args>(args)...);
-			colliders[id]->entity = id;
-			colliders[id]->Init();
 		}
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) {
 			entity_behaviours[id] = std::make_shared<T>(std::forward<Args>(args)...);
-			entity_behaviours[id]->entity = id;
-			entity_behaviours[id]->Init();
 		}
 		else {
 			auto& map = GetComponentMap<T>();
@@ -184,12 +159,15 @@ public:
 			}
 		}
 
+
+
 		GetComponent<T>(id).entity = id;
+		GetComponent<T>(id).parent_ecs = this;
 		if constexpr (std::is_base_of_v<Component, T>) {
 			if (HasComponent<Transform>(id)) {
 				std::shared_ptr<Component> comp_ptr = GetComponentPtr<T>(id);
 				auto component_expanded = std::static_pointer_cast<Component>(comp_ptr);
-				if (!component_expanded) throw std::runtime_error("Invalid component cast");
+				if (!component_expanded) throw std::runtime_error("Invalid component-set-transform cast");
 				component_expanded->transform = GetComponentPtr<Transform>(id);
 			}
 			else {
@@ -197,12 +175,15 @@ public:
 			}
 		}
 
+		GetComponent<T>(id).Init();
+
 		return GetComponent<T>(id);
 	}
 
 	// For normal components
 	template<typename T, typename... Args>
-	std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> AddComponentPtr(const Entity id, Args&&... args) // Returns shared_ptr
+	std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> 
+		AddComponentPtr(const Entity id, Args&&... args) // Returns shared_ptr
 	{
 		AddComponent<T>(id);
 
@@ -210,8 +191,11 @@ public:
 	}
 
 
+
+
 	template<typename T>
-	std::enable_if_t<std::is_base_of_v<Component, T>, void> RemoveComponent(const Entity id) {
+	std::enable_if_t<std::is_base_of_v<Component, T>, void> 
+		RemoveComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) { colliders.erase(id); return; }
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) { entity_behaviours.erase(id); return; }
 

@@ -19,7 +19,7 @@ public:
 
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;
-	virtual void Init();
+	virtual void Init() override;
 	virtual void Start() {}
 	virtual void Awake() {}
 	virtual void Update() {}

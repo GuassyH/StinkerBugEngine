@@ -8,9 +8,12 @@
 #include "glm/glm.hpp"
 #include "CollisionInfo.h"
 
+#include "Transform.h"
+
 class EntityHelper;
 class SphereCollider;
 class BoxCollider;
+
 
 class Collider : public Component {
 public:
@@ -23,7 +26,7 @@ public:
 
     Collider() = default;
     virtual ~Collider() = default; // Always virtual destructor for base classes
-    virtual void Init();
+    virtual void Init() override;
 
 	virtual CollisionInfo CheckCollisions(Collider& other) = 0;
     virtual CollisionInfo CollideWithBox(BoxCollider& other_box_collider) = 0;
