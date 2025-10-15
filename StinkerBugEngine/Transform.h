@@ -73,6 +73,41 @@ public:
 			if (ImGui::DragFloat3("Scale", &scale.x, 0.1f, 0.01f)) { UpdateMatrix(); }
 		}
 	}
+
+	// ECS CONTROL
+
+	template<typename T, typename... Args>
+	T& AddComponent(Args&&... args)
+	{
+		return parent_ecs->AddComponent<T>(entity, std::forward<Args>(args)...);
+	}
+
+	template<typename T, typename... Args>
+	std::shared_ptr<T> AddComponentPtr(Args&&... args)
+	{
+		return parent_ecs->AddComponentPtr<T>(entity, std::forward<Args>(args)...);
+	}
+
+
+	template<typename T>
+	T& GetComponent() {
+		return parent_ecs->GetComponent<T>(entity);
+	}
+
+	template<typename T>
+	std::shared_ptr<T> GetComponentPtr() {
+		return parent_ecs->GetComponentPtr<T>(entity);
+	}
+
+	template<typename T>
+	void RemoveComponent() {
+		parent_ecs->RemoveComponent<T>(entity);
+	}
+
+	template<typename T>
+	bool HasComponent() {
+		return parent_ecs->HasComponent<T>(entity);
+	}
 };
 
 

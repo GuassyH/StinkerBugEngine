@@ -15,6 +15,7 @@
 #include "FullScreenPass.h"
 
 class EntityHelper;
+class Transform;
 
 class Scene {
 public:
