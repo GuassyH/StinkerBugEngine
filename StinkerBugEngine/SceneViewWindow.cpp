@@ -15,12 +15,11 @@ void SceneViewWindow::Init(ECSystem& editor_ecs) {
 	editorCamera->transform->rotation = glm::vec3(0.0f, 180.0f, 0.0f);
 
 	editorCamera->camera->output_texture = cam_output;
-	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene(), editor_ecs);
+	// editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene(), editor_ecs);
 }
  
 
 void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
-	std::ostringstream fps_text;	fps_text << display.FrameRate << "fps";
 
 	// Begin SceneViewWindow
 	ImGui::Begin("Scene View");
@@ -32,6 +31,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		return;
 	}
 
+	ImGuiStyle* custom_syle = &ImGui::GetStyle();
 
 	// Scene View Selectables
 	ImGui::SetCursorPos(ImVec2(0, 18));
@@ -56,40 +56,25 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		ImVec2 windowSize = ImGui::GetContentRegionAvail();
 		ImVec2 windowPos = ImGui::GetWindowPos(); // top-left of the window in screen coordinates
 
-		// Camera aspect ratio (width / height)
-		float cameraAspect = (float)editorCamera->camera->width / (float)editorCamera->camera->height;
-		float windowAspect = windowSize.x / windowSize.y;
 
 		ImVec2 imageSize;
-
-		if (windowAspect > cameraAspect) {
-			// Window is wider than camera -> match height
-			imageSize.y = windowSize.y;
-			imageSize.x = windowSize.y * cameraAspect;
-		}
-		else {
-			// Window is taller than camera -> match width
-			imageSize.x = windowSize.x;
-			imageSize.y = windowSize.x / cameraAspect;
-		}
-
 		imageSize = ImGui::GetWindowSize();
-		imageSize.y -= 1;
+		imageSize.y -= 1; // Because of padding
 
 		ImVec2 imagePosInWindow;
 		imagePosInWindow.x = ((windowSize.x - imageSize.x) * 0.5f) + ImGui::GetCursorPosX();
 		imagePosInWindow.y = ((windowSize.y - imageSize.y) * 0.5f) + ImGui::GetCursorPosY();
 
 
-		// ImGui::SetCursorPos(ImVec2(0, 18));
 		ImGui::SetCursorPos(ImVec2(0, 0));
 
 		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
 			editorCamera->w_size.x = imageSize.x;
-			editorCamera->w_size.y = imageSize.y;
+			editorCamera->w_size.y = imageSize.y - 20;
 		
-			editorCamera->w_pos.x = windowPos.x + imagePosInWindow.x;
-			editorCamera->w_pos.y = windowPos.y + imagePosInWindow.y;
+			// Due to the toolbar this is inaccurate, needs fixing
+			editorCamera->w_pos.x = (windowPos.x + imagePosInWindow.x);
+			editorCamera->w_pos.y = (windowPos.y + imagePosInWindow.y);
 
 			if (firstRightClick) {
 				glfwSetCursorPos(display.window, glm::roundEven((imageSize.x / 2.0f) + windowPos.x + imagePosInWindow.x), glm::roundEven((imageSize.y / 2.0f) + windowPos.y + imagePosInWindow.y));
@@ -109,6 +94,23 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		}
 
 		ImGui::Image((ImTextureID)(intptr_t)cam_output->ID, imageSize, ImVec2(0, 1), ImVec2(1, 0));
+	
+		if (showStats) {
+			ImGui::SetNextWindowSize(ImVec2(220, 80));
+			ImGui::SetNextWindowPos(ImVec2(windowPos.x + windowSize.x - 220, windowPos.y + imagePosInWindow.y + 18)); // simplified
+			ImGui::Begin("Stats", &opened, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
+
+			ImGui::Text("Stats");
+			ImGui::Separator();
+
+			std::ostringstream fps_text;	fps_text << display.FrameRate << " : fps";
+			std::ostringstream delta_text;	delta_text << glm::round((DeltaTime::getInstance().get() * 100000.0f)) / 100.0f << " : ms";
+
+			ImGui::TextUnformatted(fps_text.str().c_str());
+			ImGui::TextUnformatted(delta_text.str().c_str());
+
+			ImGui::End();
+		}
 	}
 	else {
 		ImGui::End(); std::cout << "No output texture!\n";
@@ -123,6 +125,8 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	if (ImGui::IsWindowHovered()) {
 		editorCamera->SelectObject(scene, is_entity_selected, selected_entity, editor_ecs);
 	}
+
+
 
 	ImGui::End();
 }

@@ -11,16 +11,16 @@ class Display {
 private:
 	Display() = default;
 public:
-	int windowWidth;
-	int windowHeight;
+	int windowWidth = 1920;
+	int windowHeight = 1080;
 
-	int monitorWidth;
-	int monitorHeight;
+	int monitorWidth = 1;
+	int monitorHeight = 1;
 
-	const char* title;
+	const char* title = "New Display";
 
-	GLFWwindow* window;
-	GLFWmonitor* monitor;
+	GLFWwindow* window = nullptr;
+	GLFWmonitor* monitor = nullptr;
 	
 	static Display& getInstance() { static Display instance; return instance; }
 

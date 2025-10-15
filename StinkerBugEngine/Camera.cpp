@@ -15,7 +15,7 @@
 
 Shader m_shadowMapShader;
 
-Camera::Camera(int width, int height, Transform& t) {
+Camera::Camera(int width, int height) {
 	Display& display = Display::getInstance();
 	GLFWwindow* window = display.window;
 	
@@ -27,7 +27,6 @@ Camera::Camera(int width, int height, Transform& t) {
 	// Should maybe be case by case
 	m_shadowMapFBO.Init(8192, 8192);
 	m_shadowMapShader = Shader("ShadowMapFBO.vert", "ShadowMapFBO.frag");
-	transform = &t;
 }
 
 
@@ -97,9 +96,10 @@ void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 
 
 void Camera::Render(Scene* scene) {
+	if (!transform) { std::cout << "No Transform" << std::endl; }
 	UpdateMatrix();
 
-	glClearColor(0.1f, 0.1f, 0.13f, 1.0f);
+	glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
@@ -113,13 +113,15 @@ void Camera::Render(Scene* scene) {
 
 		scene->main_light->GetComponent<Light>().vec_direction = direction;
 
-		float light_map_size = 100.0f;
+		float light_map_size = 50.0f;
 		glm::mat4 lightProj = glm::ortho(-light_map_size, light_map_size, -light_map_size, light_map_size, 0.1f, 200.0f);
 		glm::mat4 lightView = glm::lookAt(transform->position - (direction * glm::vec3(100)), transform->position - (direction * glm::vec3(100)) + direction, Constants::Dirs::Up);
 		glm::mat4 light_VP = lightProj * lightView;
 		
 		scene->main_light->GetComponent<Light>().light_VP = light_VP;
 		
+		// Create a buffer of all lights and send to frag shader
+
 		// Bind shadow map and draw scene to it
 		m_shadowMapFBO.BindForWriting();
 		glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
@@ -149,7 +151,7 @@ void Camera::Render(Scene* scene) {
 
 	// should do opaque then transparent stuff
 	if (scene->HasMainLight()) {
-		scene->skybox_pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+		if (renderSkybox) { scene->skybox_pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>()); }
 		
 		for (FullScreenPass pass : scene->passes) {
 			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
@@ -159,7 +161,7 @@ void Camera::Render(Scene* scene) {
 		LightingPass(light_VP, &scene->main_light->GetComponent<Light>());
 	}
 	else {
-		scene->skybox_pass.Draw(*this, nullptr, nullptr);
+		if (renderSkybox) { scene->skybox_pass.Draw(*this, nullptr, nullptr); }
 		
 		for (FullScreenPass pass : scene->passes) {
 			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());

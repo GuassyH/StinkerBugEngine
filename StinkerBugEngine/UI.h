@@ -19,6 +19,8 @@
 #include "SceneViewWindow.h"
 #include "GameWindow.h"
 
+#include "AssetWindow.h"
+
 #include "ECSystem.h"
 
 class Scene;
@@ -39,6 +41,7 @@ private:
 	InspectorWindow inspectorWindow;
 	SceneViewWindow sceneViewWindow;
 	GameWindow gameWindow;
+	AssetWindow assetWindow;
 public:
 	static UI& getInstance() { static UI instance; return instance; }
 

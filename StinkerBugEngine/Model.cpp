@@ -150,7 +150,7 @@ void Model::shadowPass() {
 	}
 }
 
-void Model::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light) {
+void Model::render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, std::shared_ptr<Transform> c_transform, Camera* cam, Light* light) {
 	for (Mesh mesh : meshes) {
 		mesh.render(material, m_transform, c_transform, cam, light);
 	}

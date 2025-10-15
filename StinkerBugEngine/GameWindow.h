@@ -14,6 +14,8 @@ private:
 	bool opened = true;
 	bool closed = false;
 
+	bool fsOnStart = false;
+
 	Display& display = Display::getInstance();
 public:
 	void Init();

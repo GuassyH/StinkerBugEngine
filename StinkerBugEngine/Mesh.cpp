@@ -43,7 +43,7 @@ void Mesh::shadowPass() {
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }
 
-void Mesh::render(Material* material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light) {
+void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, std::shared_ptr<Transform> c_transform, Camera* cam, Light* light) {
 
 	if (!material || !cam || !m_transform || !c_transform) { return; }
 	material->Use();
@@ -63,7 +63,7 @@ void Mesh::render(Material* material, Transform* m_transform, Transform* c_trans
 		std::string name;
 		switch (textures[i].type) {
 		case aiTextureType_DIFFUSE:
-			if (textures[i].numColCh = 4) { material->AddFlag(MaterialFlags_Transparent); }
+			if (textures[i].numColCh == 4) { material->AddFlag(MaterialFlags_Transparent); }
 			name = "diffuse" + std::to_string(diffuseIdx++);
 			break;
 		case aiTextureType_SPECULAR:

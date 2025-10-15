@@ -135,7 +135,7 @@ void Scene::CheckMains() {
 // Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
-	Renderer::getInstance().rebuildMeshLists(Scene_ECS.components);
+	// Renderer::getInstance().rebuildMeshLists(Scene_ECS.components);
 
 	CheckMains();
 	

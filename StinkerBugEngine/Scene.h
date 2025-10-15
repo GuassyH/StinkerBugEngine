@@ -26,7 +26,7 @@ public:
 	float gravity = -9.82f;
 
 	// Environment
-	float ambient = 0.3f;
+	float ambient = 0.5f;
 	EntityHelper* main_light = nullptr;
 	EntityHelper* main_camera = nullptr;
 	ECSystem Scene_ECS;

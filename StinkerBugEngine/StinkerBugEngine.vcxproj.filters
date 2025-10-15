@@ -198,6 +198,9 @@
     <ClCompile Include="GameWindow.cpp">
       <Filter>Source Files\Core\UI</Filter>
     </ClCompile>
+    <ClCompile Include="AssetWindow.cpp">
+      <Filter>Source Files\Core\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeltaTime.h">
@@ -391,6 +394,12 @@
     </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Header Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetWindow.h">
+      <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="ComponentCore.h">
+      <Filter>Header Files\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

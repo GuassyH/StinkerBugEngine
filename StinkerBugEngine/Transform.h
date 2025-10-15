@@ -2,7 +2,7 @@
 #define TRANSFORM_COMPONENT_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "Component.h"
+#include "ComponentCore.h"
 
 #include <glm/glm.hpp>
 #include "glm/matrix.hpp"
@@ -14,7 +14,7 @@
 
 
 
-class Transform : public Component {
+class Transform : public ComponentCore {
 private:
 	glm::mat4 modelMatrix = glm::mat4(1.0);
 	glm::mat4 rotationMatrix = glm::mat4(1.0);
@@ -27,9 +27,9 @@ public:
 
 	Transform* parent = nullptr;
 
-	glm::vec3 position = glm::vec3(0.0);
-	glm::vec3 rotation = glm::vec3(0.0);
-	glm::vec3 scale = glm::vec3(1.0);
+	glm::vec3 position = glm::vec3(0.0f);
+	glm::vec3 rotation = glm::vec3(0.0f);
+	glm::vec3 scale = glm::vec3(1.0f);
 
 	void UpdateMatrix() {
 		glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);

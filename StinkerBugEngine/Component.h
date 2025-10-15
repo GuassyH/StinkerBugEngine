@@ -1,19 +1,13 @@
-#ifndef COMPONENT_H
-#define COMPONENT_H
+#ifndef ComponentCore_H
+#define ComponentCore_H
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "Entity.h"
+#include "ComponentCore.h"
 
-class Component {
+#include "Transform.h"
+
+class Component : public ComponentCore {
 public:	
-	Entity entity = 0;
-
-	Component() = default;
-	virtual ~Component() = default;
-	virtual void DrawOnInspector() {}
-	virtual void DrawGizmo() {}
+	std::shared_ptr<Transform> transform = nullptr;
 };
 
 

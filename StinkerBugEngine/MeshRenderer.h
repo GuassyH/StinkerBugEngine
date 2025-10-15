@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 #include "Constants.h"
 #include "Component.h"
@@ -16,15 +17,17 @@
 #include "VBO.h"
 #include "EBO.h"
 
-class MeshRenderer : public Component{
+class MeshRenderer : public Component {
 public:
-	Model* model = nullptr;
-	Material* material = nullptr;
+	std::shared_ptr<Model> model = nullptr;
+	std::shared_ptr<Material> material = nullptr;
+
 	bool raycastable = true;
 	bool shadowCaster = true;
 
-	MeshRenderer(Model& m, Material& mat) : model(&m), material(&mat) {}
-	MeshRenderer(Model* m, Material* mat) : model(m), material(mat) {}
+	MeshRenderer(Model& m, Material& mat) : model(std::make_shared<Model>(m)), material(std::make_shared<Material>(mat)) {}
+	MeshRenderer(std::shared_ptr<Model> m, std::shared_ptr<Material> mat) : model(m), material(mat) {}
+	MeshRenderer(Model* w_m, Material* w_mat) = delete;
 	MeshRenderer() = default; // still allow default construction
 
 	bool trnsprncy = false;

@@ -21,10 +21,21 @@ public:
 		return ecs->AddComponent<T>(id, std::forward<Args>(args)...);
 	}
 
+	template<typename T, typename... Args>
+	std::shared_ptr<T> AddComponentPtr(Args&&... args)
+	{
+		return ecs->AddComponentPtr<T>(id, std::forward<Args>(args)...);
+	}
+
 
 	template<typename T>
 	T& GetComponent() {
 		return ecs->GetComponent<T>(id);
+	}
+
+	template<typename T>
+	std::shared_ptr<T> GetComponentPtr() {
+		return ecs->GetComponentPtr<T>(id);
 	}
 
 	template<typename T>

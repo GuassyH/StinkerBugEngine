@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AssetWindow.cpp" />
     <ClCompile Include="BoxCollider.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collider.cpp" />
@@ -59,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrowGizmo.h" />
+    <ClInclude Include="AssetWindow.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraMovement.h" />
@@ -67,6 +69,7 @@
     <ClInclude Include="ColliderFunctions.h" />
     <ClInclude Include="CollisionInfo.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="ComponentCore.h" />
     <ClInclude Include="ComponentsList.h" />
     <ClInclude Include="ConsoleCapture.h" />
     <ClInclude Include="ConsoleWindow.h" />

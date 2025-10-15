@@ -40,28 +40,6 @@ CollisionInfo ColliderFunctions::SphereVsSphere(SphereCollider& this_sphere, Sph
 CollisionInfo ColliderFunctions::SphereVsBox(SphereCollider& sphere, BoxCollider& box) {
 	CollisionInfo collision_info;
 	collision_info.did_collide = false;
-/*
-    // --- Transform vertices into world space ---
-    std::vector<glm::vec3> box_vert_positions;
-    glm::vec3 sphere_closest_pos;
-    glm::vec3 sphere_farthest_pos;
-
-    glm::vec3 dir = glm::normalize(box.transform->position - sphere.transform->position);
-    sphere_closest_pos = sphere.transform->position + (dir * sphere.radius);
-    sphere_farthest_pos = sphere.transform->position - (dir * sphere.radius);
-
-    // the meshes HAVE to be different or at least the model matrices need to be
-    // Otherwise the collision isnt accurate AT ALL
-    Mesh* box_mesh = box.entity->GetComponent<MeshRenderer>().mesh;
-    Mesh* sphere_mesh = sphere.entity->GetComponent<MeshRenderer>().mesh;
-
-    for (size_t i = 0; i < 8; i++) {
-        // Center vertices around origin
-        glm::vec3 box_local = box.vert_positions[i].pos + box.offset;
-
-        box_vert_positions.push_back(glm::vec3(box_mesh->modelMatrix * glm::vec4(box_local, 1.0f)));
-    }
-*/
 
 
 	return collision_info;

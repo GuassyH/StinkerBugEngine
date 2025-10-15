@@ -13,6 +13,32 @@
 
 namespace Screen
 {
+	static inline std::vector<glm::vec2> Resolutions = {
+		{ 320, 200 },
+		{ 480, 480 },
+		{ 720, 480 },
+		{ 720, 720 },
+		{ 1080, 1080 },
+		{ 1920, 1080 },
+		{ 2560, 1440 },
+	};
+
+
+	static inline std::vector<std::string> ResolutionStrings;
+	static inline std::vector<const char*> ResolutionNames;
+
+	static inline void generateResolutionNames() {
+		ResolutionStrings.clear();
+		ResolutionNames.clear();
+
+		for (const glm::vec2& res : Resolutions) {
+			ResolutionStrings.push_back(std::to_string((int)res.x) + "x" + std::to_string((int)res.y));
+		}
+
+		for (const std::string& s : ResolutionStrings) {
+			ResolutionNames.push_back(s.c_str());
+		}
+	}
 
 
 	static inline void InitFBO(float width, float height, unsigned int& fbo, unsigned int& rbo, unsigned int& tex) {
@@ -83,12 +109,12 @@ namespace Screen
 
 		Shader c_shader("ColToID.vert", "ColToID.frag");
 		Material id_material(c_shader, MaterialFlags_Depth);
+		std::shared_ptr<Material> id_mat_ptr = std::make_shared<Material>(id_material);;
 		glm::vec4 id_color = glm::vec4(0.0f);
 
 		for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
 			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 			if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
-			Transform& r_transform = scene.Scene_ECS.GetComponent<Transform>(id);
 
 			id_color.r = ((id & 0x000000FF) >> 0) / 255.0f;
 			id_color.g = ((id & 0x0000FF00) >> 8) / 255.0f;
@@ -97,7 +123,7 @@ namespace Screen
 
 			id_material.color = id_color;
 
-			renderer.model->render(&id_material, &r_transform, camera->transform, camera, nullptr);
+			renderer.model->render(id_mat_ptr, scene.Scene_ECS.GetComponentPtr<Transform>(id), camera->transform, camera, nullptr);
 		}
 
 		// Read the pixel at the mouse position

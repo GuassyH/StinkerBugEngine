@@ -14,14 +14,18 @@ void UI::imgui_init() {
 
 	ImGui::StyleColorsClassic();
 	
+	float bright = 1.5f;
+
 	ImGuiStyle* custom_style = &ImGui::GetStyle();
-	custom_style->Colors[ImGuiCol_WindowBg] = ImVec4(0.1f, 0.1f, 0.13f, 1.0f);
 	custom_style->Colors[ImGuiCol_Header] = custom_style->Colors[ImGuiCol_Button];
-	custom_style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
 	custom_style->Colors[ImGuiCol_TitleBgActive] = custom_style->Colors[ImGuiCol_TitleBg];
+	custom_style->Colors[ImGuiCol_WindowBg] = ImVec4(0.1f * bright, 0.1f * bright, 0.13f * bright, 1.0f);
+	custom_style->Colors[ImGuiCol_TextDisabled] = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
 	custom_style->Colors[ImGuiCol_FrameBg] = ImVec4(0.2f, 0.2f, 0.26f, 1.0f);
 
+
 	custom_style->WindowPadding = ImVec2(1.0, 1.0);
+	custom_style->ItemSpacing = ImVec2(10, 5);
 
 	ImGui_ImplGlfw_InitForOpenGL(display.window, true);
 	ImGui_ImplOpenGL3_Init("#version 460");
@@ -57,8 +61,8 @@ void UI::imgui_render(Scene& scene) {
 	{
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
 		// Temp size adjustment to account for top bar
-		ImVec2 workPos = viewport->WorkPos; workPos.y += 15;
-		ImVec2 workSize = viewport->WorkSize; workSize.y -= 15;
+		ImVec2 workPos = viewport->WorkPos; workPos.y += 13;
+		ImVec2 workSize = viewport->WorkSize; workSize.y -= 13;
 		ImGui::SetNextWindowPos(workPos);
 		ImGui::SetNextWindowSize(workSize);
 		ImGui::SetNextWindowViewport(viewport->ID);
@@ -91,13 +95,15 @@ void UI::imgui_render(Scene& scene) {
 	hierarchyWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
 	inspectorWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
 	consoleWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	assetWindow.Draw();
 
 	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-	// io.IniFilename = "layout.ini";
+	
+	// io.IniFilename = "layout.ini"; // This like resets it? Im unsure
 }
 
 

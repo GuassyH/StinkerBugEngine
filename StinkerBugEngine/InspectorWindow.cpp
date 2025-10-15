@@ -61,7 +61,7 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 		// Setup popup
 		ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 300, display.windowHeight - 360)); // simplified
-		ImGui::SetNextWindowSize(ImVec2(250, 300));
+		ImGui::SetNextWindowSize(ImVec2(235, 300));
 		if (ImGui::BeginPopup("Add Component", ImGuiWindowFlags_NoMove)) {
 			ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - ImGui::CalcTextSize("Add Component").x * 0.5f);
 			ImGui::Text("Add Component");
@@ -74,7 +74,7 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 				if (ImGui::Button("Mesh Renderer", ImVec2(235, 20))) {
 					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS);
-					new_ntt.AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+					new_ntt.AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 					new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();
 					new_ntt.~EntityHelper();
@@ -83,7 +83,7 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			
 			if (!scene.Scene_ECS.HasComponent<Camera>(selected_entity)) {
 				if (ImGui::Button("Camera", ImVec2(235, 20))) {
-					scene.Scene_ECS.AddComponent<Camera>(selected_entity, 1920, 1080, scene.Scene_ECS.GetComponent<Transform>(selected_entity));
+					scene.Scene_ECS.AddComponent<Camera>(selected_entity, 1920, 1080);
 					ImGui::CloseCurrentPopup();
 				}
 			}

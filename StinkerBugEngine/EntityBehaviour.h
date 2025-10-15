@@ -11,13 +11,12 @@
 
 #include "ComponentsList.h"
 
-
 class EntityHelper;
 
 class EntityBehaviour : public Component {
 public:
-	EntityHelper* entityHelper = nullptr;
-	Transform* transform = nullptr;
+	std::shared_ptr<EntityHelper> entityHelper = nullptr;
+	std::shared_ptr<Transform> transform = nullptr;
 
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;

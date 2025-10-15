@@ -17,14 +17,17 @@ class Light : public Component {
 public:
 	// Global
 	LightTypes light_type = LightTypes::Spotlight;
+	glm::mat4 light_VP = glm::mat4(1.0f);
 	glm::vec4 color = glm::vec4(1.0f);
 	glm::vec3 vec_direction;
-	glm::mat4 light_VP = glm::mat4(1.0f);
 
 	// Spotlight
 	float distance;
 	float radius_i;
 	float radius_o;
+
+	// Pointlight
+	float radius;
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Light")) {

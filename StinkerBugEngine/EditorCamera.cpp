@@ -4,9 +4,10 @@
 #include "Physics.h"
 
 void EditorCamera::Init() {
-	transform = new Transform();
+	transform = std::make_unique<Transform>();
+	camera = new Camera(1920, 1080);
+	camera->transform = transform;
 	transform->rotation = glm::vec3(0, 0, -1);
-	camera = new Camera(1920, 1080, *transform);
 	camera->FOVdeg = 90.0f;
 	camera->farPlane = 1000.0f;
 	camera->nearPlane = 0.01f;
@@ -19,7 +20,6 @@ void EditorCamera::AddGizmoEntities(Scene& scene, ECSystem& editor_ecs) {
 	Gizmos::Gizmo infinite_grid = Gizmos::InfiniteGrid(editor_ecs);
 
 	pre_pass_gizmos.push_back(infinite_grid);
-
 
 	Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle(editor_ecs);
 	Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle(editor_ecs);
@@ -49,8 +49,8 @@ void EditorCamera::PrePass(Scene& scene, ECSystem& editor_ecs) {
 
 void EditorCamera::Render(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	camera->Render(&scene);
-	PrePass(scene, editor_ecs);
-	PostPass(scene, is_entity_selected, selected_entity, editor_ecs);
+	// PrePass(scene, editor_ecs);
+	// PostPass(scene, is_entity_selected, selected_entity, editor_ecs);
 }
 
 void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {

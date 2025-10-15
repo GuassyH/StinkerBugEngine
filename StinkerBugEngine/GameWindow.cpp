@@ -1,7 +1,7 @@
 #include "GameWindow.h"
+#include "Screen.h"
 
-
-
+int selectedRes = 5;
 void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	// Begin Game View window
 	ImGui::Begin("Game View");
@@ -12,8 +12,6 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 		ImGui::End();
 		return;
 	}
-
-
 
 	if (!scene.HasMainCamera()) {
 		ImGui::End();
@@ -26,6 +24,25 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 		std::cout << "Camera has invalid dimensions\n";
 		return;
 	}
+
+
+	// Scene View Selectables
+	ImGui::SetCursorPos(ImVec2(0, 18));
+	ImGui::BeginChild("Toolbar", ImVec2(ImGui::GetWindowSize().x, 20), ImGuiChildFlags_FrameStyle, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+	ImGui::SetNextItemWidth(100);
+	Screen::generateResolutionNames();
+	if(ImGui::Combo("Resolution", &selectedRes, Screen::ResolutionNames.data(), Screen::ResolutionNames.size())) {
+		camera.width = Screen::Resolutions[selectedRes].x;
+		camera.height = Screen::Resolutions[selectedRes].y;
+	}
+	ImGui::SameLine();
+	ImGui::Text("|");
+	ImGui::SameLine();
+	ImGui::Selectable("Fullscreen on start", &fsOnStart, ImGuiSelectableFlags_None, ImVec2(135, 20));
+
+	ImGui::EndChild();
+
 
 	if (!camera.output_texture) {
 		camera.output_texture = new Texture(camera.width, camera.height);
@@ -47,6 +64,8 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 
 	ImVec2 windowSize = ImGui::GetContentRegionAvail();
 	ImVec2 windowPos = ImGui::GetWindowPos(); // top-left of the window in screen coordinates
+
+	windowSize.y -= 1;
 
 	// Camera aspect ratio (width / height)
 	float cameraAspect = (float)camera.width / (float)camera.height;

@@ -17,25 +17,24 @@ class Scene;
 
 class EditorCamera {
 private:
-	unsigned int select_fbo;
-	unsigned int select_rbo;
-	unsigned int select_tex;
-
+	unsigned int select_fbo = 0;
+	unsigned int select_rbo = 0;
+	unsigned int select_tex = 0;
+	
 	bool firstLeftClick = true;
 	bool firstRightClick = true;
 	bool interactingWithGizmo = false;
 	Physics::RaycastHit rayHit;
 public:
-	Transform* transform = nullptr;
+	std::shared_ptr<Transform> transform = nullptr;
 	Camera* camera = nullptr;
 	
 	EditorCamera() = default;
 	
-	EntityHelper selected_entity_helper;
 	unsigned int selected_gizmo = 0;
-	std::vector<Gizmos::Gizmo> pre_pass_gizmos;
-	std::vector<Gizmos::Gizmo> post_pass_gizmos;
-
+	EntityHelper selected_entity_helper;
+	std::vector<Gizmos::Gizmo> pre_pass_gizmos = {};
+	std::vector<Gizmos::Gizmo> post_pass_gizmos = {};
 
 	bool showGrid = false;
 
