@@ -1,7 +1,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "Entity.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 
 SceneManager& SceneManager::getInstance(){
 	static SceneManager instance; return instance;

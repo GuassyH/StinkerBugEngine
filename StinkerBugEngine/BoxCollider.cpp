@@ -1,10 +1,10 @@
 #include "BoxCollider.h"
 #include "Mesh.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 
 bool BoxCollider::CalculateCorners() {
 	// If the box collider isnt setup correctly (doesnt have a mesh) then return false
-	// if (!entityHelper->GetComponent<MeshRenderer>().model) { return false; }
+	// if (!entityObject->GetComponent<MeshRenderer>().model) { return false; }
 
 	if (transform->rotation != last_rotation || transform->position != last_position || size != last_size || init) {
 

@@ -14,22 +14,22 @@
 #include "Entity.h"
 #include "FullScreenPass.h"
 
-class EntityHelper;
+class EntityObject;
 class Transform;
 
 class Scene {
 public:
 	Scene() = default;
-	Entity& CreateEntity();
-	Entity& CreateEntity(std::string name);
+	EntityObject& CreateEntity();
+	EntityObject& CreateEntity(std::string name);
 
 	// Physics
 	float gravity = -9.82f;
 
 	// Environment
 	float ambient = 0.5f;
-	EntityHelper* main_light = nullptr;
-	EntityHelper* main_camera = nullptr;
+	EntityObject* main_light = nullptr;
+	EntityObject* main_camera = nullptr;
 	ECSystem Scene_ECS;
 
 	Shader skybox_shader = Shader("skybox.vert", "skybox.frag");

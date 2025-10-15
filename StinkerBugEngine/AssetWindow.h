@@ -4,7 +4,7 @@
 #include "Scene.h"
 #include "Display.h"
 #include "Entity.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 #include "EditorCamera.h"
 #include "Texture.h"
 #include "ECSystem.h"

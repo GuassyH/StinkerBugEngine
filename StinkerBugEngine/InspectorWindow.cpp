@@ -2,7 +2,7 @@
 
 #include "ComponentsList.h"
 #include "CharleyComponent.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 
 /// THIS IS THE ENTITY INSPECTOR
 char buff[255];
@@ -73,11 +73,11 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			// I mean it works but its not efficient. Should be a loop for each component type add component like with the DrawOnInspector
 			if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 				if (ImGui::Button("Mesh Renderer", ImVec2(235, 20))) {
-					EntityHelper new_ntt(selected_entity, &scene.Scene_ECS);
-					new_ntt.AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-					new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
+					EntityObject new_ntt; new_ntt.transform = scene.Scene_ECS.GetComponentPtr<Transform>(selected_entity);
+					new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+					new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();
-					new_ntt.~EntityHelper();
+					new_ntt.~EntityObject();
 				}
 			}
 			

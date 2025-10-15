@@ -1,7 +1,7 @@
 #include "SceneViewWindow.h"
 
 #include "ComponentsList.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 #include "Constants.h"
 #include "SceneManager.h"
 #include "Screen.h"

@@ -10,7 +10,7 @@
 #include "MeshRenderer.h"
 #include "Transform.h"
 #include "Camera.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 #include "Scene.h"
 #include "ECSystem.h"
 #include "ComponentsList.h"
@@ -28,14 +28,16 @@ namespace Gizmos {
     static inline glm::vec4 z_color = glm::vec4(45.0f / 255.0f, 230.0f / 255.0f, 255.0f / 255.0f, gizmo_opacity);
     static inline glm::vec4 origo_color = glm::vec4(0.9f, 0.9f, 0.9f, gizmo_opacity);
 
-    inline Entity& createGizmo(ECSystem& gizmo_registry, const char* name) {
+    inline EntityObject& createGizmo(ECSystem& gizmo_registry, const char* name) {
+        EntityObject new_ntt;
         Entity& entity_id = gizmo_registry.nextEntity;	gizmo_registry.nextEntity++;
         gizmo_registry.component_bits[entity_id] = 0b0;
         gizmo_registry.entity_names[entity_id] = name;
         gizmo_registry.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
         gizmo_registry.AddComponent<GizmoComponent>(entity_id);
         gizmo_registry.entities.insert(entity_id);
-        return entity_id;
+        new_ntt.transform = gizmo_registry.GetComponentPtr<Transform>(entity_id);
+        return new_ntt;
     }
 
 
@@ -43,7 +45,7 @@ namespace Gizmos {
         GizmoObject() = default;
         ~GizmoObject() = default;
 
-        std::shared_ptr<EntityHelper> entity_helper = nullptr;
+        std::shared_ptr<EntityObject> entity_helper = nullptr;
 		std::shared_ptr<MeshRenderer> mr = nullptr;
         std::shared_ptr<GizmoComponent> gc = nullptr;
         std::shared_ptr<EntityBehaviour> eb = nullptr;
@@ -57,9 +59,9 @@ namespace Gizmos {
         ~Gizmo() = default;
 
         std::vector<GizmoObject> objects;
-		void Draw(Camera* camera, Scene& scene, std::shared_ptr<Transform> editor_transform, EntityHelper& selected_entity_helper, bool local_space) // INTERACTABLE
+		void Draw(Camera* camera, Scene& scene, std::shared_ptr<Transform> editor_transform, EntityObject& selected_entity_helper, bool local_space) // INTERACTABLE
         {
-			glm::vec3 cam_to_entity = editor_transform->position + (glm::normalize(selected_entity_helper.GetComponent<Transform>().position - editor_transform->position) * 4.0f);
+			glm::vec3 cam_to_entity = editor_transform->position + (glm::normalize(selected_entity_helper.transform->GetComponent<Transform>().position - editor_transform->position) * 4.0f);
 		    
             for (GizmoObject& obj : objects) {
                 if (!obj.mr || !obj.mr->transform || !obj.entity_helper || !obj.gc) { continue; }
@@ -69,8 +71,8 @@ namespace Gizmos {
 
                 // Set rotation
                 if (local_space) {
-                    glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
-			        obj.mr->transform->rotation = selected_entity_helper.GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
+                    glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.transform->GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
+			        obj.mr->transform->rotation = selected_entity_helper.transform->GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
                 }
                 else {
                     obj.mr->transform->rotation = obj.rotation_offset;
@@ -130,6 +132,7 @@ namespace Gizmos {
         }
     }; 
 
+    /*
     struct TransformHandle : public Gizmo {
         GizmoObject arrowX;
         GizmoObject arrowY;
@@ -144,10 +147,10 @@ namespace Gizmos {
             arrowZ.needs_neg_z = true;
 
             // Initialize arrows
-            arrowX.entity_helper = std::make_shared<EntityHelper>(createGizmo(ecs, "arrowX"), &ecs);
-            arrowY.entity_helper = std::make_shared<EntityHelper>(createGizmo(ecs, "arrowY"), &ecs);
-            arrowZ.entity_helper = std::make_shared<EntityHelper>(createGizmo(ecs, "arrowZ"), &ecs);
-            translate_origo_point.entity_helper = std::make_shared<EntityHelper>(createGizmo(ecs, "translate_origo_point"), &ecs);
+            arrowX.entity_helper = std::make_shared<EntityObject>(createGizmo(ecs, "arrowX"), &ecs);
+            arrowY.entity_helper = std::make_shared<EntityObject>(createGizmo(ecs, "arrowY"), &ecs);
+            arrowZ.entity_helper = std::make_shared<EntityObject>(createGizmo(ecs, "arrowZ"), &ecs);
+            translate_origo_point.entity_helper = std::make_shared<EntityObject>(createGizmo(ecs, "translate_origo_point"), &ecs);
 
             arrowX.mr = arrowX.entity_helper->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
             arrowY.mr = arrowY.entity_helper->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
@@ -212,10 +215,10 @@ namespace Gizmos {
             scaleZ.needs_neg_z = true;
 
             
-            scaleX.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "scaleX"), &ecs));
-            scaleY.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "scaleY"), &ecs));
-            scaleZ.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "scaleZ"), &ecs));
-            scale_origo_point.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "scale_origo_point"), &ecs));
+            scaleX.entity_helper = std::shared_ptr<EntityObject>(new EntityObject(createGizmo(ecs, "scaleX"), &ecs));
+            scaleY.entity_helper = std::shared_ptr<EntityObject>(new EntityObject(createGizmo(ecs, "scaleY"), &ecs));
+            scaleZ.entity_helper = std::shared_ptr<EntityObject>(new EntityObject(createGizmo(ecs, "scaleZ"), &ecs));
+            scale_origo_point.entity_helper = std::shared_ptr<EntityObject>(new EntityObject(createGizmo(ecs, "scale_origo_point"), &ecs));
 
 
             scaleX.mr = scaleX.entity_helper->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
@@ -276,17 +279,17 @@ namespace Gizmos {
 
 
             
-            rotateX.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "rotateX"), &ecs));
-            rotateY.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "rotateY"), &ecs));
-            rotateZ.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "rotateZ"), &ecs));
+            rotateX.entity_helper = std::shared_ptr<EntityObject>(new EntityObject(createGizmo(ecs, "rotateX"), &ecs));
+            rotateY.entity_helper = std::shared_ptr<EntityObject>(new EntityObject(createGizmo(ecs, "rotateY"), &ecs));
+            rotateZ.entity_helper = std::shared_ptr<EntityObject>(new EntityObject(createGizmo(ecs, "rotateZ"), &ecs));
 
-            rotateX.mr = rotateX.entity_helper->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
-            rotateY.mr = rotateY.entity_helper->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
-            rotateZ.mr = rotateZ.entity_helper->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
+            rotateX.mr = rotateX.entity_helper->transform->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
+            rotateY.mr = rotateY.entity_helper->transform->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
+            rotateZ.mr = rotateZ.entity_helper->transform->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_NoDepthTest));
 
-            rotateX.gc = rotateX.entity_helper->GetComponentPtr<GizmoComponent>();
-            rotateY.gc = rotateY.entity_helper->GetComponentPtr<GizmoComponent>();
-            rotateZ.gc = rotateZ.entity_helper->GetComponentPtr<GizmoComponent>();
+            rotateX.gc = rotateX.entity_helper->transform->GetComponentPtr<GizmoComponent>();
+            rotateY.gc = rotateY.entity_helper->transform->GetComponentPtr<GizmoComponent>();
+            rotateZ.gc = rotateZ.entity_helper->transform->GetComponentPtr<GizmoComponent>();
 
             rotateX.gc->reg_color = x_color;
             rotateY.gc->reg_color = y_color;
@@ -324,14 +327,14 @@ namespace Gizmos {
         InfiniteGrid(ECSystem& ecs) {
 
 
-            infinite_grid.entity_helper = std::shared_ptr<EntityHelper>(new EntityHelper(createGizmo(ecs, "infinite_grid"), &ecs));
+            infinite_grid.entity_helper = std::shared_ptr<EntityObject>(createGizmo(ecs, "infinite_grid"), &ecs);
 
             Shader grid_shader("editor_grid.vert", "editor_grid.frag");
             Material grid_mat(grid_shader);
 
-            infinite_grid.mr = infinite_grid.entity_helper->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Plane()), std::make_shared<Material>(grid_mat));
+            infinite_grid.mr = infinite_grid.entity_helper->transform->AddComponentPtr<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Plane()), std::make_shared<Material>(grid_mat));
             infinite_grid.mr->raycastable = false;
-            infinite_grid.gc = infinite_grid.entity_helper->GetComponentPtr<GizmoComponent>();
+            infinite_grid.gc = infinite_grid.entity_helper->transform->GetComponentPtr<GizmoComponent>();
             infinite_grid.gc->interactable = false;
             infinite_grid.mr->transform->scale = glm::vec3(100.0f, 0.0f, 100.0f);
             infinite_grid.gc->reg_color = glm::vec4(1.0f);
@@ -344,6 +347,8 @@ namespace Gizmos {
 
         }
     };
+    */
+
 }
 
 

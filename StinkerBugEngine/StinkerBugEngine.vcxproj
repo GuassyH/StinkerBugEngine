@@ -81,7 +81,7 @@
     <ClInclude Include="EditorCamera.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityBehaviour.h" />
-    <ClInclude Include="EntityHelper.h" />
+    <ClInclude Include="EntityObject.h" />
     <ClInclude Include="EntitySelector.h" />
     <ClInclude Include="FullScreenPass.h" />
     <ClInclude Include="GameWindow.h" />

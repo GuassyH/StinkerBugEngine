@@ -2,7 +2,7 @@
 
 #include "EntitySelector.h"
 #include "ComponentsList.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 
 /// THIS IS THE HIERARCHY
 void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
@@ -36,68 +36,68 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	if (ImGui::BeginPopup("Create Object", ImGuiWindowFlags_NoMove)) {
 		ImGui::Text("Create Object");
 		if (ImGui::Button("Create Empty Entity", ImVec2(180, 20))) {
-			selected_entity = scene.CreateEntity();
+			selected_entity = scene.CreateEntity().transform->entity;
 			ImGui::CloseCurrentPopup();
 		}
 
 		ImGui::Separator();
 
 		if (ImGui::Button("Create Directional Light", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
-			scene.Scene_ECS.entity_names[new_ntt.id] = "Light (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<Light>();
-			new_ntt.GetComponent<Light>().light_type = LightTypes::Directional;
-			new_ntt.GetComponent<Transform>().rotation = glm::vec3(25.0f, 205.0f, 0.0f);
-			selected_entity = new_ntt.id;
-			new_ntt.~EntityHelper();
+			EntityObject new_ntt = scene.CreateEntity();
+			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Light (" + std::to_string(new_ntt.transform->entity) + ")";
+			new_ntt.transform->AddComponent<Light>();
+			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Directional;
+			new_ntt.transform->GetComponent<Transform>().rotation = glm::vec3(25.0f, 205.0f, 0.0f);
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Camera", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
-			scene.Scene_ECS.entity_names[new_ntt.id] = "Camera (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<Camera>(1920, 1080);
-			selected_entity = new_ntt.id;
-			new_ntt.~EntityHelper();
+			EntityObject new_ntt = scene.CreateEntity();
+			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Camera (" + std::to_string(new_ntt.transform->entity) + ")";
+			new_ntt.transform->AddComponent<Camera>(1920, 1080);
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
-			scene.Scene_ECS.entity_names[new_ntt.id] = "Cube (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
-			selected_entity = new_ntt.id;
-			new_ntt.~EntityHelper();
+			EntityObject new_ntt = scene.CreateEntity();
+			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Cube (" + std::to_string(new_ntt.transform->entity) + ")";
+			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Sphere", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
-			scene.Scene_ECS.entity_names[new_ntt.id] = "Sphere (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::UVSphere()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
-			selected_entity = new_ntt.id;
-			new_ntt.~EntityHelper();
+			EntityObject new_ntt = scene.CreateEntity();
+			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Sphere (" + std::to_string(new_ntt.transform->entity) + ")";
+			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::UVSphere()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
 		if (ImGui::Button("Create Plane", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
-			scene.Scene_ECS.entity_names[new_ntt.id] = "Plane (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Plane()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
-			selected_entity = new_ntt.id;
-			new_ntt.~EntityHelper();
+			EntityObject new_ntt = scene.CreateEntity();
+			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Plane (" + std::to_string(new_ntt.transform->entity) + ")";
+			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Plane()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
 		
 		ImGui::Separator();
 
 		if (ImGui::Button("Create Goblin", ImVec2(180, 20))) {
-			EntityHelper new_ntt(scene.CreateEntity(), &scene.Scene_ECS);
-			scene.Scene_ECS.entity_names[new_ntt.id] = "Goblin (" + std::to_string(new_ntt.id) + ")";
-			new_ntt.AddComponent<MeshRenderer>(std::make_shared<Model>(glm::vec3(0.05f)), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
-			new_ntt.GetComponent<Transform>().scale = glm::vec3(0.05f);
-			selected_entity = new_ntt.id;
-			new_ntt.~EntityHelper();
+			EntityObject new_ntt = scene.CreateEntity();
+			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Goblin (" + std::to_string(new_ntt.transform->entity) + ")";
+			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(glm::vec3(0.05f)), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.transform->GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
+			new_ntt.transform->GetComponent<Transform>().scale = glm::vec3(0.05f);
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
 

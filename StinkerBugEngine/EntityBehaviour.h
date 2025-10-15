@@ -11,11 +11,11 @@
 
 #include "ComponentsList.h"
 
-class EntityHelper;
+class EntityObject;
 
 class EntityBehaviour : public Component {
 public:
-	std::shared_ptr<EntityHelper> entityHelper = nullptr;
+	std::shared_ptr<EntityObject> entityObject = nullptr;
 
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;

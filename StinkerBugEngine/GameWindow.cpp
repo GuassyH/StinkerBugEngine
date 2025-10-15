@@ -18,7 +18,7 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 		return;
 	}
 
-	Camera& camera = scene.main_camera->GetComponent<Camera>();
+	Camera& camera = scene.main_camera->transform->GetComponent<Camera>();
 	if (camera.width <= 0 || camera.height <= 0) {
 		ImGui::End();
 		std::cout << "Camera has invalid dimensions\n";

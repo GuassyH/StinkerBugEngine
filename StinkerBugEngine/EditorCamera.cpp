@@ -17,17 +17,17 @@ void EditorCamera::Init() {
 }
 
 void EditorCamera::AddGizmoEntities(Scene& scene, ECSystem& editor_ecs) {
-	Gizmos::Gizmo infinite_grid = Gizmos::InfiniteGrid(editor_ecs);
+	//Gizmos::Gizmo infinite_grid = Gizmos::InfiniteGrid(editor_ecs);
 
-	pre_pass_gizmos.push_back(infinite_grid);
+	//pre_pass_gizmos.push_back(infinite_grid);
 
-	Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle(editor_ecs);
-	Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle(editor_ecs);
-	Gizmos::Gizmo rotate_gizmo = Gizmos::RotateHandle(editor_ecs);
+	//Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle(editor_ecs);
+	//Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle(editor_ecs);
+	//Gizmos::Gizmo rotate_gizmo = Gizmos::RotateHandle(editor_ecs);
 
-	post_pass_gizmos.push_back(transform_gizmo);
-	post_pass_gizmos.push_back(scale_gizmo);
-	post_pass_gizmos.push_back(rotate_gizmo);
+	//post_pass_gizmos.push_back(transform_gizmo);
+	//post_pass_gizmos.push_back(scale_gizmo);
+	//post_pass_gizmos.push_back(rotate_gizmo);
 }
 
 
@@ -53,7 +53,9 @@ void EditorCamera::Render(Scene& scene, bool& is_entity_selected, Entity& select
 	// PostPass(scene, is_entity_selected, selected_entity, editor_ecs);
 }
 
+
 void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
+	/*
 	// Rebind the framebuffer to the editor camera's FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, camera->outputFBO);
 	
@@ -76,6 +78,7 @@ void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& sele
 
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	*/
 }
 
 void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
@@ -112,8 +115,8 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 		else {
 			if (firstLeftClick) {
 				// Do Gizmo stuff
-				EntityHelper gizmo(rayHit.entity, &editor_ecs);
-				gizmo.GetComponent<GizmoComponent>().isHovered = true;
+				EntityObject gizmo; gizmo.transform = editor_ecs.GetComponentPtr<Transform>(rayHit.entity);
+				gizmo.transform->GetComponent<GizmoComponent>().isHovered = true;
 				firstLeftClick = false;
 				interactingWithGizmo = true;
 			}

@@ -8,7 +8,7 @@
 #include "Camera.h"
 #include "Constants.h"
 #include "Display.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 #include "Gizmos.h"
 #include "Physics.h"
 #include "ECSystem.h"
@@ -32,7 +32,7 @@ public:
 	EditorCamera() = default;
 	
 	unsigned int selected_gizmo = 0;
-	EntityHelper selected_entity_helper;
+	EntityObject selected_entity_helper;
 	std::vector<Gizmos::Gizmo> pre_pass_gizmos = {};
 	std::vector<Gizmos::Gizmo> post_pass_gizmos = {};
 

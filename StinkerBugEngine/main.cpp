@@ -14,7 +14,7 @@
 
 #include "EntityBehaviour.h"
 #include "ComponentsList.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 #include "ECSystem.h"
 #include "Entity.h"
 #include "Model.h"
@@ -35,28 +35,28 @@ int main(void) {
 	UI& ui = UI::getInstance();
 	ui.imgui_init();
 
-	EntityHelper dir_light(scene.CreateEntity("Sun Light"), &scene.Scene_ECS);
-	dir_light.AddComponent<Light>().light_type = LightTypes::Directional;
-	dir_light.GetComponent<Transform>().rotation = glm::vec3(50.0f, 205.0f, 0.0f);
+	EntityObject dir_light = scene.CreateEntity("Sun Light");
+	dir_light.transform->AddComponent<Light>().light_type = LightTypes::Directional;
+	dir_light.transform->GetComponent<Transform>().rotation = glm::vec3(50.0f, 205.0f, 0.0f);
 
-	EntityHelper main_camera(scene.CreateEntity("Main Camera"), &scene.Scene_ECS);
-	main_camera.AddComponent<Camera>(1920, 1080);
-	main_camera.GetComponent<Transform>().rotation = glm::vec3(0.0f, 180.0f, 0.0f);
-	main_camera.GetComponent<Transform>().position = glm::vec3(0.0f, 0.0f, 10.0f);
+	EntityObject main_camera = scene.CreateEntity("Main Camera");
+	main_camera.transform->AddComponent<Camera>(1920, 1080);
+	main_camera.transform->rotation = glm::vec3(0.0f, 180.0f, 0.0f);
+	main_camera.transform->position = glm::vec3(0.0f, 0.0f, 10.0f);
 
-	EntityHelper goblin(scene.CreateEntity("Goblin Guy"), &scene.Scene_ECS);
-	goblin.AddComponent<MeshRenderer>(std::make_unique<Model>(glm::vec3(0.05f)), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-	goblin.GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
-	goblin.GetComponent<Transform>().scale = glm::vec3(0.05f);
+	EntityObject goblin = scene.CreateEntity("Goblin Guy");
+	goblin.transform->AddComponent<MeshRenderer>(std::make_unique<Model>(glm::vec3(0.05f)), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+	goblin.transform->GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
+	goblin.transform->scale = glm::vec3(0.05f);
 
-	EntityHelper Floor(scene.CreateEntity("Floor"), &scene.Scene_ECS);
-	Floor.AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Plane()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-	Floor.GetComponent<Transform>().scale = glm::vec3(250.0f);
-	Floor.GetComponent<Transform>().position = glm::vec3(0.0f, -10.0f, 0.0f);
+	EntityObject Floor = scene.CreateEntity("Floor");
+	Floor.transform->AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Plane()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+	Floor.transform->GetComponent<Transform>().scale = glm::vec3(250.0f);
+	Floor.transform->GetComponent<Transform>().position = glm::vec3(0.0f, -10.0f, 0.0f);
 	
-	EntityHelper test(scene.CreateEntity("Test"), &scene.Scene_ECS);
-	test.AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Cube()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-	test.AddComponent<TestScript>();
+	EntityObject test = scene.CreateEntity("Test");
+	test.transform->AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Cube()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+	test.transform->AddComponent<TestScript>();
 
 	Scene* active_scene = &sceneManager.GetActiveScene();
 	while (!glfwWindowShouldClose(display.window)) {

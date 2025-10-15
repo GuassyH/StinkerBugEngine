@@ -2,7 +2,7 @@
 
 #include "SceneManager.h"
 #include "Scene.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 
 #include "Transform.h"
 #include "Camera.h"

@@ -10,14 +10,14 @@
 
 #include "Transform.h"
 
-class EntityHelper;
+class EntityObject;
 class SphereCollider;
 class BoxCollider;
 
 
 class Collider : public Component {
 public:
-    std::shared_ptr<EntityHelper> entityHelper = nullptr;
+    std::shared_ptr<EntityObject> entityObject = nullptr;
 
 
     float radius = 0.5f;

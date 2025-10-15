@@ -4,29 +4,33 @@
 #include "EntityBehaviour.h"
 #include "ComponentTypeID.h"
 #include "Display.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 #include "Scene.h"
 
 DeltaTime& deltaTime = DeltaTime::getInstance();
 
 // Create the Entity
-Entity& Scene::CreateEntity() {
+EntityObject& Scene::CreateEntity() {
+	EntityObject new_ntt;
 	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.component_bits[entity_id] = 0b0;
 	Scene_ECS.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
 	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
 	Scene_ECS.entities.insert(entity_id);
-	return entity_id;
+	new_ntt.transform = Scene_ECS.GetComponentPtr<Transform>(entity_id);
+	return new_ntt;
 }
 
 
-Entity& Scene::CreateEntity(std::string name) {
+EntityObject& Scene::CreateEntity(std::string name) {
+	EntityObject new_ntt;
 	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.component_bits[entity_id] = 0b0;
 	Scene_ECS.entity_names[entity_id] = name;
 	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
 	Scene_ECS.entities.insert(entity_id);
-	return entity_id;
+	new_ntt.transform = Scene_ECS.GetComponentPtr<Transform>(entity_id);
+	return new_ntt;
 }
 
 
@@ -93,39 +97,37 @@ void Scene::UpdatePhysics() {
 
 // Check if a main light exists (directional light)
 bool Scene::HasMainLight() {
-	return (main_light && Scene_ECS.GetComponentMap<Light>().find(main_light->id) != Scene_ECS.GetComponentMap<Light>().end());
+	return (main_light && Scene_ECS.GetComponentMap<Light>().find(main_light->transform->entity) != Scene_ECS.GetComponentMap<Light>().end());
 }
 
 // Check if a main camera exists
 bool Scene::HasMainCamera() {
-	return (main_camera && Scene_ECS.GetComponentMap<Camera>().find(main_camera->id) != Scene_ECS.GetComponentMap<Camera>().end());
+	return (main_camera && Scene_ECS.GetComponentMap<Camera>().find(main_camera->transform->entity) != Scene_ECS.GetComponentMap<Camera>().end());
 }
 
 // Check all mains and set needed data
 void Scene::CheckMains() {
 	if (!HasMainLight()) {
 		if (!main_light) {
-			main_light = new EntityHelper();
-			main_light->ecs = &Scene_ECS;
-			main_light->id = 0;
+			main_light = new EntityObject();
+			main_light->transform = nullptr;
 		}
 		for (auto& [id, lightPtr] : Scene_ECS.GetComponentMap<Light>()) {
 			Light* light = dynamic_cast<Light*>(lightPtr.get());
 			if (light->light_type == LightTypes::Directional) {
-				main_light->id = id;
+				main_light->transform = Scene_ECS.GetComponentPtr<Transform>(id);
 				break;
 			}
 		}
 	}
 	if (!HasMainCamera()) {
 		if (!main_camera) {
-			main_camera = new EntityHelper();
-			main_camera->ecs = &Scene_ECS;
-			main_camera->id = 0;
+			main_camera = new EntityObject();
+			main_camera->transform = nullptr;
 		}
 		for (auto& [id, camPtr] : Scene_ECS.GetComponentMap<Camera>()) {
 			std::cout << "new main_cam id set: " << id << "\n";
-			main_camera->id = id;
+			main_camera->transform = Scene_ECS.GetComponentPtr<Transform>(id);
 			break;
 		}
 	}

@@ -7,7 +7,7 @@
 
 #include "ComponentsList.h"
 #include "Shader.h"
-#include "EntityHelper.h"
+#include "EntityObject.h"
 #include "FullScreenPass.h"
 #include "Screen.h"
 
@@ -107,18 +107,18 @@ void Camera::Render(Scene* scene) {
 	Transform* l_transform = nullptr;
 
 	if (scene->HasMainLight()) { 
-		l_transform = &scene->main_light->GetComponent<Transform>();
+		l_transform = &scene->main_light->transform->GetComponent<Transform>();
 
 		glm::vec3 direction = l_transform->DegToVec();
 
-		scene->main_light->GetComponent<Light>().transform->DegToVec() = direction;
+		scene->main_light->transform->DegToVec() = direction;
 
 		float light_map_size = 50.0f;
 		glm::mat4 lightProj = glm::ortho(-light_map_size, light_map_size, -light_map_size, light_map_size, 0.1f, 200.0f);
 		glm::mat4 lightView = glm::lookAt(transform->position - (direction * glm::vec3(100)), transform->position - (direction * glm::vec3(100)) + direction, Constants::Dirs::Up);
 		glm::mat4 light_VP = lightProj * lightView;
 		
-		scene->main_light->GetComponent<Light>().light_VP = light_VP;
+		l_transform->GetComponent<Light>().light_VP = light_VP;
 		
 		// Create a buffer of all lights and send to frag shader
 
@@ -151,20 +151,20 @@ void Camera::Render(Scene* scene) {
 
 	// should do opaque then transparent stuff
 	if (scene->HasMainLight()) {
-		if (renderSkybox) { scene->skybox_pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>()); }
+		if (renderSkybox) { scene->skybox_pass.Draw(*this, &scene->main_light->transform->GetComponent<Light>(), &scene->main_light->transform->GetComponent<Transform>()); }
 		
 		for (FullScreenPass pass : scene->passes) {
-			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+			pass.Draw(*this, &scene->main_light->transform->GetComponent<Light>(), &scene->main_light->transform->GetComponent<Transform>());
 		}
 
 		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
-		LightingPass(light_VP, &scene->main_light->GetComponent<Light>());
+		LightingPass(light_VP, &scene->main_light->transform->GetComponent<Light>());
 	}
 	else {
 		if (renderSkybox) { scene->skybox_pass.Draw(*this, nullptr, nullptr); }
 		
 		for (FullScreenPass pass : scene->passes) {
-			pass.Draw(*this, &scene->main_light->GetComponent<Light>(), &scene->main_light->GetComponent<Transform>());
+			pass.Draw(*this, &scene->main_light->transform->GetComponent<Light>(), &scene->main_light->transform->GetComponent<Transform>());
 		}
 		
 		LightingPass(light_VP, nullptr);
