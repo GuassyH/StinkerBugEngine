@@ -57,6 +57,7 @@ int main(void) {
 	EntityObject test = scene.CreateEntity("Test");
 	test.transform->AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Cube()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	test.transform->AddComponent<TestScript>();
+	
 
 	Scene* active_scene = &sceneManager.GetActiveScene();
 	while (!glfwWindowShouldClose(display.window)) {
