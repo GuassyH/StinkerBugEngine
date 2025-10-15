@@ -245,20 +245,11 @@
     <ClInclude Include="ComponentsList.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
-    <ClInclude Include="SphereMove.h">
-      <Filter>Header Files\EntityBehaviours</Filter>
-    </ClInclude>
     <ClInclude Include="ECSystem.h">
       <Filter>Header Files\ECS</Filter>
     </ClInclude>
-    <ClInclude Include="JumpMechanic.h">
-      <Filter>Header Files\EntityBehaviours</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraMovement.h">
-      <Filter>Header Files\EntityBehaviours</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>Header Files\Components</Filter>
@@ -403,6 +394,9 @@
     </ClInclude>
     <ClInclude Include="AssetWindow.h">
       <Filter>Header Files\Core\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScript.h">
+      <Filter>Header Files\EntityBehaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -65,7 +65,6 @@
     <ClInclude Include="AssetWindow.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="Camera.h" />
-    <ClInclude Include="CameraMovement.h" />
     <ClInclude Include="CharleyComponent.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="ColliderFunctions.h" />
@@ -100,7 +99,6 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="InspectorWindow.h" />
-    <ClInclude Include="JumpMechanic.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
@@ -117,7 +115,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMapFBO.h" />
     <ClInclude Include="SphereCollider.h" />
-    <ClInclude Include="SphereMove.h" />
+    <ClInclude Include="TestScript.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TopBarWindow.h" />
     <ClInclude Include="Transform.h" />

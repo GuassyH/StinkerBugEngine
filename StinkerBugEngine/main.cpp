@@ -19,6 +19,7 @@
 #include "Entity.h"
 #include "Model.h"
 
+#include "TestScript.h"
 
 int main(void) {
 	Display& display = Display::getInstance();
@@ -53,6 +54,9 @@ int main(void) {
 	Floor.GetComponent<Transform>().scale = glm::vec3(250.0f);
 	Floor.GetComponent<Transform>().position = glm::vec3(0.0f, -10.0f, 0.0f);
 	
+	EntityHelper test(scene.CreateEntity("Test"), &scene.Scene_ECS);
+	test.AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Cube()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+	test.AddComponent<TestScript>();
 
 	Scene* active_scene = &sceneManager.GetActiveScene();
 	while (!glfwWindowShouldClose(display.window)) {
