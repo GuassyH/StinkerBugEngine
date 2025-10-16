@@ -5,7 +5,6 @@
 #include "GizmoComponent.h"
 #include "Transform.h"
 
-
 void Renderer::rebuildMeshLists(std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>>& components) {
     clearMeshes();
 
@@ -25,8 +24,7 @@ void Renderer::rebuildMeshLists(std::unordered_map<std::type_index, std::unorder
 
         // Could perform frustum culling here
 
-
-        ObjectCall new_call{ std::shared_ptr<MeshRenderer>(rendererPtr), std::shared_ptr<Transform>(transformPtr) };
+        ObjectCall new_call{ std::weak_ptr<MeshRenderer>(rendererPtr), std::weak_ptr<Transform>(transformPtr) };
 
         if (rendererPtr->material->HasFlag(MaterialFlags_Transparent)) {
             transparent_meshes.push_back(new_call);

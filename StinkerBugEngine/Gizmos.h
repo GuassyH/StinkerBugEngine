@@ -96,7 +96,7 @@ namespace Gizmos {
 
                 // Render
 			    obj.mr->transform->UpdateMatrix();
-                obj.mr->model->render(obj.mr->material, obj.mr->transform, camera, nullptr);
+                obj.mr->model->render(obj.mr->material, obj.mr->transform.lock(), camera, nullptr);
 
                 
                 // If is hovered reset and set hovered to false
@@ -127,7 +127,7 @@ namespace Gizmos {
 
                 // Render
                 obj.mr->transform->UpdateMatrix();
-                obj.mr->model->render(obj.mr->material, obj.mr->transform, camera, nullptr);
+                obj.mr->model->render(obj.mr->material, obj.mr->transform.lock(), camera, nullptr);
             }
         }
     }; 

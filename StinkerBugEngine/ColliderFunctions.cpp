@@ -16,8 +16,10 @@ void DebugVec3(std::string text, glm::vec3 vector) {
 }
 
 CollisionInfo ColliderFunctions::SphereVsSphere(SphereCollider& this_sphere, SphereCollider& other_sphere) {
+
 	CollisionInfo collision_info;
 	collision_info.did_collide = false;
+    if (!this_sphere.transform || !other_sphere.transform) { return collision_info; }
 
 	glm::vec3 this_pos = this_sphere.transform->position + this_sphere.offset;
 	glm::vec3 other_pos = other_sphere.transform->position + other_sphere.offset;
@@ -50,8 +52,8 @@ CollisionInfo ColliderFunctions::BoxVsBox(BoxCollider& this_box, BoxCollider& ot
     CollisionInfo collision_info;
     collision_info.did_collide = true;
 
-    Transform& tb_transform = this_box.entityObject->transform->GetComponent<Transform>();
-    Transform& ob_transform = other_box.entityObject->transform->GetComponent<Transform>();
+    Transform& tb_transform = this_box.transform->GetComponent<Transform>();
+    Transform& ob_transform = other_box.transform->GetComponent<Transform>();
 
     // --- Transform vertices into world space ---
     std::vector<glm::vec3> tb_vert_positions = this_box.vert_positions;

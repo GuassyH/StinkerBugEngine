@@ -11,7 +11,7 @@ private:
 	bool opened = true;
 	bool closed = true;
 
-	Entity hovered_entity;
+	Entity hovered_entity = 0;
 
 	Display& display = Display::getInstance();
 public:

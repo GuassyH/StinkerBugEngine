@@ -114,12 +114,20 @@ public:
 		if constexpr (std::is_base_of_v<Collider, T>) {
 			auto it = colliders.find(id);
 			if (it == colliders.end()) throw std::runtime_error("Collider not found for entity " + std::to_string(id));
-			return std::dynamic_pointer_cast<T>(it->second);
+			auto ptr = std::dynamic_pointer_cast<T>(it->second);
+			if (!ptr) {
+				throw std::runtime_error("Component type mismatch for entity " + std::to_string(id));
+			}
+			return ptr;
 		}
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) { // EntityBehaviour
 			auto it = entity_behaviours.find(id);
 			if (it == entity_behaviours.end()) throw std::runtime_error("EntityBehaviour not found for entity " + std::to_string(id));
-			return std::dynamic_pointer_cast<T>(it->second);
+			auto ptr = std::dynamic_pointer_cast<T>(it->second);
+			if (!ptr) {
+				throw std::runtime_error("Component type mismatch for entity " + std::to_string(id));
+			}
+			return ptr;
 		}
 		else {
 			if (!HasComponent<T>(id)) {
@@ -130,7 +138,7 @@ public:
 			if (it == map.end()) {
 				throw std::runtime_error("Internal error: component bit set but component missing for entity " + std::to_string(id));
 			}
-			return  std::dynamic_pointer_cast<T>(it->second);
+			return std::static_pointer_cast<T>(it->second);
 		}
 	}
 
@@ -148,7 +156,7 @@ public:
 		}
 		else {
 			auto& map = GetComponentMap<T>();
-			if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return *std::static_pointer_cast<T>(map.find(id)->second); }
+			if (HasComponent<T>(id)) { std::cout << "Entity: " << entity_names[id] << " already has component\n"; return GetComponent<T>(id); }
 
 			AddComponentBit(ComponentBit<T>(), id);
 
@@ -160,24 +168,23 @@ public:
 		}
 
 
+		auto& comp = GetComponent<T>(id);
+		comp.entity = id;
+		comp.parent_ecs = this;
 
-		GetComponent<T>(id).entity = id;
-		GetComponent<T>(id).parent_ecs = this;
-		if constexpr (std::is_base_of_v<Component, T>) {
-			if (HasComponent<Transform>(id)) {
-				std::shared_ptr<Component> comp_ptr = GetComponentPtr<T>(id);
-				auto component_expanded = std::static_pointer_cast<Component>(comp_ptr);
-				if (!component_expanded) throw std::runtime_error("Invalid component-set-transform cast");
-				component_expanded->transform = GetComponentPtr<Transform>(id);
-			}
-			else {
-				std::cout << "No transform!" << std::endl;
-			}
+		auto comp_ptr = GetComponentPtr<T>(id);
+		if (!comp_ptr) throw std::runtime_error("Invalid component-set-transform cast");
+		if (HasComponent<Transform>(id)) {
+			comp_ptr->transform = GetComponentPtr<Transform>(id);
+		}
+		else {
+			comp_ptr->transform = nullptr;
+			std::cout << "No transform!" << std::endl;
 		}
 
-		GetComponent<T>(id).Init();
+		comp.Init();
 
-		return GetComponent<T>(id);
+		return comp;
 	}
 
 	// For normal components
@@ -186,10 +193,8 @@ public:
 		AddComponentPtr(const Entity id, Args&&... args) // Returns shared_ptr
 	{
 		AddComponent<T>(id);
-
 		return GetComponentPtr<T>(id);
 	}
-
 
 
 
@@ -206,7 +211,7 @@ public:
 			RemoveComponentBit(ComponentBit<T>(), id);
 		}
 		else {
-			std::cout << "Component not found" << std::endl;
+			std::cout << "Component not found - Nothing to remove" << std::endl;
 		}
 	}
 

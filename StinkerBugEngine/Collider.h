@@ -9,6 +9,7 @@
 #include "CollisionInfo.h"
 
 #include "Transform.h"
+#include "WeakPtrProxy.h"
 
 class EntityObject;
 class SphereCollider;
@@ -17,8 +18,6 @@ class BoxCollider;
 
 class Collider : public Component {
 public:
-    std::shared_ptr<EntityObject> entityObject = nullptr;
-
 
     float radius = 0.5f;
     glm::vec3 offset = glm::vec3(0.0f);

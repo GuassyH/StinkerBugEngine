@@ -22,8 +22,10 @@
 #include "TestScript.h"
 
 int main(void) {
+try {
+
 	Display& display = Display::getInstance();
-	if (display.Init(1920, 1080, "Stinker Bug Engine") == -1) { std::cout << "Display failed init" << std::endl; return -1; }
+	if (display.Init(1920, 1080, "Stinker Bug Engine") == -1) { std::runtime_error("Display failed to Initialize"); }
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 	Renderer& renderer = Renderer::getInstance();
@@ -34,7 +36,6 @@ int main(void) {
 
 	UI& ui = UI::getInstance();
 	ui.imgui_init();
-
 	EntityObject dir_light = scene.CreateEntity("Sun Light");
 	dir_light.transform->AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.transform->GetComponent<Transform>().rotation = glm::vec3(50.0f, 205.0f, 0.0f);
@@ -58,9 +59,9 @@ int main(void) {
 	test.transform->AddComponent<MeshRenderer>(std::make_unique<Model>(Constants::Shapes::Cube()), std::make_unique<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	test.transform->AddComponent<TestScript>();
 	
-
 	Scene* active_scene = &sceneManager.GetActiveScene();
 	while (!glfwWindowShouldClose(display.window)) {
+		
 		display.BeginFrame();
 
 		active_scene->Render();
@@ -69,11 +70,15 @@ int main(void) {
 		display.EndFrame();
 	}
 
+
 	sceneManager.UnloadScene();
 	ui.imgui_shutdown();
 	display.~Display();
 
-	
+} catch (const std::exception& e) {
+	std::cerr << "Caught exception: " << e.what() << std::endl;
+	return 1;
+}
 
 	return 0;
 }

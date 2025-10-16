@@ -110,7 +110,6 @@ void Scene::CheckMains() {
 	if (!HasMainLight()) {
 		if (!main_light) {
 			main_light = new EntityObject();
-			main_light->transform = nullptr;
 		}
 		for (auto& [id, lightPtr] : Scene_ECS.GetComponentMap<Light>()) {
 			Light* light = dynamic_cast<Light*>(lightPtr.get());
@@ -123,7 +122,6 @@ void Scene::CheckMains() {
 	if (!HasMainCamera()) {
 		if (!main_camera) {
 			main_camera = new EntityObject();
-			main_camera->transform = nullptr;
 		}
 		for (auto& [id, camPtr] : Scene_ECS.GetComponentMap<Camera>()) {
 			std::cout << "new main_cam id set: " << id << "\n";

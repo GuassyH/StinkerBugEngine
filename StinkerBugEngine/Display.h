@@ -33,7 +33,7 @@ public:
 	void SetSize(unsigned int width, unsigned int height);
 	~Display();
 
-	int FrameRate;
+	int FrameRate = 0;
 	double scroll = 0.0;
 };
 

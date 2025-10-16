@@ -50,11 +50,11 @@ public:
 	const glm::mat4& GetModelMatrix() const { return modelMatrix; }
 	const glm::mat4& GetRotationMatrix() const { return rotationMatrix; }
 
-	glm::vec3 DegToVec() {
+	glm::vec3 DegToVec() const {
 		float pitch = glm::radians(rotation.x);
 		float yaw = glm::radians(rotation.y);
 
-		glm::vec3 direction;
+		glm::vec3 direction = glm::vec3(0.0f);
 		direction.z = (cos(pitch) * cos(yaw));
 		direction.y = -sin(pitch);
 		direction.x = (cos(pitch) * sin(yaw));

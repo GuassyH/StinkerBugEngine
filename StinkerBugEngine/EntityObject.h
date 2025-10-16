@@ -5,13 +5,14 @@
 #include "Entity.h"
 
 #include "Transform.h"
+#include "WeakPtrProxy.h"
 
 class EntityObject {
 public:
 	EntityObject() = default;
 	~EntityObject() = default;
 
-	std::shared_ptr<Transform> transform = nullptr;
+	WeakPtrProxy<Transform> transform = nullptr;
 };
 
 #endif

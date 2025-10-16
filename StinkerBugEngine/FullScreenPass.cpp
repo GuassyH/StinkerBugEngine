@@ -31,7 +31,7 @@ FullScreenPass::FullScreenPass(Material& material) : material(&material) {
 	}
 }
 
-void FullScreenPass::Draw(Camera& camera, Light* light, Transform* l_transform) {
+void FullScreenPass::Draw(Camera& camera, std::shared_ptr<Light> light, std::shared_ptr<Transform> l_transform) {
 	material->shader.Use();
 
 

@@ -14,3 +14,4 @@ TODO LIST
 
 (10) Go through the safety of everything. Make sure ptrs are good (first time using shared ptrs)
 (11) Fix Gizmos (Got wierd when fixing the transform stuff)
+(12) CLEANUP. Clean up all the code, remove redundancies. Maybe make the ShadowMap FBO global?

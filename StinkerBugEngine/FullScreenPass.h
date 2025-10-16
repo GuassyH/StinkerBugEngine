@@ -22,7 +22,7 @@ public:
 
 	FullScreenPass() = default;
 	FullScreenPass(Material& material);
-	void Draw(Camera& camera, Light* light, Transform* l_transform);
+	void Draw(Camera& camera, std::shared_ptr<Light> light, std::shared_ptr<Transform> l_transform);
 
 	VAO VAO1;
 	VBO VBO1;

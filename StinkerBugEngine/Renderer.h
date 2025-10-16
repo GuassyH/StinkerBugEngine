@@ -9,6 +9,7 @@
 #include <typeindex>
 #include <typeinfo>
 #include "Entity.h"
+#include "WeakPtrProxy.h"
 
 class Component;
 class GizmoComponent;
@@ -16,8 +17,8 @@ class Transform;
 class MeshRenderer;
 
 struct ObjectCall {
-	std::shared_ptr<MeshRenderer> renderer;
-    std::shared_ptr<Transform> transform;
+	WeakPtrProxy<MeshRenderer> renderer;
+	WeakPtrProxy<Transform> transform;
 };
 
 class Renderer {

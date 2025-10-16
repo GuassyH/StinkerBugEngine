@@ -128,6 +128,8 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 
 
 void EditorCamera::Move() {
+	if (!transform) { return; }
+
 	float deltaTime = DeltaTime::getInstance().get();
 	Display& display = Display::getInstance();
 	GLFWwindow* window = display.window;
@@ -160,6 +162,7 @@ void EditorCamera::Move() {
 
 
 void EditorCamera::Look() {
+	if (!transform) { return; }
 
 	float deltaTime = DeltaTime::getInstance().get();
 	Display& display = Display::getInstance();

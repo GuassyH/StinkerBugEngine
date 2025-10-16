@@ -5,7 +5,7 @@
 bool BoxCollider::CalculateCorners() {
 	// If the box collider isnt setup correctly (doesnt have a mesh) then return false
 	// if (!entityObject->GetComponent<MeshRenderer>().model) { return false; }
-
+	if (!transform) { return false; }
 	if (transform->rotation != last_rotation || transform->position != last_position || size != last_size || init) {
 
 		last_rotation = transform->rotation;

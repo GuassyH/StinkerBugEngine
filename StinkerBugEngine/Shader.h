@@ -13,10 +13,10 @@ class Material;
 
 class Shader {
 	public:
-		std::string vertexPath;
-		std::string fragmentPath;
+		std::string vertexPath = {};
+		std::string fragmentPath = {};
 
-		unsigned int ID;
+		unsigned int ID = 0;
 		Shader() = default;
 		Shader(const char* vertexShaderFile, const char* fragmentShaderFile, Material* material = nullptr);
 		// Shader(const char* vertexShaderFile, const char* fragmentShaderFile);

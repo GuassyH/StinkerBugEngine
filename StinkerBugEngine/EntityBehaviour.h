@@ -10,13 +10,12 @@
 #include "DeltaTime.h"
 
 #include "ComponentsList.h"
+#include "WeakPtrProxy.h"
 
 class EntityObject;
 
 class EntityBehaviour : public Component {
 public:
-	std::shared_ptr<EntityObject> entityObject = nullptr;
-
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;
 	virtual void Init() override;

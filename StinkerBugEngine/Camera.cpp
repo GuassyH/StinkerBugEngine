@@ -31,7 +31,8 @@ Camera::Camera(int width, int height) {
 
 
 void Camera::UpdateMatrix() {
-
+	if (!transform) { return; }
+	
 	// Initialise the matrices
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
@@ -50,8 +51,9 @@ void Camera::UpdateMatrix() {
 void Camera::ShadowPass(glm::mat4 light_VP) {
 	if (!renderShadows) { return; }
 	for (auto& call : Renderer::getInstance().opaque_meshes) {
-		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow)) { continue; }
+		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow) || !call.transform || !call.renderer) { continue; }
 
+		// SHOULD BE DONE ONLY ONCE A FRAME? NOT PER CAMERA
 		call.transform->UpdateMatrix();
 
 		m_shadowMapShader.Use();
@@ -64,8 +66,9 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 		call.renderer->model->shadowPass();
 	}
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
-		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow)) { continue; }
+		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow) || !call.transform || !call.renderer) { continue; }
 
+		// SHOULD BE DONE ONLY ONCE A FRAME? NOT PER CAMERA
 		call.transform->UpdateMatrix();
 
 		m_shadowMapShader.Use();
@@ -81,22 +84,26 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 
 
 void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
+
 	// Opaque
 	for (auto& call : Renderer::getInstance().opaque_meshes) {
-		call.renderer->model->render(call.renderer->material, call.transform, this, light);
+		if (!call.transform || !call.renderer) { continue; }
+		call.renderer->model->render(call.renderer->material, call.transform.lock(), this, light);
 	}
 
 	Renderer::getInstance().sortTransparentMeshes(transform->position);
 
 	// Transparent Not fully working
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
-		call.renderer->model->render(call.renderer->material, call.transform, this, light);
+		if (!call.transform || !call.renderer) { continue; }
+		call.renderer->model->render(call.renderer->material, call.transform.lock(), this, light);
 	}
 }
 
 
 void Camera::Render(Scene* scene) {
-	if (!transform) { std::cout << "No Transform" << std::endl; }
+	if (!transform) { std::cout << "No Transform" << std::endl; return; }
+
 	UpdateMatrix();
 
 	glClearColor(clearColor.r, clearColor.g, clearColor.b, 1.0f);
@@ -104,28 +111,27 @@ void Camera::Render(Scene* scene) {
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
 	glm::mat4 light_VP = glm::mat4(1.0f);
-	Transform* l_transform = nullptr;
 
-	if (scene->HasMainLight()) { 
-		l_transform = &scene->main_light->transform->GetComponent<Transform>();
+	if (scene->HasMainLight()) {
+		std::weak_ptr<Transform> weak_l_transform = scene->main_light->transform->GetComponentPtr<Transform>();
+		if (auto l_transform = weak_l_transform.lock()) {
+			glm::vec3 direction;
+			direction = l_transform->DegToVec();
 
-		glm::vec3 direction = l_transform->DegToVec();
-
-		scene->main_light->transform->DegToVec() = direction;
-
-		float light_map_size = 50.0f;
-		glm::mat4 lightProj = glm::ortho(-light_map_size, light_map_size, -light_map_size, light_map_size, 0.1f, 200.0f);
-		glm::mat4 lightView = glm::lookAt(transform->position - (direction * glm::vec3(100)), transform->position - (direction * glm::vec3(100)) + direction, Constants::Dirs::Up);
-		glm::mat4 light_VP = lightProj * lightView;
+			float light_map_size = 50.0f;
+			glm::mat4 lightProj = glm::ortho(-light_map_size, light_map_size, -light_map_size, light_map_size, 0.1f, 200.0f);
+			glm::mat4 lightView = glm::lookAt(this->transform->position - (direction * glm::vec3(100)), this->transform->position - (direction * glm::vec3(100)) + direction, Constants::Dirs::Up);
+			glm::mat4 light_VP = lightProj * lightView;
 		
-		l_transform->GetComponent<Light>().light_VP = light_VP;
+			l_transform->GetComponent<Light>().light_VP = light_VP;
 		
-		// Create a buffer of all lights and send to frag shader
+			// Create a buffer of all lights and send to frag shader
 
-		// Bind shadow map and draw scene to it
-		m_shadowMapFBO.BindForWriting();
-		glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
-		ShadowPass(light_VP);
+			// Bind shadow map and draw scene to it
+			m_shadowMapFBO.BindForWriting();
+			glClear(GL_DEPTH_BUFFER_BIT);  // clear depth before shadow pass
+			ShadowPass(light_VP);
+		}
 	}
 
 
@@ -151,10 +157,10 @@ void Camera::Render(Scene* scene) {
 
 	// should do opaque then transparent stuff
 	if (scene->HasMainLight()) {
-		if (renderSkybox) { scene->skybox_pass.Draw(*this, &scene->main_light->transform->GetComponent<Light>(), &scene->main_light->transform->GetComponent<Transform>()); }
+		if (renderSkybox) { scene->skybox_pass.Draw(*this, scene->main_light->transform->GetComponentPtr<Light>(), scene->main_light->transform.lock()); }
 		
 		for (FullScreenPass pass : scene->passes) {
-			pass.Draw(*this, &scene->main_light->transform->GetComponent<Light>(), &scene->main_light->transform->GetComponent<Transform>());
+			pass.Draw(*this, scene->main_light->transform->GetComponentPtr<Light>(), scene->main_light->transform.lock());
 		}
 
 		m_shadowMapFBO.BindForReading(GL_TEXTURE0);
@@ -164,7 +170,7 @@ void Camera::Render(Scene* scene) {
 		if (renderSkybox) { scene->skybox_pass.Draw(*this, nullptr, nullptr); }
 		
 		for (FullScreenPass pass : scene->passes) {
-			pass.Draw(*this, &scene->main_light->transform->GetComponent<Light>(), &scene->main_light->transform->GetComponent<Transform>());
+			pass.Draw(*this, scene->main_light->transform->GetComponentPtr<Light>(), scene->main_light->transform.lock());
 		}
 		
 		LightingPass(light_VP, nullptr);

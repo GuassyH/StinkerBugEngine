@@ -44,9 +44,11 @@ public:
 				ImGui::DragFloat("Distance", &distance, 0.1f, 0.0f);
 				ImGui::DragFloat("Inner Radius", &radius_i, 0.1f, 0.0f);
 				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
+				break;
 			case LightTypes::Area:
 				ImGui::DragFloat("Inner Radius", &radius_i, 0.1f, 0.0f);
 				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
+				break;
 			}
 		}
 	}

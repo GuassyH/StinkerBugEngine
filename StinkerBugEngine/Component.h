@@ -8,6 +8,7 @@
 #include "Entity.h"
 
 #include <memory>
+#include "WeakPtrProxy.h"
 
 class ECSystem;
 class Transform;
@@ -15,8 +16,8 @@ class Transform;
 class Component {
 public:	
 	Entity entity = 0;
-	std::shared_ptr<Transform> transform = nullptr;
-	ECSystem* parent_ecs;
+	WeakPtrProxy<Transform> transform = nullptr;
+	ECSystem* parent_ecs = nullptr;
 
 	Component() = default;
 	virtual ~Component() = default;
