@@ -36,7 +36,8 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	if (ImGui::BeginPopup("Create Object", ImGuiWindowFlags_NoMove)) {
 		ImGui::Text("Create Object");
 		if (ImGui::Button("Create Empty Entity", ImVec2(180, 20))) {
-			selected_entity = scene.CreateEntity().transform->entity;
+			EntityObject new_ntt = scene.CreateEntity();
+			selected_entity = new_ntt.transform->entity;
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -48,6 +49,17 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			new_ntt.transform->AddComponent<Light>();
 			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Directional;
 			new_ntt.transform->GetComponent<Transform>().rotation = glm::vec3(25.0f, 205.0f, 0.0f);
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
+			ImGui::CloseCurrentPopup();
+		}
+		if (ImGui::Button("Create Point Light", ImVec2(180, 20))) {
+			EntityObject new_ntt = scene.CreateEntity();
+			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Point Light (" + std::to_string(new_ntt.transform->entity) + ")";
+			new_ntt.transform->AddComponent<Light>();
+			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Point;
+			new_ntt.transform->GetComponent<Light>().radius_o = 1.0f;
+			new_ntt.transform->GetComponent<Light>().radius_i = 0.5f;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();

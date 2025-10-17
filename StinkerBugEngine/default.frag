@@ -19,10 +19,12 @@
 		float radius_o;	
 		float radius;
 		float intensity;
+		int pad1;
+		int pad2;
 		vec3 pos;
-		float pad1;
+		float pad3;
 		vec3 dir;
-		float pad2;
+		float pad4;
 		vec4 color;
 	};
 
@@ -62,73 +64,47 @@ out vec4 fragColor;
 
 
 #ifdef LIT
-// Helper: get diffuse + specular contribution from a directioned light
+
 vec4 spotLight(LightObject lo){
-	// early out for zero intensity or nearly black color
-	if(lo.intensity <= 0.0 || length(lo.color.rgb) < 1e-6) { return vec4(0.0); }
-
-	// ensure normals and directions are normalized
-	vec3 N = normalize(normal);
-	vec3 L = normalize(lo.dir); // direction from surface to light (caller should provide)
-	
-	// diffuse
-	float diff = max(dot(N, L), 0.0);
-
-	// specular (Blinn-Phong would be cheaper; keeping reflect-based original)
-	float specularStrength = 0.50;
-	vec3 V = normalize(camPos - crntPos);
-	vec3 R = reflect(-L, N);
-	float specFactor = pow(max(dot(V, R), 0.0), 16.0);
-	float specular = specFactor * specularStrength;
-
-	// angular falloff (spot cone)
-	float angle = dot(vec3(0.0, -1.0, 0.0), -L); // this assumes spotlight points down - adjust per-light
-	float spotAtt = clamp((angle - lo.radius_o) / (lo.radius_i - lo.radius_o), 0.0, 1.0);
-
-	vec4 finalCol = lo.color * (diff * spotAtt * lo.intensity + ambient);
-
-	if(hasSpecular){
-		finalCol += vec4(texture(specular0, texCoords).r * specular * spotAtt, texture(specular0, texCoords).r * specular * spotAtt, texture(specular0, texCoords).r * specular * spotAtt, 0.0);
-	}
-
-	// ensure final color is at least ambient in rgb
-	finalCol.rgb = max(finalCol.rgb, vec3(ambient));
-	finalCol.a = 1.0;
-	return finalCol;
+	return vec4(1.0);
 }
 
-vec4 pointLight(LightObject lo){
-	if(lo.intensity <= 0.0 || length(lo.color.rgb) < 1e-6) { return vec4(0.0); }
+vec4 pointLight(LightObject lo) {
 
-	vec3 N = normalize(normal);
-	vec3 L = normalize(lo.dir);
 
-	// simple distance attenuation (tweak a/b as needed)
-	float dist = length(lo.pos - crntPos);
-	float a = 0.5;
-	float b = 0.01;
-	float att = 1.0 / (a * dist * dist + b * dist + 1.0);
+	// use inverse square law to calculate intensity
+	vec3 lightVec = lo.pos - crntPos;
+	float dist = length(lightVec);
 
-	// diffuse
-	float diff = max(dot(N, L), 0.0);
+	if(dist > lo.radius_o) { return vec4(0.0); }
 
-	// specular
-	float specularStrength = 0.50;
-	vec3 V = normalize(camPos - crntPos);
-	vec3 R = reflect(-L, N);
-	float specFactor = pow(max(dot(V, R), 0.0), 16.0);
-	float specular = specFactor * specularStrength;
+	float dst_intensity = 1.0 / (lo.radius_o / dist);
+	dst_intensity = 1.0 - dst_intensity; 
 
-	vec4 finalCol = lo.color * (diff * att * lo.intensity + ambient);
+	// dst_intensity = clamp(dst_intensity, 0.0, 1.0);
+	
+	// diffuse lighting
+	vec3 lightDirection = normalize(lightVec);
+	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
-	if(hasSpecular){
-		float s = texture(specular0, texCoords).r * specular * att * lo.intensity;
-		finalCol += vec4(s, s, s, 0.0);
-	}
+	// specular lighting
+	float specularLight = 0.50f;
+	vec3 viewDirection = normalize(camPos - crntPos);
+	vec3 reflectionDirection = reflect(-lightDirection, normal);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
+	float specular = specAmount * specularLight;
 
-	finalCol.rgb = max(finalCol.rgb, vec3(ambient));
-	finalCol.a = 1.0;
-	return finalCol;
+	float cl_intensity = max(lo.intensity, 0.0);
+
+    vec3 finalCol = lo.color.rgb * (diffuse * dst_intensity) * cl_intensity;
+
+    if(hasSpecular) {
+        float s = texture(specular0, texCoords).r * specular * cl_intensity;
+        finalCol += vec3(s);
+    }
+
+
+    return vec4(finalCol, 0.0);
 }
 
 vec4 directionalLight(){
@@ -228,7 +204,7 @@ void main()
 				// Calculate Light;
 				switch(lo.type){
 					case LIGHT_SPOTLIGHT:
-						lightVal += spotLight(lo);
+						lightVal *= spotLight(lo);
 						break;
 					case LIGHT_POINT:
 						lightVal += pointLight(lo);

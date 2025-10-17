@@ -30,13 +30,13 @@ public:
 	void RemoveFlag(uint32_t flag) {
 		flags &= ~flag;
 		if ((flag & MaterialFlags_Transparent) == MaterialFlags_Transparent) { // If one of the flags added is transparency, queue a rebuild
-			Renderer::getInstance().queue_rebuild = true;
+			Renderer::getInstance().queue_mesh_rebuild = true;
 		}
 	}
 	void AddFlag(uint32_t flag) {
 		flags |= flag;
 		if ((flag & MaterialFlags_Transparent) == MaterialFlags_Transparent) { // If one of the flags added is transparency, queue a rebuild
-			Renderer::getInstance().queue_rebuild = true;
+			Renderer::getInstance().queue_mesh_rebuild = true;
 		}
 	}
 

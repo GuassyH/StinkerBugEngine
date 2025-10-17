@@ -135,7 +135,8 @@ void Scene::Render() {
 	Display& display = Display::getInstance();
 	Renderer& renderer = Renderer::getInstance();
 
-	if (renderer.queue_rebuild == true) { renderer.rebuildMeshLists(Scene_ECS.components); }
+	if (renderer.queue_mesh_rebuild == true) { renderer.rebuildMeshLists(Scene_ECS.components); }
+	if (renderer.queue_lights_rebuild == true) { renderer.recalculateLightsBuffer(Scene_ECS.components); }
 
 	CheckMains();
 	

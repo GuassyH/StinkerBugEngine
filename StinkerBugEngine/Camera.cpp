@@ -84,6 +84,8 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 
 
 void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
+	Renderer::getInstance().queue_lights_rebuild = true;
+	
 	// Opaque
 	for (auto& call : Renderer::getInstance().opaque_meshes) {
 		if (!call.transform || !call.renderer) { continue; }

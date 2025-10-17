@@ -14,17 +14,19 @@ enum class LightTypes : uint8_t {
 	Area = 3
 };
 
-struct LightObject {
+struct alignas(16) LightBufferObject {
 	int type;
 	int pad0;
 	float radius_i;
 	float radius_o;
 	float radius;
 	float intensity;
+	int pad1;
+	int pad2; // pad to 32 byte
 	glm::vec3 pos;
-	float pad1;
+	float pad3;
 	glm::vec3 dir;
-	float pad2;
+	float pad4;
 	glm::vec4 color;
 };
 
@@ -34,6 +36,8 @@ public:
 	LightTypes light_type = LightTypes::Spotlight;
 	glm::mat4 light_VP = glm::mat4(1.0f);
 	glm::vec4 color = glm::vec4(1.0f);
+	float intensity = 1.0f;
+
 
 	// Spotlight
 	float distance;
@@ -59,10 +63,12 @@ public:
 				ImGui::DragFloat("Distance", &distance, 0.1f, 0.0f);
 				ImGui::DragFloat("Inner Radius", &radius_i, 0.1f, 0.0f);
 				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
+				ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f);
 				break;
-			case LightTypes::Area:
+			case LightTypes::Point:
 				ImGui::DragFloat("Inner Radius", &radius_i, 0.1f, 0.0f);
 				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
+				ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f);
 				break;
 			}
 		}

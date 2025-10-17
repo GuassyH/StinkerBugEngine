@@ -80,6 +80,10 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 		textures[i].Bind();
 	}
 
+	Renderer::getInstance().bindLightsBuffer();
+	std::cout << std::to_string(Renderer::getInstance().GetNumLights()) << " : " << std::to_string(glfwGetTime()) << std::endl;
+	material->shader.SetInt("numLights", Renderer::getInstance().GetNumLights());
+
 	material->shader.SetInt("hasDiffuse", diffuseIdx > 0);
 	material->shader.SetInt("hasSpecular", specularIdx > 0);
 	material->shader.SetInt("hasNormal", normalIdx > 0);

@@ -27,7 +27,7 @@ int main(void) {
 	try {
 
 	Display& display = Display::getInstance();
-	if (display.Init(1920, 1080, "Stinker Bug Engine") == -1) { std::runtime_error("Display failed to Initialize"); }
+	if (display.Init(2344, 1280, "Stinker Bug Engine") == -1) { std::runtime_error("Display failed to Initialize"); }
 
 	DeltaTime& deltaTime = DeltaTime::getInstance();
 	Renderer& renderer = Renderer::getInstance();

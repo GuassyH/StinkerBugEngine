@@ -23,7 +23,7 @@ void ECSystem::DestroyEntity(Entity& id) {
 	}
 
 	if (update_renderer) {
-		Renderer::getInstance().queue_rebuild = true;
+		Renderer::getInstance().queue_mesh_rebuild = true;
 	}
 }
 

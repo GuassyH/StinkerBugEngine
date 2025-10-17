@@ -192,7 +192,7 @@ public:
 
 			map.insert(std::make_pair(id, std::make_shared<T>(std::forward<Args>(args)...)));
 
-			if constexpr (std::is_base_of_v<MeshRenderer, T>) { Renderer::getInstance().queue_rebuild = true; }
+			if constexpr (std::is_base_of_v<MeshRenderer, T>) { Renderer::getInstance().queue_mesh_rebuild = true; }
 		}
 
 
@@ -246,7 +246,7 @@ public:
 
 			RemoveComponentBit(ComponentBit<T>(), id);
 
-			if constexpr (std::is_base_of_v<MeshRenderer, T>) { Renderer::getInstance().queue_rebuild = true; }
+			if constexpr (std::is_base_of_v<MeshRenderer, T>) { Renderer::getInstance().queue_mesh_rebuild = true; }
 		}
 		else {
 			std::cout << "Component not found - Nothing to remove" << std::endl;
