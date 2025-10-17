@@ -76,7 +76,7 @@ vec4 pointLight(LightObject lo) {
 	vec3 lightVec = lo.pos - crntPos;
 	float dist = length(lightVec);
 
-	if(dist > lo.radius_o) { return vec4(0.0); }
+	if(dist >= lo.radius_o) { return vec4(0.0); }
 	
 	float dst_intensity = 0.0;
 
@@ -87,19 +87,20 @@ vec4 pointLight(LightObject lo) {
 		float range = lo.radius_o - lo.radius_i;
 		float dist_scaled = (dist-lo.radius_i) / (range);
 		dst_intensity = 1.0 - dist_scaled;
+		dst_intensity = max(dst_intensity, 0.0);
 	}
 	
 
 	
 	// diffuse lighting
 	vec3 lightDirection = normalize(lightVec);
-	float diffuse = max(dot(normal, lightDirection), 0.0f);
+	float diffuse = max(dot(normal, lightDirection), 0.0);
 
 	// specular lighting
-	float specularLight = 0.50f;
+	float specularLight = 0.50;
 	vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 16);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0), 16);
 	float specular = specAmount * specularLight;
 
 	float cl_intensity = max(lo.intensity, 0.0);
@@ -111,8 +112,11 @@ vec4 pointLight(LightObject lo) {
         finalCol += vec3(s);
     }
 
-
-    return vec4(finalCol, 0.0);
+	// finalCol.r = max(finalCol.r, 0.0);
+	// finalCol.g = max(finalCol.g, 0.0);
+	// finalCol.b = max(finalCol.b, 0.0);
+    
+	return vec4(finalCol, 0.0);
 }
 
 vec4 directionalLight(){
@@ -133,7 +137,7 @@ vec4 directionalLight(){
 		rgb += vec3(s);
 	}
 
-	rgb = max(rgb, vec3(ambient));
+	rgb = max(rgb, vec3(ambient * 2.0));
 	vec4 finalCol = vec4(rgb, 1.0);
 	return finalCol;
 }
@@ -204,7 +208,7 @@ void main()
 					shadowFactor = mix(ambient, shadowPCF, edgeFade * depthFade);
 				}
 				// apply to light
-				lightVal.rgb *= max(shadowFactor, ambient);
+				lightVal.rgb *= max(shadowFactor, ambient * 2.0);
 			#endif
 
         }

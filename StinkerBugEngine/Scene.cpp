@@ -14,7 +14,21 @@ EntityObject& Scene::CreateEntity() {
 	EntityObject new_ntt;
 	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.component_bits[entity_id] = 0b0;
-	Scene_ECS.entity_names[entity_id] = "Entity: " + std::to_string(entity_id);
+	
+	int tries = 0;
+	std::string name = "Entity";
+	std::string new_name = name;
+	// Go through each variation of the name until a new one is found
+	while (name_exists(new_name)){
+		tries++;
+		new_name = name + " (" + std::to_string(tries) + ")";
+	}
+
+	if (tries > 0) {
+		name = new_name;
+	}
+
+	Scene_ECS.entity_names[entity_id] = name;
 	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
 	Scene_ECS.entities.insert(entity_id);
 	new_ntt.transform = Scene_ECS.GetComponentPtr<Transform>(entity_id);
@@ -25,6 +39,19 @@ EntityObject& Scene::CreateEntity(std::string name) {
 	EntityObject new_ntt;
 	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
 	Scene_ECS.component_bits[entity_id] = 0b0;
+
+	int tries = 0;
+	std::string new_name = name;
+	// Go through each variation of the name until a new one is found
+	while (name_exists(new_name)){
+		tries++;
+		new_name = name + " (" + std::to_string(tries) + ")";
+	}
+	
+	if (tries > 0) {
+		name = new_name;
+	}
+
 	Scene_ECS.entity_names[entity_id] = name;
 	Scene_ECS.AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
 	Scene_ECS.entities.insert(entity_id);
@@ -32,6 +59,12 @@ EntityObject& Scene::CreateEntity(std::string name) {
 	return new_ntt;
 }
 
+bool Scene::name_exists(std::string name) {
+	return std::any_of(Scene_ECS.entity_names.begin(), Scene_ECS.entity_names.end(),
+		[&](const auto& pair) {
+			return pair.second == name;
+		});
+}
 
 // Resolve collision (apply forces)
 void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, RigidBody& rb2) {

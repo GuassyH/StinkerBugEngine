@@ -38,7 +38,7 @@ void Mesh::RecalculateMesh() {
 	EBO1.Unbind();
 }
 
-void Mesh::shadowPass() {
+void Mesh::shadowPass(std::shared_ptr<Material> material) {
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
 }

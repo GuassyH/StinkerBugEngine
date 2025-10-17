@@ -31,21 +31,25 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	double m_x, m_y;
 	glfwGetCursorPos(display.window, &m_x, &m_y);
 
-	ImGui::SetNextWindowSize(ImVec2(180, 300));
+	// ImGui::SetNextWindowSize(ImVec2(180, 300));
 	ImGui::SetNextWindowPos(ImVec2((float)m_x, (float)m_y), ImGuiCond_Once); // simplified
-	if (ImGui::BeginPopup("Create Object", ImGuiWindowFlags_NoMove)) {
+	if (ImGui::BeginPopup("Create Object", ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize)) {
+		ImGuiStyle* custom_style = &ImGui::GetStyle();
+		ImVec2 org_space = custom_style->ItemSpacing;
+		custom_style->ItemSpacing = ImVec2(10, 1);
+
+		ImVec2 button_size = ImVec2(150, 20);
 		ImGui::Text("Create Object");
-		if (ImGui::Button("Create Empty Entity", ImVec2(180, 20))) {
+		if (ImGui::Button("Create Empty Entity", button_size)) {
 			EntityObject new_ntt = scene.CreateEntity();
 			selected_entity = new_ntt.transform->entity;
 			ImGui::CloseCurrentPopup();
 		}
 
-		ImGui::Separator();
+		ImGui::Spacing(); ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing(); ImGui::Spacing();
 
-		if (ImGui::Button("Create Directional Light", ImVec2(180, 20))) {
-			EntityObject new_ntt = scene.CreateEntity();
-			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Light (" + std::to_string(new_ntt.transform->entity) + ")";
+		if (ImGui::Button("Create Dir Light", button_size)) {
+			EntityObject new_ntt = scene.CreateEntity("Directional Light");
 			new_ntt.transform->AddComponent<Light>();
 			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Directional;
 			new_ntt.transform->GetComponent<Transform>().rotation = glm::vec3(25.0f, 205.0f, 0.0f);
@@ -53,73 +57,75 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
-		if (ImGui::Button("Create Point Light", ImVec2(180, 20))) {
-			EntityObject new_ntt = scene.CreateEntity();
-			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Point Light (" + std::to_string(new_ntt.transform->entity) + ")";
+		if (ImGui::Button("Create Point Light", button_size)) {
+			EntityObject new_ntt = scene.CreateEntity("Point Light");
 			new_ntt.transform->AddComponent<Light>();
 			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Point;
 			new_ntt.transform->GetComponent<Light>().radius_o = 10.0f;
 			new_ntt.transform->GetComponent<Light>().radius_i = 0.5f;
+			new_ntt.transform->GetComponent<Light>().intensity = 0.600;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
-		if (ImGui::Button("Create Camera", ImVec2(180, 20))) {
-			EntityObject new_ntt = scene.CreateEntity();
-			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Camera (" + std::to_string(new_ntt.transform->entity) + ")";
+		
+		if (ImGui::Button("Create Spot Light", button_size)) {
+			EntityObject new_ntt = scene.CreateEntity("Spot Light");
+			new_ntt.transform->AddComponent<Light>();
+			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Point;
+			new_ntt.transform->GetComponent<Light>().radius_o = 10.0f;
+			new_ntt.transform->GetComponent<Light>().radius_i = 0.5f;
+			new_ntt.transform->GetComponent<Light>().intensity = 0.600;
+			selected_entity = new_ntt.transform->entity;
+			new_ntt.~EntityObject();
+			ImGui::CloseCurrentPopup();
+		}
+
+
+		ImGui::Spacing(); ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing(); ImGui::Spacing();
+
+		if (ImGui::Button("Create Camera", button_size)) {
+			EntityObject new_ntt = scene.CreateEntity("Camera");
 			new_ntt.transform->AddComponent<Camera>(1920, 1080);
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
-		if (ImGui::Button("Create Cube", ImVec2(180, 20))) {
-			EntityObject new_ntt = scene.CreateEntity();
-			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Cube (" + std::to_string(new_ntt.transform->entity) + ")";
+
+		ImGui::Spacing(); ImGui::Spacing(); ImGui::Separator(); ImGui::Spacing(); ImGui::Spacing();
+
+		if (ImGui::Button("Create Cube", button_size)) {
+			EntityObject new_ntt = scene.CreateEntity("Cube");
 			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
-		if (ImGui::Button("Create Sphere", ImVec2(180, 20))) {
-			EntityObject new_ntt = scene.CreateEntity();
-			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Sphere (" + std::to_string(new_ntt.transform->entity) + ")";
+		if (ImGui::Button("Create Sphere", button_size)) {
+			EntityObject new_ntt = scene.CreateEntity("Sphere");
 			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::UVSphere()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
-		if (ImGui::Button("Create Plane", ImVec2(180, 20))) {
-			EntityObject new_ntt = scene.CreateEntity();
-			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Plane (" + std::to_string(new_ntt.transform->entity) + ")";
+		if (ImGui::Button("Create Plane", button_size)) {
+			EntityObject new_ntt = scene.CreateEntity("Plane");
 			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Plane()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
 			ImGui::CloseCurrentPopup();
 		}
-		
-		ImGui::Separator();
-
-		if (ImGui::Button("Create Goblin", ImVec2(180, 20))) {
-			EntityObject new_ntt = scene.CreateEntity();
-			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Goblin (" + std::to_string(new_ntt.transform->entity) + ")";
-			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(glm::vec3(0.05f)), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
-			new_ntt.transform->GetComponent<MeshRenderer>().model->loadModel("assets/models/lotr_troll/scene.gltf");
-			new_ntt.transform->GetComponent<Transform>().scale = glm::vec3(0.05f);
-			selected_entity = new_ntt.transform->entity;
-			new_ntt.~EntityObject();
-			ImGui::CloseCurrentPopup();
-		}
-
+		custom_style->ItemSpacing = org_space;
 
 		ImGui::EndPopup();
 	}
 
-	ImGui::SetNextWindowSize(ImVec2(110, 80));
+	//ImGui::SetNextWindowSize(ImVec2(110, 80));
 	ImGui::SetNextWindowPos(ImVec2((float)m_x, (float)m_y), ImGuiCond_Once); // simplified
-	if (ImGui::BeginPopup("Change Object", ImGuiWindowFlags_NoMove)) {
+	if (ImGui::BeginPopup("Change Object", ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::Text("Change Object");
 		ImGui::Separator();
 		if (ImGui::Button("Duplicate", ImVec2(110, 20))) {

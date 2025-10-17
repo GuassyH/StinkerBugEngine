@@ -32,7 +32,7 @@ public:
 
 	void RecalculateMesh();
 
-	void shadowPass();
+	void shadowPass(std::shared_ptr<Material> material);
 	void render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, Camera* cam, Light* light);
 
 	void cleanup();

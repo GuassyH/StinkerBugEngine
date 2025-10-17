@@ -63,15 +63,18 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 		// Setup popup
-		ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 300, display.windowHeight - 360)); // simplified
-		ImGui::SetNextWindowSize(ImVec2(235, 300));
-		if (ImGui::BeginPopup("Add Component", ImGuiWindowFlags_NoMove)) {
+		ImGui::SetNextWindowPos(ImVec2(display.windowWidth - 300, display.windowHeight - 300)); // simplified
+		// ImGui::SetNextWindowSize(ImVec2(235, 300));
+		if (ImGui::BeginPopup("Add Component", ImGuiWindowFlags_NoMove | ImGuiWindowFlags_AlwaysAutoResize)) {
 			ImGui::SetCursorPosX(ImGui::GetWindowWidth() * 0.5f - ImGui::CalcTextSize("Add Component").x * 0.5f);
 			ImGui::Text("Add Component");
 			ImGui::Separator();
 			ImGui::Text("Select a component to add:");
 			ImGui::Separator();
 
+			ImGuiStyle* custom_style = &ImGui::GetStyle();
+			ImVec2 org_space = custom_style->ItemSpacing;
+			custom_style->ItemSpacing = ImVec2(10, 1);
 
 			// I mean it works but its not efficient. Should be a loop for each component type add component like with the DrawOnInspector
 			if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
@@ -131,6 +134,8 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 					ImGui::CloseCurrentPopup();
 				}
 			}
+
+			custom_style->ItemSpacing = org_space;
 
 			ImGui::EndPopup();
 		}

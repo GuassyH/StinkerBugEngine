@@ -5,6 +5,7 @@ layout (location = 0) in vec3 aPos;
 uniform mat4 light_VP;
 uniform mat4 modelMatrix;
 
+
 void main(){
 	gl_Position = light_VP * modelMatrix * vec4(aPos, 1.0f);
 }

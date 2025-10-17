@@ -44,7 +44,7 @@ public:
 	void init();
 	void loadModel(std::string path);
 	// void render(Material* m_material, Transform* m_transform, Transform* c_transform, Camera* cam, Light* light, bool shadowPass);
-	void shadowPass();
+	void shadowPass(std::shared_ptr<Material> material);
 	void render(std::shared_ptr<Material> material, std::shared_ptr<Transform> m_transform, Camera* cam, Light* light);
 	void cleanup();
 

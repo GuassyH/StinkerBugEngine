@@ -63,7 +63,7 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(call.transform->GetModelMatrix()));
 
 		// Render the scene through the light view
-		call.renderer->model->shadowPass();
+		call.renderer->model->shadowPass(call.renderer->material);
 	}
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
 		if (!call.renderer->shadowCaster || !call.renderer->material->HasFlag(MaterialFlags_Shadow) || !call.transform || !call.renderer) { continue; }
@@ -78,7 +78,7 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 		glUniformMatrix4fv(glGetUniformLocation(m_shadowMapShader.ID, "modelMatrix"), 1, GL_FALSE, glm::value_ptr(call.transform->GetModelMatrix()));
 
 		// Render the scene through the light view
-		call.renderer->model->shadowPass();
+		call.renderer->model->shadowPass(call.renderer->material);
 	}
 }
 

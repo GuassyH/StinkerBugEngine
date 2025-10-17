@@ -18,6 +18,8 @@ class EntityObject;
 class Transform;
 
 class Scene {
+private:
+	bool name_exists(std::string name);
 public:
 	Scene() = default;
 	EntityObject& CreateEntity();
@@ -27,7 +29,7 @@ public:
 	float gravity = -9.82f;
 
 	// Environment
-	float ambient = 0.5f;
+	float ambient = 0.2f;
 	EntityObject* main_light = nullptr;
 	EntityObject* main_camera = nullptr;
 	ECSystem Scene_ECS;

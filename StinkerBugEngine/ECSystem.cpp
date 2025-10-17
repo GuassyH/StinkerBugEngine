@@ -28,18 +28,36 @@ void ECSystem::DestroyEntity(Entity& id) {
 }
 
 void ECSystem::DuplicateEntity(Entity& id) {
-	Entity& entity_id = nextEntity;	nextEntity++;
-	component_bits[entity_id] = 0b0;
+	Entity& new_id = nextEntity;	nextEntity++;
+	component_bits[new_id] = 0b0;
 
-	entity_names[entity_id] = entity_names.find(id)->second + " (" + std::to_string(entity_id) + ")";
-	AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
+	AddComponent<Transform>(new_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
 	
+	int tries = 0;
+	std::string name = entity_names[id];
+	std::string new_name = name;
+
+	// Go through each variation of the name until a new one is found
+	while (std::any_of(entity_names.begin(), entity_names.end(),
+		[&](const auto& pair) {
+			return pair.second == new_name;
+		})) {
+		tries++;
+		new_name = name + " (" + std::to_string(tries) + ")";
+	}
+
+	if (tries > 0) {
+		name = new_name;
+	}
+
+	entity_names[new_id] = name;
+
 	for (auto& [type, map] : components) {
 		auto compPtr = map.find(id);
 		if (compPtr != map.end() && compPtr->second && type != typeid(Transform)) {
-			// Should add component
+			// Add
 		}
 	}
 	
-	entities.insert(entity_id);
+	entities.insert(new_id);
 }

@@ -144,9 +144,9 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
 	return newMesh;
 }
 
-void Model::shadowPass() {
+void Model::shadowPass(std::shared_ptr<Material> material) {
 	for (Mesh mesh : meshes) {
-		mesh.shadowPass();
+		mesh.shadowPass(material);
 	}
 }
 

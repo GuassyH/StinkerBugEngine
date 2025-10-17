@@ -38,6 +38,8 @@ int main(void) {
 
 	UI& ui = UI::getInstance();
 	ui.imgui_init();
+
+
 	EntityObject dir_light = scene.CreateEntity("Sun Light");
 	dir_light.transform->AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.transform->rotation = glm::vec3(50.0f, 205.0f, 0.0f);
@@ -71,7 +73,6 @@ int main(void) {
 
 		display.EndFrame();
 	}
-
 
 	sceneManager.UnloadScene();
 	ui.imgui_shutdown();
