@@ -108,8 +108,7 @@ namespace Screen
 
 
 		Shader c_shader("ColToID.vert", "ColToID.frag");
-		Material id_material(c_shader, MaterialFlags_Depth);
-		std::shared_ptr<Material> id_mat_ptr = std::make_shared<Material>(id_material);;
+		std::shared_ptr<Material> id_mat_ptr = std::make_shared<Material>(c_shader, MaterialFlags_Depth);;
 		glm::vec4 id_color = glm::vec4(0.0f);
 
 		for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
@@ -121,7 +120,7 @@ namespace Screen
 			id_color.b = ((id & 0x00FF0000) >> 16) / 255.0f;
 			id_color.a = 1.0f;
 
-			id_material.color = id_color;
+			id_mat_ptr->color = id_color;
 
 			renderer.model->render(id_mat_ptr, scene.Scene_ECS.GetComponentPtr<Transform>(id), camera, nullptr);
 		}

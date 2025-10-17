@@ -25,12 +25,14 @@ public:
 	bool raycastable = true;
 	bool shadowCaster = true;
 
-	MeshRenderer(Model& m, Material& mat) : model(std::make_shared<Model>(m)), material(std::make_shared<Material>(mat)) {}
-	MeshRenderer(std::shared_ptr<Model> m, std::shared_ptr<Material> mat) : model(m), material(mat) {}
-	MeshRenderer(Model* w_m, Material* w_mat) = delete;
+	MeshRenderer(Model& m, Material& mat) : model(std::make_shared<Model>(m)), material(std::make_shared<Material>(mat)) {} // TRY NOT TO USE THIS
+	MeshRenderer(Model* m, Material* mat) : model(std::shared_ptr<Model>(m)), material(std::shared_ptr<Material>(mat)) {}
+	MeshRenderer(std::shared_ptr<Model> m, std::shared_ptr<Material> mat) : model(std::move(m)), material(std::move(mat)) {}
 	MeshRenderer() = default; // still allow default construction
 
 	bool trnsprncy = false;
+
+	virtual void DrawOnInspectorInit() override { trnsprncy = material->HasFlag(MaterialFlags_Transparent); }
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Mesh Renderer")) {

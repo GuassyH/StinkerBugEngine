@@ -21,7 +21,6 @@ EntityObject& Scene::CreateEntity() {
 	return new_ntt;
 }
 
-
 EntityObject& Scene::CreateEntity(std::string name) {
 	EntityObject new_ntt;
 	Entity& entity_id = Scene_ECS.nextEntity;	Scene_ECS.nextEntity++;
@@ -134,6 +133,9 @@ void Scene::CheckMains() {
 // Render each camera
 void Scene::Render() {
 	Display& display = Display::getInstance();
+	Renderer& renderer = Renderer::getInstance();
+
+	if (renderer.queue_rebuild == true) { renderer.rebuildMeshLists(Scene_ECS.components); }
 
 	CheckMains();
 	
@@ -142,21 +144,22 @@ void Scene::Render() {
 
 // Call the EntityBehaviours Start
 void Scene::StartEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
-		behaviour->Start();
-	}
+	for (auto& [id, map] : Scene_ECS.entity_behaviours) 
+		for (auto& [typeIdx, behaviour] : map) 
+			if (behaviour) behaviour->Start();
 }
 
 // Call the EntityBehaviours Awake
 void Scene::WakeEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
-		behaviour->Awake();
-	}
+	for (auto& [id, map] : Scene_ECS.entity_behaviours) 
+		for (auto& [typeIdx, behaviour] : map) 
+			if(behaviour) behaviour->Awake();
 }
 
 // Update all the EntityBehaviour scripts
 void Scene::UpdateEntityBehaviours() {
-	for (auto& [id, behaviour] : Scene_ECS.entity_behaviours) {
-		behaviour->Update();
-	}
+	for (auto& [id, map] : Scene_ECS.entity_behaviours) 
+		for (auto& [typeIdx, behaviour] : map) 
+			if (behaviour) behaviour->Update();
+
 }

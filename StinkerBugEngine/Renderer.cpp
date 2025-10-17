@@ -8,6 +8,8 @@
 void Renderer::rebuildMeshLists(std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>>& components) {
     clearMeshes();
 
+    queue_rebuild = false;
+    
     auto& meshMap = components[std::type_index(typeid(MeshRenderer))];
     auto& transformMap = components[std::type_index(typeid(Transform))];
 

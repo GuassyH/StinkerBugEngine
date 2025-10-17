@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Screen.h"
 #include "Physics.h"
+#include "Constants.h"
 
 void EditorCamera::Init() {
 	transform = std::make_unique<Transform>();
@@ -89,7 +90,7 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 	// If you left click
 	if (is_entity_selected) {
 		// Gizmo only raycast
-		rayHit = Physics::Raycast(Screen::ScreenToWorldRay(w_pos, w_size, camera), camera->farPlane, camera, Screen::GetMouseNDC(w_pos, w_size, glm::vec2(camera->width, camera->height)), editor_ecs);
+		// rayHit = Physics::Raycast(Screen::ScreenToWorldRay(w_pos, w_size, camera), camera->farPlane, camera, Screen::GetMouseNDC(w_pos, w_size, glm::vec2(camera->width, camera->height)), editor_ecs);
 	}
 
 	if (glfwGetMouseButton(Display::getInstance().window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS && 
@@ -101,12 +102,16 @@ void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& 
 					// Cast a ray from the mouse position
 					Screen::ScreenCastHit scHit = Screen::EntityAtMousePos
 					(camera, scene, Screen::GetMousePosInViewport(w_pos, w_size, glm::vec2(camera->width, camera->height)), select_fbo, select_rbo, select_tex);
-				
+					
+					Constants::DebugLog::Vec2("Mouse Pos", Screen::GetMousePosInViewport(w_pos, w_size, glm::vec2(camera->width, camera->height)));
+
 					if (scHit.hit) {
 						selected_entity = scHit.entity;
 						is_entity_selected = true;
+						std::cout << "Hit Entity: " << selected_entity << std::endl;
 					}
 					else {
+						// std::cout << "Did NOT Hit Entity" << std::endl;
 						is_entity_selected = false;
 					}
 				}

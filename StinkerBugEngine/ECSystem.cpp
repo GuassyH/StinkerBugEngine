@@ -23,10 +23,23 @@ void ECSystem::DestroyEntity(Entity& id) {
 	}
 
 	if (update_renderer) {
-		Renderer::getInstance().rebuildMeshLists(components);
+		Renderer::getInstance().queue_rebuild = true;
 	}
 }
 
 void ECSystem::DuplicateEntity(Entity& id) {
+	Entity& entity_id = nextEntity;	nextEntity++;
+	component_bits[entity_id] = 0b0;
 
+	entity_names[entity_id] = entity_names.find(id)->second + " (" + std::to_string(entity_id) + ")";
+	AddComponent<Transform>(entity_id, glm::vec3(0.0), glm::vec3(0.0), glm::vec3(1.0));
+	
+	for (auto& [type, map] : components) {
+		auto compPtr = map.find(id);
+		if (compPtr != map.end() && compPtr->second && type != typeid(Transform)) {
+			// Should add component
+		}
+	}
+	
+	entities.insert(entity_id);
 }

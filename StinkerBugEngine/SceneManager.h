@@ -1,12 +1,13 @@
 #ifndef SCENE_MANAGER_H
 #define SCENE_MANAGER_H
 
+#include <iostream>
 class Scene;
 
 // Stores an actice Scene
 class SceneManager {
 private:
-	Scene* activeScene = nullptr;
+	Scene* activeScene = nullptr; // Should be a smart pointer?
 	SceneManager() = default;
 public:
 	static SceneManager& getInstance();

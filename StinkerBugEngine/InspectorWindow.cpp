@@ -5,6 +5,8 @@
 #include "EntityObject.h"
 
 /// THIS IS THE ENTITY INSPECTOR
+
+
 char buff[255];
 void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	ImGui::Begin("Entity Inspector");
@@ -38,6 +40,7 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			auto compPtr = map.find(selected_entity);
 			if (compPtr != map.end() && compPtr->second && type != typeid(Transform)) {
 				Component* c = dynamic_cast<Component*>(compPtr->second.get());
+				if (!c->InspectorHasInit) { c->DrawOnInspectorInit(); c->InspectorHasInit = true; }
 				c->DrawOnInspector();
 				ImGui::Separator();
 			}

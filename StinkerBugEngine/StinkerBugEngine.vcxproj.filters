@@ -401,6 +401,9 @@
     <ClInclude Include="WeakPtrProxy.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
+    <ClInclude Include="SecondTest.h">
+      <Filter>Header Files\EntityBehaviours</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

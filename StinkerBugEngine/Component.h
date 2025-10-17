@@ -19,9 +19,12 @@ public:
 	WeakPtrProxy<Transform> transform = nullptr;
 	ECSystem* parent_ecs = nullptr;
 
+
+	bool InspectorHasInit = false;
 	Component() = default;
 	virtual ~Component() = default;
 	virtual void Init() {}
+	virtual void DrawOnInspectorInit() {}
 	virtual void DrawOnInspector() {}
 	virtual void DrawGizmo() {}
 };

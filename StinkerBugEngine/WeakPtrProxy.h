@@ -45,7 +45,7 @@ public:
 		return shared.get();
 	}
 
-	bool operator!() const { return weak.expired(); }
+	// bool operator!() const { return weak.expired(); }
 	explicit operator bool() const { return !weak.expired(); }
 	bool expired() const { return weak.expired(); }
 	std::shared_ptr<T> lock() const { return weak.lock(); }

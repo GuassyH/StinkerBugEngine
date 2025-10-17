@@ -26,8 +26,11 @@ private:
     Renderer() = default;
     Renderer(const Renderer&) = delete;
     Renderer& operator=(const Renderer&) = delete;
+
 public:
 	static Renderer& getInstance() { static Renderer instance; return instance; }
+
+	bool queue_rebuild;
 
 	std::vector<ObjectCall> opaque_meshes;
     std::vector<ObjectCall> transparent_meshes;

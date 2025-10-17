@@ -112,6 +112,7 @@
     <ClInclude Include="SceneManager.h" />
     <ClInclude Include="SceneViewWindow.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="SecondTest.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMapFBO.h" />
     <ClInclude Include="SphereCollider.h" />
@@ -228,7 +229,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\StinkerBugEngine\dependencies\include; imgui</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -246,7 +247,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\StinkerBugEngine\dependencies\include; imgui</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

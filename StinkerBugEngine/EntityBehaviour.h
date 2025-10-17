@@ -11,8 +11,8 @@
 
 #include "ComponentsList.h"
 #include "WeakPtrProxy.h"
+#include "Display.h"
 
-class EntityObject;
 
 class EntityBehaviour : public Component {
 public:

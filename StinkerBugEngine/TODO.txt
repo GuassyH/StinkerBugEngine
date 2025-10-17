@@ -5,13 +5,21 @@ TODO LIST
 (4) DONE --- Make UI entity tab/button its own thing, so that you can right click and delete for example
 (5) DONE --- UI docking (should just be importing the branch)
 (7) DONE --- Make a game window; should get the main camera and render from its view
+(8) DONE --- Go through everything and just polish polish polish
+(12) SEMI-DONE --- CLEANUP. Clean up all the code, remove redundancies. 
 
 (2) Sphere vs Box collision.
 
 (6) Make a scene / physics tab. So that you can change scene and physics settings
-(8) Go through everything and just polish polish polish
+
 (9) VERY ADVANCED. Make drag and drop with a file explorer. So you can drag and drop i.e. materials into mesh renderer
 
 (10) Go through the safety of everything. Make sure ptrs are good (first time using shared ptrs)
 (11) Fix Gizmos (Got wierd when fixing the transform stuff)
-(12) CLEANUP. Clean up all the code, remove redundancies. Maybe make the ShadowMap FBO global?
+
+(13) Multiple lights
+(14) Script layers, C# for coding entity behaviours that is run by the backend (C++)
+(15) Parenting
+
+(16) Drag and drop hierarchy (reorganisation on the fly as well as parenting)
+(17) Duplicate Entity

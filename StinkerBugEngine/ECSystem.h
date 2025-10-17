@@ -27,7 +27,8 @@ public:
 	std::unordered_map<Entity, std::string> entity_names;
 
 	std::unordered_map<Entity, std::shared_ptr<Collider>> colliders;
-	std::unordered_map<Entity, std::shared_ptr<EntityBehaviour>> entity_behaviours;
+	std::unordered_map<Entity, std::unordered_map<std::type_index, std::shared_ptr<EntityBehaviour>>> entity_behaviours;
+	//std::unordered_map<Entity, std::shared_ptr<EntityBehaviour>> entity_behaviours;
 
 	std::unordered_map<Entity, uint32_t> component_bits;
 	std::unordered_map<std::type_index, std::unordered_map<Entity, std::shared_ptr<Component>>> components;
@@ -53,24 +54,6 @@ public:
 		return (original_bits & id) == id;
 	}
 
-
-	template<typename T>
-	std::enable_if_t<std::is_base_of_v<Component, T>, bool> 
-		HasComponent(const Entity id) {
-		if constexpr (std::is_base_of_v<Collider, T>) {
-			auto it = colliders.find(id);
-			return (it != colliders.end());
-		}
-		else if constexpr(std::is_base_of_v<EntityBehaviour, T>) {
-			auto it = entity_behaviours.find(id);
-			return (it != entity_behaviours.end());
-		}
-		else {
-			return HasComponentBit(ComponentBit<T>(), id);
-		}
-		return false;
-	}
-
 	template<typename T>
 	std::unordered_map<Entity, std::shared_ptr<Component>>& 
 		GetComponentMap() {
@@ -78,20 +61,51 @@ public:
 	}
 
 	template<typename T>
+	std::enable_if_t<std::is_base_of_v<Component, T>, bool> 
+		HasComponent(const Entity id) {
+		if constexpr (std::is_base_of_v<Collider, T>) {
+			return colliders.contains(id);
+		}
+		else if constexpr(std::is_base_of_v<EntityBehaviour, T>) {
+			auto eIt = entity_behaviours.find(id);
+			if (eIt == entity_behaviours.end()) return false;
+			return eIt->second.contains(std::type_index(typeid(T)));
+		}
+		else {
+			return HasComponentBit(ComponentBit<T>(), id);
+		}
+		return false;
+	}
+
+
+	template<typename T>
 	std::enable_if_t<std::is_base_of_v<Component, T>, T&> 
 		GetComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) {
-			auto it = colliders.find(id);
-			if (it == colliders.end()) throw std::runtime_error("Collider not found for entity " + std::to_string(id));
-			T* derived = dynamic_cast<T*>(it->second.get());
-			if (!derived) throw std::runtime_error("Collider type mismatch for entity " + std::to_string(id));
+			if (!colliders.contains(id)) 
+				throw std::runtime_error("Collider not found for entity " + std::to_string(id));
+			
+			T* derived = dynamic_cast<T*>(colliders.find(id)->second.get());
+			
+			if (!derived) 
+				throw std::runtime_error("Collider type mismatch for entity " + std::to_string(id));
+			
 			return *derived;
 		}
 		else if constexpr(std::is_base_of_v<EntityBehaviour, T>) { // EntityBehaviour
-			auto it = entity_behaviours.find(id);
-			if (it == entity_behaviours.end()) throw std::runtime_error("EntityBehaviour not found for entity " + std::to_string(id));
-			T* derived = dynamic_cast<T*>(it->second.get());
-			if (!derived) throw std::runtime_error("EntityBehaviour type mismatch for entity " + std::to_string(id));
+			auto entityIt = entity_behaviours.find(id);
+			if (entityIt == entity_behaviours.end())
+				throw std::runtime_error("EntityBehaviour map not found for entity " + std::to_string(id));
+
+			auto& behaviourMap = entityIt->second;
+			auto behaviourIt = behaviourMap.find(std::type_index(typeid(T)));
+			if (behaviourIt == behaviourMap.end())
+				throw std::runtime_error("EntityBehaviour not found for entity " + std::to_string(id));
+
+			T* derived = dynamic_cast<T*>(behaviourIt->second.get());
+			if (!derived)
+				throw std::runtime_error("EntityBehaviour type mismatch for entity " + std::to_string(id));
+
 			return *derived;
 		}
 		else {
@@ -121,12 +135,19 @@ public:
 			return ptr;
 		}
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) { // EntityBehaviour
-			auto it = entity_behaviours.find(id);
-			if (it == entity_behaviours.end()) throw std::runtime_error("EntityBehaviour not found for entity " + std::to_string(id));
-			auto ptr = std::dynamic_pointer_cast<T>(it->second);
-			if (!ptr) {
-				throw std::runtime_error("Component type mismatch for entity " + std::to_string(id));
-			}
+			auto entityIt = entity_behaviours.find(id);
+			if (entityIt == entity_behaviours.end())
+				throw std::runtime_error("EntityBehaviour map not found for entity " + std::to_string(id));
+
+			auto& behaviourMap = entityIt->second;
+			auto behaviourIt = behaviourMap.find(std::type_index(typeid(T)));
+			if (behaviourIt == behaviourMap.end())
+				throw std::runtime_error("EntityBehaviour not found for entity " + std::to_string(id));
+
+			auto ptr = std::dynamic_pointer_cast<T>(behaviourIt->second);
+			if (!ptr)
+				throw std::runtime_error("EntityBehaviour type mismatch for entity " + std::to_string(id));
+
 			return ptr;
 		}
 		else {
@@ -152,7 +173,21 @@ public:
 			colliders[id] = std::make_shared<T>(std::forward<Args>(args)...);
 		}
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) {
-			entity_behaviours[id] = std::make_shared<T>(std::forward<Args>(args)...);
+			auto& behaviourMap = entity_behaviours[id];
+			auto typeKey = std::type_index(typeid(T));
+
+			// Prevent duplicates
+			if (behaviourMap.contains(typeKey))
+				throw std::runtime_error("EntityBehaviour of this type already exists for entity " + std::to_string(id));
+
+			// Construct and store
+			auto behaviour = std::make_shared<T>(std::forward<Args>(args)...);
+
+			// Optional: assign the entity if the behaviour tracks it
+			if constexpr (requires(T t) { t.entity = id; })
+				behaviour->entity = id;
+
+			behaviourMap[typeKey] = behaviour;
 		}
 		else {
 			auto& map = GetComponentMap<T>();
@@ -162,9 +197,7 @@ public:
 
 			map.insert(std::make_pair(id, std::make_shared<T>(std::forward<Args>(args)...)));
 
-			if constexpr (std::is_base_of_v<MeshRenderer, T>) {
-				Renderer::getInstance().rebuildMeshLists(components);
-			}
+			if constexpr (std::is_base_of_v<MeshRenderer, T>) { Renderer::getInstance().queue_rebuild = true; }
 		}
 
 
@@ -192,7 +225,7 @@ public:
 	std::enable_if_t<std::is_base_of_v<Component, T>, std::shared_ptr<T>> 
 		AddComponentPtr(const Entity id, Args&&... args) // Returns shared_ptr
 	{
-		AddComponent<T>(id);
+		AddComponent<T>(id, std::forward<Args>(args)...);
 		return GetComponentPtr<T>(id);
 	}
 
@@ -202,13 +235,23 @@ public:
 	std::enable_if_t<std::is_base_of_v<Component, T>, void> 
 		RemoveComponent(const Entity id) {
 		if constexpr (std::is_base_of_v<Collider, T>) { colliders.erase(id); return; }
-		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) { entity_behaviours.erase(id); return; }
+		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) {
+			auto entityIt = entity_behaviours.find(id);
+			if (entityIt == entity_behaviours.end()) return;
+
+			entityIt->second.erase(std::type_index(typeid(T)));
+			if (entityIt->second.empty())
+				entity_behaviours.erase(entityIt);
+			return;
+		}
 
 		if (HasComponent<T>(id)) {
 			auto& map = GetComponentMap<T>();
 			map.erase(id);
 
 			RemoveComponentBit(ComponentBit<T>(), id);
+
+			if constexpr (std::is_base_of_v<MeshRenderer, T>) { Renderer::getInstance().queue_rebuild = true; }
 		}
 		else {
 			std::cout << "Component not found - Nothing to remove" << std::endl;

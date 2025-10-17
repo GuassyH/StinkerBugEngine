@@ -84,14 +84,13 @@ void Camera::ShadowPass(glm::mat4 light_VP) {
 
 
 void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
-
 	// Opaque
 	for (auto& call : Renderer::getInstance().opaque_meshes) {
 		if (!call.transform || !call.renderer) { continue; }
 		call.renderer->model->render(call.renderer->material, call.transform.lock(), this, light);
 	}
 
-	Renderer::getInstance().sortTransparentMeshes(transform->position);
+	Renderer::getInstance().sortTransparentMeshes(this->transform->position);
 
 	// Transparent Not fully working
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
@@ -102,7 +101,10 @@ void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 
 
 void Camera::Render(Scene* scene) {
-	if (!transform) { std::cout << "No Transform" << std::endl; return; }
+	if (!this->transform) { std::cout << "No Transform" << std::endl; return; }
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 
 	UpdateMatrix();
 
@@ -138,19 +140,15 @@ void Camera::Render(Scene* scene) {
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	if (!output_texture) {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-
 		glViewport(0, 0, width, height);
 	}
 	else {
 		if (!CheckOuputFBO(false)) { std::cout << "The output_texture is null or FBO incomplete" << std::endl; return; }
 		glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glEnable(GL_DEPTH_TEST);
-
 		glViewport(0, 0, output_texture->imgWidth, output_texture->imgHeight);
 	}
 
@@ -158,7 +156,6 @@ void Camera::Render(Scene* scene) {
 	// should do opaque then transparent stuff
 	if (scene->HasMainLight()) {
 		if (renderSkybox) { scene->skybox_pass.Draw(*this, scene->main_light->transform->GetComponentPtr<Light>(), scene->main_light->transform.lock()); }
-		
 		for (FullScreenPass pass : scene->passes) {
 			pass.Draw(*this, scene->main_light->transform->GetComponentPtr<Light>(), scene->main_light->transform.lock());
 		}
@@ -168,7 +165,6 @@ void Camera::Render(Scene* scene) {
 	}
 	else {
 		if (renderSkybox) { scene->skybox_pass.Draw(*this, nullptr, nullptr); }
-		
 		for (FullScreenPass pass : scene->passes) {
 			pass.Draw(*this, scene->main_light->transform->GetComponentPtr<Light>(), scene->main_light->transform.lock());
 		}

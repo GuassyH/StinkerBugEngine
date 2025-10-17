@@ -3,8 +3,7 @@
 
 #include "glm/glm.hpp"
 #include "Shader.h"
-
-
+#include "Renderer.h"
 
 enum MaterialFlags_ {
 	MaterialFlags_None = 0,
@@ -30,9 +29,15 @@ public:
 	}
 	void RemoveFlag(uint32_t flag) {
 		flags &= ~flag;
+		if ((flag & MaterialFlags_Transparent) == MaterialFlags_Transparent) { // If one of the flags added is transparency, queue a rebuild
+			Renderer::getInstance().queue_rebuild = true;
+		}
 	}
 	void AddFlag(uint32_t flag) {
 		flags |= flag;
+		if ((flag & MaterialFlags_Transparent) == MaterialFlags_Transparent) { // If one of the flags added is transparency, queue a rebuild
+			Renderer::getInstance().queue_rebuild = true;
+		}
 	}
 
 	void Recompile() {
@@ -47,7 +52,8 @@ public:
 		flags = new_flags;
 		shader = Shader("default.vert", "default.frag", this);
 	}
-	Material(Shader& shader, uint32_t new_flags = 0) : flags(new_flags), shader(shader) {
+	Material(Shader& shader, uint32_t new_flags = 0) : shader(shader) {
+		flags = new_flags;
 		shader.Recompile(this);
 	}
 	~Material() = default;

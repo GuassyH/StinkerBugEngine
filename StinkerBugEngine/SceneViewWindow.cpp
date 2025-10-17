@@ -96,8 +96,8 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		ImGui::Image((ImTextureID)(intptr_t)cam_output->ID, imageSize, ImVec2(0, 1), ImVec2(1, 0));
 	
 		if (showStats) {
-			ImGui::SetNextWindowSize(ImVec2(220, 80));
-			ImGui::SetNextWindowPos(ImVec2(windowPos.x + windowSize.x - 220, windowPos.y + imagePosInWindow.y + 18)); // simplified
+			ImGui::SetNextWindowSize(ImVec2(150, 80));
+			ImGui::SetNextWindowPos(ImVec2(windowPos.x + windowSize.x - 150, windowPos.y + imagePosInWindow.y + 18)); // simplified
 			ImGui::Begin("Stats", &opened, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
 			ImGui::Text("Stats");
@@ -116,14 +116,14 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		ImGui::End(); std::cout << "No output texture!\n";
 	}
 
-	if (glfwGetKey(display.window, GLFW_KEY_F) == GLFW_PRESS) {
-		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
-			editorCamera->transform->position = scene.Scene_ECS.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
-		}
-	}
 
 	if (ImGui::IsWindowHovered()) {
 		editorCamera->SelectObject(scene, is_entity_selected, selected_entity, editor_ecs);
+		if (glfwGetKey(display.window, GLFW_KEY_F) == GLFW_PRESS) {
+			if (glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
+				editorCamera->transform->position = scene.Scene_ECS.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
+			}
+		}
 	}
 
 
