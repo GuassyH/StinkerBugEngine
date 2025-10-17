@@ -77,11 +77,19 @@ vec4 pointLight(LightObject lo) {
 	float dist = length(lightVec);
 
 	if(dist > lo.radius_o) { return vec4(0.0); }
+	
+	float dst_intensity = 0.0;
 
-	float dst_intensity = 1.0 / (lo.radius_o / dist);
-	dst_intensity = 1.0 - dst_intensity; 
+	if(dist < lo.radius_i){
+		dst_intensity = 1.0;
+	}
+	else{
+		float range = lo.radius_o - lo.radius_i;
+		float dist_scaled = (dist-lo.radius_i) / (range);
+		dst_intensity = 1.0 - dist_scaled;
+	}
+	
 
-	// dst_intensity = clamp(dst_intensity, 0.0, 1.0);
 	
 	// diffuse lighting
 	vec3 lightDirection = normalize(lightVec);
