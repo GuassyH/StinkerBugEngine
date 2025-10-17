@@ -6,11 +6,26 @@
 #include <iostream>
 #include "glm/glm.hpp"
 
+
 enum class LightTypes : uint8_t {
 	Directional = 0,
 	Spotlight = 1,
 	Point = 2,
 	Area = 3
+};
+
+struct LightObject {
+	int type;
+	int pad0;
+	float radius_i;
+	float radius_o;
+	float radius;
+	float intensity;
+	glm::vec3 pos;
+	float pad1;
+	glm::vec3 dir;
+	float pad2;
+	glm::vec4 color;
 };
 
 class Light : public Component {

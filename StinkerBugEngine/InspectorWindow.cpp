@@ -11,7 +11,7 @@ char buff[255];
 void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	ImGui::Begin("Entity Inspector");
 
-	if (scene.Scene_ECS.entities.find(selected_entity) != scene.Scene_ECS.entities.end() && is_entity_selected) {
+	if (scene.Scene_ECS.entities.contains(selected_entity) && is_entity_selected) {
 
 
 		std::ostringstream ss; ss << scene.Scene_ECS.entity_names.find(selected_entity)->second;

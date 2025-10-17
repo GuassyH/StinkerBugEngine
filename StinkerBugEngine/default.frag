@@ -1,14 +1,43 @@
 #version 460 core
 #extension GL_NV_gpu_shader5 : enable
 
+
 #ifdef LIT
 	uniform vec3 lightDir;
 	uniform vec4 lightColor;
+
+	// simple integer light type constants (GLSL enum-style portability)
+	const int LIGHT_DIRECTIONAL = 0;
+	const int LIGHT_SPOTLIGHT   = 1;
+	const int LIGHT_POINT       = 2;
+	const int LIGHT_AREA        = 3;
+
+	struct LightObject {
+		int type;
+		int pad0;
+		float radius_i;	
+		float radius_o;	
+		float radius;
+		float intensity;
+		vec3 pos;
+		float pad1;
+		vec3 dir;
+		float pad2;
+		vec4 color;
+	};
+
+	layout (std430, binding = 0) buffer LightObjectsBuffer {
+		LightObject lightObjs[];
+	};
+
+	uniform int numLights;
 #endif
+
 #ifdef SHADOW
 	uniform sampler2DShadow ShadowMap;
 	in vec4 shadowFragPos;
 #endif
+
 vec4 shadowColor = vec4(0.9, 0.9, 0.95, 1.0);
 
 uniform sampler2D diffuse0;
@@ -31,38 +60,103 @@ in vec3 normal;
 
 out vec4 fragColor;
 
+
 #ifdef LIT
-vec4 directionalLight(){
-	
-	// easy to understand
-	vec3 lightDirection = -lightDir;
-	
-	// diffuse lighting
-	lightDirection = normalize(lightDirection);
-	float diffuse = max(dot(normal, lightDirection), ambient);
+// Helper: get diffuse + specular contribution from a directioned light
+vec4 spotLight(LightObject lo){
+	// early out for zero intensity or nearly black color
+	if(lo.intensity <= 0.0 || length(lo.color.rgb) < 1e-6) { return vec4(0.0); }
 
-	// specular lighting
-	float specularLight = 0.5;
-	vec3 viewDirection = normalize(camPos - crntPos);
-	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0), 16.0);
-	float specular = specAmount * specularLight;
+	// ensure normals and directions are normalized
+	vec3 N = normalize(normal);
+	vec3 L = normalize(lo.dir); // direction from surface to light (caller should provide)
+	
+	// diffuse
+	float diff = max(dot(N, L), 0.0);
 
-	vec4 finalCol = vec4(ambient);
+	// specular (Blinn-Phong would be cheaper; keeping reflect-based original)
+	float specularStrength = 0.50;
+	vec3 V = normalize(camPos - crntPos);
+	vec3 R = reflect(-L, N);
+	float specFactor = pow(max(dot(V, R), 0.0), 16.0);
+	float specular = specFactor * specularStrength;
+
+	// angular falloff (spot cone)
+	float angle = dot(vec3(0.0, -1.0, 0.0), -L); // this assumes spotlight points down - adjust per-light
+	float spotAtt = clamp((angle - lo.radius_o) / (lo.radius_i - lo.radius_o), 0.0, 1.0);
+
+	vec4 finalCol = lo.color * (diff * spotAtt * lo.intensity + ambient);
+
 	if(hasSpecular){
-		finalCol = (lightColor * diffuse) + (texture(specular0, texCoords).r * specular);
-	}else{
-		finalCol = (lightColor * diffuse) + specular;
+		finalCol += vec4(texture(specular0, texCoords).r * specular * spotAtt, texture(specular0, texCoords).r * specular * spotAtt, texture(specular0, texCoords).r * specular * spotAtt, 0.0);
 	}
-	finalCol = max(finalCol, ambient);
+
+	// ensure final color is at least ambient in rgb
+	finalCol.rgb = max(finalCol.rgb, vec3(ambient));
 	finalCol.a = 1.0;
 	return finalCol;
-};
+}
+
+vec4 pointLight(LightObject lo){
+	if(lo.intensity <= 0.0 || length(lo.color.rgb) < 1e-6) { return vec4(0.0); }
+
+	vec3 N = normalize(normal);
+	vec3 L = normalize(lo.dir);
+
+	// simple distance attenuation (tweak a/b as needed)
+	float dist = length(lo.pos - crntPos);
+	float a = 0.5;
+	float b = 0.01;
+	float att = 1.0 / (a * dist * dist + b * dist + 1.0);
+
+	// diffuse
+	float diff = max(dot(N, L), 0.0);
+
+	// specular
+	float specularStrength = 0.50;
+	vec3 V = normalize(camPos - crntPos);
+	vec3 R = reflect(-L, N);
+	float specFactor = pow(max(dot(V, R), 0.0), 16.0);
+	float specular = specFactor * specularStrength;
+
+	vec4 finalCol = lo.color * (diff * att * lo.intensity + ambient);
+
+	if(hasSpecular){
+		float s = texture(specular0, texCoords).r * specular * att * lo.intensity;
+		finalCol += vec4(s, s, s, 0.0);
+	}
+
+	finalCol.rgb = max(finalCol.rgb, vec3(ambient));
+	finalCol.a = 1.0;
+	return finalCol;
+}
+
+vec4 directionalLight(){
+	vec3 N = normalize(normal);
+	vec3 L = normalize(-lightDir); // direction from surface to light
+	float diff = max(dot(N, L), ambient); // keep at least ambient
+
+	// specular
+	float specularStrength = 0.5;
+	vec3 V = normalize(camPos - crntPos);
+	vec3 R = reflect(-L, N);
+	float specFactor = pow(max(dot(V, R), 0.0), 16.0);
+	float specular = specFactor * specularStrength;
+
+	vec3 rgb = (lightColor.rgb * diff);
+	if(hasSpecular){
+		float s = texture(specular0, texCoords).r * specular;
+		rgb += vec3(s);
+	}
+
+	rgb = max(rgb, vec3(ambient));
+	vec4 finalCol = vec4(rgb, 1.0);
+	return finalCol;
+}
 #endif
 
 #ifdef SHADOW // I need to somehow smoothe the lines
-float ShadowPCF(vec3 projCoords)
-{
+float ShadowPCF(vec3 projCoords){
     float shadow = 0.0;
     float bias = 0.0002;
     vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
@@ -78,43 +172,81 @@ float ShadowPCF(vec3 projCoords)
 }
 #endif
 
+void main()
+{
+    // === Base color ===
+    vec4 baseColor = hasDiffuse ? texture(diffuse0, texCoords) * color : color;
 
-void main(){
-	// if(color.a == 0.0 && isTransparent) { discard; }
+    // Initialize lighting and depth factor
+    vec4 lightVal = vec4(1.0);
+    float depthVal = 1.0;
 
-	vec4 baseColor = hasDiffuse ? texture(diffuse0, texCoords) * color : color;
-	vec4 lightVal = vec4(1.0);
-	float depthVal = 1.0;
+    // === Optional depth-based fade (temporary separation) ===
+    #ifdef DEPTH
+        float dist = length(camPos - crntPos);
+        depthVal = 1.0 - clamp(dist / 1000.0, 0.0, 1.0);
+    #endif
 
+    // === Lighting pass ===
+    #ifdef LIT
+        if (lightEnabled)
+        {
+            lightVal = directionalLight();
 
-	#ifdef DEPTH
-		depthVal = 1.0 - (min(length(camPos - crntPos), 1000.0) / 1000.0); // Seperates object a bit, temporary
-	#endif
-
-	#ifdef LIT 
-		#ifdef SHADOW
-			if(lightEnabled) { 
-				lightVal = directionalLight(); 
-				// it looks worse with?
-				// vec3 shadowAcneBias = lightDir * 0.001;				
-				vec3 shadowAcneBias = vec3(0);				
+			#ifdef SHADOW
 				vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
-				projCoords += shadowAcneBias;
-				projCoords = projCoords * 0.5 + 0.5;
+				projCoords = projCoords * 0.5 + 0.5; // NDC -> [0,1]
 				bool outside = any(lessThan(projCoords.xy, vec2(0.0))) || any(greaterThan(projCoords.xy, vec2(1.0))) || projCoords.z > 1.0 || projCoords.z < 0.0;
-				float shadow = outside ? 1.0 : max(ShadowPCF(projCoords), ambient); 
+				float shadowFactor = 1.0;
 
-				if(shadow < 1.0){
-					lightVal *= shadow;
-					lightVal.a = 1.0;
+				if(!outside){
+					// epsilon to handle precision issues
+					float eps = 0.001;
+
+					// distance from map edge
+					float edgeDist = min(min(projCoords.x, 1.0 - projCoords.x),
+										 min(projCoords.y, 1.0 - projCoords.y));
+
+					// factor 0.0 at edge, 1.0 inside
+					float edgeFade = smoothstep(0.0, eps, edgeDist);
+
+					// factor 0.0 if depth outside 0..1
+					float depthFade = smoothstep(1.0 + eps, 1.0, projCoords.z);
+
+					// normal PCF shadow sampling
+					float shadowPCF = ShadowPCF(projCoords);
+
+					// combine: near edge or outside = more shadow, inside = normal PCF
+					shadowFactor = mix(ambient, shadowPCF, edgeFade * depthFade);
 				}
-			}else{
-				lightVal *= ambient;
-				lightVal.a = 1.0;
+				// apply to light
+				lightVal.rgb *= max(shadowFactor, ambient);
+			#endif
+
+			for (int i = 0; i < numLights; i++) {
+				LightObject lo = lightObjs[i];
+				// Calculate Light;
+				switch(lo.type){
+					case LIGHT_SPOTLIGHT:
+						lightVal += spotLight(lo);
+						break;
+					case LIGHT_POINT:
+						lightVal += pointLight(lo);
+						break;
+					default:
+						break;
+				}
 			}
-		#endif
+        }
+        else
+        {
+            lightVal = vec4(vec3(ambient), 1.0);
+        }
 	#endif
 
-	fragColor = baseColor * lightVal * depthVal;
-	fragColor.a = isTransparent ? fragColor.a : 1.0;
+    // === Final color composition ===
+    fragColor = baseColor * lightVal * depthVal;
+
+    // Opaque unless marked transparent
+    fragColor.a = isTransparent ? fragColor.a : 1.0;
 }

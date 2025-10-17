@@ -6,7 +6,7 @@ void EntitySelector::Draw(Scene& scene, Entity& ID, bool& is_entity_selected, En
 
 
 	if(ImGui::Selectable(ss.str().c_str(), selected_entity == ID && is_entity_selected)) {
-		if (scene.Scene_ECS.entities.find(ID) == scene.Scene_ECS.entities.end()) {
+		if (!scene.Scene_ECS.entities.contains(ID)) {
 			is_entity_selected = false;
 			selected_entity = ID;
 		}

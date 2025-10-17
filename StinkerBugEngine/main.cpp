@@ -57,8 +57,8 @@ int main(void) {
 	EntityObject Floor = scene.CreateEntity("Floor");
 	Floor.transform->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
 	Floor.transform->scale = glm::vec3(250.0f);
-	Floor.transform->AddComponent<TestScript>();
-	Floor.transform->AddComponent<SecondTest>();
+	// Floor.transform->AddComponent<TestScript>();
+	// Floor.transform->AddComponent<SecondTest>();
 
 
 	Scene* active_scene = &sceneManager.GetActiveScene();

@@ -64,7 +64,7 @@ void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& sele
 	selected_entity_helper.id = selected_entity;
 
 	// If there isnt an entity selected then skip drawing gizmos, reset framebuffer 
-	if (!is_entity_selected || scene.Scene_ECS.entities.find(selected_entity) == scene.Scene_ECS.entities.end()) { glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
+	if (!is_entity_selected || !scene.Scene_ECS.entities.contains(selected_entity)) { glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);

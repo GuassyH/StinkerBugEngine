@@ -4,8 +4,8 @@
 
 void ECSystem::DestroyEntity(Entity& id) {
 	bool update_renderer = false;
-	if (GetComponentMap<MeshRenderer>().find(id) != GetComponentMap<MeshRenderer>().end()) {
-		if (components[std::type_index(typeid(GizmoComponent))].find(id) == components[std::type_index(typeid(GizmoComponent))].end()) {
+	if (GetComponentMap<MeshRenderer>().contains(id)) {
+		if (!GetComponentMap<GizmoComponent>().contains(id)) {
 			update_renderer = true;
 		}
 	}

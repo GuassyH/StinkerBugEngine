@@ -126,12 +126,12 @@ public:
 		GetComponentPtr(const Entity id) // Return the std::shared_ptr
 	{
 		if constexpr (std::is_base_of_v<Collider, T>) {
-			auto it = colliders.find(id);
-			if (it == colliders.end()) throw std::runtime_error("Collider not found for entity " + std::to_string(id));
-			auto ptr = std::dynamic_pointer_cast<T>(it->second);
-			if (!ptr) {
+			if (colliders.contains(id)) throw std::runtime_error("Collider not found for entity " + std::to_string(id));
+
+			auto ptr = std::dynamic_pointer_cast<T>(colliders.find(id)->second);
+			if (!ptr) 
 				throw std::runtime_error("Component type mismatch for entity " + std::to_string(id));
-			}
+			
 			return ptr;
 		}
 		else if constexpr (std::is_base_of_v<EntityBehaviour, T>) { // EntityBehaviour
@@ -182,11 +182,6 @@ public:
 
 			// Construct and store
 			auto behaviour = std::make_shared<T>(std::forward<Args>(args)...);
-
-			// Optional: assign the entity if the behaviour tracks it
-			if constexpr (requires(T t) { t.entity = id; })
-				behaviour->entity = id;
-
 			behaviourMap[typeKey] = behaviour;
 		}
 		else {

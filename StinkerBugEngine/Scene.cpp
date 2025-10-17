@@ -63,12 +63,12 @@ void Scene::ResolveCollision(CollisionInfo collision_info, RigidBody& rb1, Rigid
 // Check for collisions between all colliders
 // Add not double checking
 void Scene::CheckCollisions(uint32_t id) {
-	if (Scene_ECS.colliders.find(id) != Scene_ECS.colliders.end()) {
+	if (Scene_ECS.colliders.contains(id)) {
 		auto& this_collider = Scene_ECS.colliders[id];
 		for (auto& [id2, other_collider] : Scene_ECS.colliders) {
 			// if both ptrs arent null and arent the same collider
 			if (this_collider != other_collider) {
-				if (Scene_ECS.GetComponentMap<RigidBody>().find(id2) != Scene_ECS.GetComponentMap<RigidBody>().end()) {
+				if (Scene_ECS.GetComponentMap<RigidBody>().contains(id2)) {
 					CollisionInfo collision_info = this_collider->CheckCollisions(*other_collider);
 					if (collision_info.did_collide) {
 						ResolveCollision(collision_info, Scene_ECS.GetComponent<RigidBody>(id), Scene_ECS.GetComponent<RigidBody>(id2));
@@ -96,12 +96,12 @@ void Scene::UpdatePhysics() {
 
 // Check if a main light exists (directional light)
 bool Scene::HasMainLight() {
-	return (main_light && Scene_ECS.GetComponentMap<Light>().find(main_light->transform->entity) != Scene_ECS.GetComponentMap<Light>().end());
+	return (main_light && Scene_ECS.GetComponentMap<Light>().contains(main_light->transform->entity));
 }
 
 // Check if a main camera exists
 bool Scene::HasMainCamera() {
-	return (main_camera && Scene_ECS.GetComponentMap<Camera>().find(main_camera->transform->entity) != Scene_ECS.GetComponentMap<Camera>().end());
+	return (main_camera && Scene_ECS.GetComponentMap<Camera>().contains(main_camera->transform->entity));
 }
 
 // Check all mains and set needed data
