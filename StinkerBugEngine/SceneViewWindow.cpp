@@ -15,7 +15,7 @@ void SceneViewWindow::Init(ECSystem& editor_ecs) {
 	editorCamera->transform->rotation = glm::vec3(0.0f, 180.0f, 0.0f);
 
 	editorCamera->camera->output_texture = cam_output;
-	// editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene(), editor_ecs);
+	editorCamera->AddGizmoEntities(SceneManager::getInstance().GetActiveScene(), editor_ecs);
 }
  
 
@@ -40,6 +40,8 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::Selectable("Grid", &editorCamera->showGrid, ImGuiSelectableFlags_None, ImVec2(30, 20));
 	ImGui::SameLine();
 	ImGui::Selectable("Render Shadows", &editorCamera->camera->renderShadows, ImGuiSelectableFlags_None, ImVec2(100, 20));
+	ImGui::SameLine();
+	ImGui::Selectable("Local Gizmos", &editorCamera->gizmosLocalSpace, ImGuiSelectableFlags_None, ImVec2(80, 20));
 	ImGui::SameLine();
 	ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 50);
 	ImGui::Selectable("Stats", &showStats, ImGuiSelectableFlags_None, ImVec2(35, 20)); // SHOULD BE MENU?
@@ -68,13 +70,14 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 		ImGui::SetCursorPos(ImVec2(0, 0));
 
-		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
-			editorCamera->w_size.x = imageSize.x;
-			editorCamera->w_size.y = imageSize.y;
+		editorCamera->w_size.x = imageSize.x;
+		editorCamera->w_size.y = imageSize.y;
 		
-			// Due to the toolbar this is inaccurate, needs fixing
-			editorCamera->w_pos.x = (windowPos.x + imagePosInWindow.x);
-			editorCamera->w_pos.y = (windowPos.y + imagePosInWindow.y);
+		// Due to the toolbar this is inaccurate, needs fixing
+		editorCamera->w_pos.x = (windowPos.x + imagePosInWindow.x);
+		editorCamera->w_pos.y = (windowPos.y + imagePosInWindow.y);
+
+		if (ImGui::IsWindowHovered() && glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS) {
 
 			if (firstRightClick) {
 				glfwSetCursorPos(display.window, glm::roundEven((imageSize.x / 2.0f) + windowPos.x + imagePosInWindow.x), glm::roundEven((imageSize.y / 2.0f) + windowPos.y + imagePosInWindow.y));

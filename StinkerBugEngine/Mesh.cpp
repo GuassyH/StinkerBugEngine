@@ -81,7 +81,7 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 	}
 
 	Renderer::getInstance().bindLightsBuffer();
-	std::cout << std::to_string(Renderer::getInstance().GetNumLights()) << " : " << std::to_string(glfwGetTime()) << std::endl;
+	// std::cout << std::to_string(Renderer::getInstance().GetNumLights()) << " : " << std::to_string(glfwGetTime()) << std::endl;
 	material->shader.SetInt("numLights", Renderer::getInstance().GetNumLights());
 
 	material->shader.SetInt("hasDiffuse", diffuseIdx > 0);

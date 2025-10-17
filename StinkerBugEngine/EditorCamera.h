@@ -36,6 +36,7 @@ public:
 	std::vector<Gizmos::Gizmo> pre_pass_gizmos = {};
 	std::vector<Gizmos::Gizmo> post_pass_gizmos = {};
 
+	bool gizmosLocalSpace = true;
 	bool showGrid = false;
 
 	void Init();

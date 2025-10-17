@@ -18,17 +18,17 @@ void EditorCamera::Init() {
 }
 
 void EditorCamera::AddGizmoEntities(Scene& scene, ECSystem& editor_ecs) {
-	//Gizmos::Gizmo infinite_grid = Gizmos::InfiniteGrid(editor_ecs);
+	Gizmos::Gizmo infinite_grid = Gizmos::InfiniteGrid(editor_ecs);
 
-	//pre_pass_gizmos.push_back(infinite_grid);
+	pre_pass_gizmos.push_back(infinite_grid);
 
-	//Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle(editor_ecs);
-	//Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle(editor_ecs);
-	//Gizmos::Gizmo rotate_gizmo = Gizmos::RotateHandle(editor_ecs);
+	Gizmos::Gizmo transform_gizmo = Gizmos::TransformHandle(editor_ecs);
+	Gizmos::Gizmo scale_gizmo = Gizmos::ScaleHandle(editor_ecs);
+	Gizmos::Gizmo rotate_gizmo = Gizmos::RotateHandle(editor_ecs);
 
-	//post_pass_gizmos.push_back(transform_gizmo);
-	//post_pass_gizmos.push_back(scale_gizmo);
-	//post_pass_gizmos.push_back(rotate_gizmo);
+	post_pass_gizmos.push_back(transform_gizmo);
+	post_pass_gizmos.push_back(scale_gizmo);
+	post_pass_gizmos.push_back(rotate_gizmo);
 }
 
 
@@ -50,21 +50,22 @@ void EditorCamera::PrePass(Scene& scene, ECSystem& editor_ecs) {
 
 void EditorCamera::Render(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	camera->Render(&scene);
-	// PrePass(scene, editor_ecs);
-	// PostPass(scene, is_entity_selected, selected_entity, editor_ecs);
+	PrePass(scene, editor_ecs);
+	PostPass(scene, is_entity_selected, selected_entity, editor_ecs);
 }
 
 
 void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
-	/*
+	
 	// Rebind the framebuffer to the editor camera's FBO
 	glBindFramebuffer(GL_FRAMEBUFFER, camera->outputFBO);
 	
-	selected_entity_helper.ecs = &scene.Scene_ECS;
-	selected_entity_helper.id = selected_entity;
 
 	// If there isnt an entity selected then skip drawing gizmos, reset framebuffer 
 	if (!is_entity_selected || !scene.Scene_ECS.entities.contains(selected_entity)) { glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
+	if (!scene.Scene_ECS.HasComponent<Transform>(selected_entity)) { glBindFramebuffer(GL_FRAMEBUFFER, 0); return; }
+	selected_entity_helper.transform = scene.Scene_ECS.GetComponentPtr<Transform>(selected_entity);
+
 
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
@@ -75,11 +76,12 @@ void EditorCamera::PostPass(Scene& scene, bool& is_entity_selected, Entity& sele
 		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_S) == GLFW_PRESS) { selected_gizmo = 1; }
 		if (glfwGetKey(Display::getInstance().window, GLFW_KEY_R) == GLFW_PRESS) { selected_gizmo = 2; }
 	}
-	post_pass_gizmos[selected_gizmo].Draw(camera, scene, transform, selected_entity_helper, true);
+	
+	post_pass_gizmos[selected_gizmo].Draw(camera, scene, transform, selected_entity_helper, gizmosLocalSpace);
 
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	*/
+	
 }
 
 void EditorCamera::SelectObject(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
