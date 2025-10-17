@@ -58,7 +58,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			scene.Scene_ECS.entity_names[new_ntt.transform->entity] = "Point Light (" + std::to_string(new_ntt.transform->entity) + ")";
 			new_ntt.transform->AddComponent<Light>();
 			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Point;
-			new_ntt.transform->GetComponent<Light>().radius_o = 1.0f;
+			new_ntt.transform->GetComponent<Light>().radius_o = 10.0f;
 			new_ntt.transform->GetComponent<Light>().radius_i = 0.5f;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();

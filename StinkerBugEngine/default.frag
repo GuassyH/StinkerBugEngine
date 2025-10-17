@@ -207,25 +207,25 @@ void main()
 				lightVal.rgb *= max(shadowFactor, ambient);
 			#endif
 
-			for (int i = 0; i < numLights; i++) {
-				LightObject lo = lightObjs[i];
-				// Calculate Light;
-				switch(lo.type){
-					case LIGHT_SPOTLIGHT:
-						lightVal *= spotLight(lo);
-						break;
-					case LIGHT_POINT:
-						lightVal += pointLight(lo);
-						break;
-					default:
-						break;
-				}
-			}
         }
         else
         {
             lightVal = vec4(vec3(ambient), 1.0);
         }
+		for (int i = 0; i < numLights; i++) {
+			LightObject lo = lightObjs[i];
+			// Calculate Light;
+			switch(lo.type){
+				case LIGHT_SPOTLIGHT:
+					lightVal *= spotLight(lo);
+					break;
+				case LIGHT_POINT:
+					lightVal += pointLight(lo);
+					break;
+				default:
+					break;
+			}
+		}
 	#endif
 
     // === Final color composition ===

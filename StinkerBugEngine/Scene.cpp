@@ -96,12 +96,16 @@ void Scene::UpdatePhysics() {
 
 // Check if a main light exists (directional light)
 bool Scene::HasMainLight() {
-	return (main_light && Scene_ECS.GetComponentMap<Light>().contains(main_light->transform->entity));
+	if (!main_light) { return false; }
+	if (!main_light->transform) { return false; }
+	return (main_light && Scene_ECS.HasComponent<Light>(main_light->transform->entity));
 }
 
 // Check if a main camera exists
 bool Scene::HasMainCamera() {
-	return (main_camera && Scene_ECS.GetComponentMap<Camera>().contains(main_camera->transform->entity));
+	if (!main_camera) { return false; }
+	if (!main_camera->transform) { return false; }
+	return (main_camera && Scene_ECS.HasComponent<Camera>(main_camera->transform->entity));
 }
 
 // Check all mains and set needed data
@@ -113,8 +117,10 @@ void Scene::CheckMains() {
 		for (auto& [id, lightPtr] : Scene_ECS.GetComponentMap<Light>()) {
 			Light* light = dynamic_cast<Light*>(lightPtr.get());
 			if (light->light_type == LightTypes::Directional) {
-				main_light->transform = Scene_ECS.GetComponentPtr<Transform>(id);
-				break;
+				if (Scene_ECS.HasComponent<Transform>(id)) {
+					main_light->transform = Scene_ECS.GetComponentPtr<Transform>(id);
+					break;
+				}
 			}
 		}
 	}
@@ -123,9 +129,11 @@ void Scene::CheckMains() {
 			main_camera = new EntityObject();
 		}
 		for (auto& [id, camPtr] : Scene_ECS.GetComponentMap<Camera>()) {
-			std::cout << "new main_cam id set: " << id << "\n";
-			main_camera->transform = Scene_ECS.GetComponentPtr<Transform>(id);
-			break;
+			if (Scene_ECS.HasComponent<Transform>(id)) {
+				std::cout << "new main_cam id set: " << id << "\n";
+				main_camera->transform = Scene_ECS.GetComponentPtr<Transform>(id);
+				break;
+			}
 		}
 	}
 }
