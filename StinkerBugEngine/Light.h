@@ -39,6 +39,9 @@ public:
 	float intensity = 1.0f;
 
 	float radius = 1.0f;
+	
+	// Directional
+	glm::vec3 ambient = glm::vec3(0.4f);
 
 	// Spotlight
 	float angle = 30.0f;
@@ -61,6 +64,9 @@ public:
 			ImGui::Spacing(); ImGui::Spacing(); ImGui::Spacing();
 
 			switch(light_type) {
+			case LightTypes::Directional:
+				ImGui::DragFloat3("Ambient", &ambient.x, 0.1f, 0.0f, 1.0f);
+				break;
 			case LightTypes::Spotlight:
 				ImGui::DragFloat("Range", &radius, 0.1f, 0.0f);
 				ImGui::DragFloat("Angle", &angle, 0.1f, 0.0f);

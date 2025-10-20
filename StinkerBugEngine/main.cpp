@@ -24,7 +24,7 @@
 
 int main(void) {
 
-	try {
+	// try {
 
 	Display& display = Display::getInstance();
 	if (display.Init(2344, 1280, "Stinker Bug Engine") == -1) { std::runtime_error("Display failed to Initialize"); }
@@ -54,7 +54,7 @@ int main(void) {
 	ghost.transform->GetComponent<MeshRenderer>().model->loadModel("assets/models/cute_ghost/scene.gltf");
 	ghost.transform->rotation = glm::vec3(-90.0f, 0.0f, 0.0f);
 	ghost.transform->position.y = -0.05f;
-	ghost.transform->scale = glm::vec3(2);
+	ghost.transform->scale = glm::vec3(1);
 
 	EntityObject Floor = scene.CreateEntity("Floor");
 	Floor.transform->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Shadow));
@@ -69,7 +69,7 @@ int main(void) {
 		display.BeginFrame();
 
 		active_scene->Render();
-		ui.imgui_render(*active_scene);
+		ui.imgui_render(active_scene);
 
 		display.EndFrame();
 	}
@@ -78,10 +78,10 @@ int main(void) {
 	ui.imgui_shutdown();
 	display.~Display();
 
-	} catch (const std::exception& e) {
-		std::cerr << "Caught exception: " << e.what() << std::endl;
-		return -1;
-	}
+	// } catch (const std::exception& e) {
+		// std::cerr << "Caught exception: " << e.what() << std::endl;
+		// return -1;
+	// }
 
 	return 0;
 }

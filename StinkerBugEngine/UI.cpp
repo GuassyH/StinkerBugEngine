@@ -40,7 +40,8 @@ void UI::imgui_init() {
 }
 
 
-void UI::imgui_render(Scene& scene) {
+void UI::imgui_render(Scene* scene) {
+	if (!scene) { std::runtime_error("ImGui tried to render with a null scene"); }
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -49,7 +50,7 @@ void UI::imgui_render(Scene& scene) {
 	int mode = 0;
 	glfwGetInputMode(display.window, mode);
 
-	topBarWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	topBarWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
 
 
 	static bool opt_fullscreen = true;
@@ -89,11 +90,11 @@ void UI::imgui_render(Scene& scene) {
 	}
 
 
-	gameWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
-	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
-	hierarchyWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
-	inspectorWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
-	consoleWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	gameWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
+	sceneViewWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
+	hierarchyWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
+	inspectorWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
+	consoleWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
 	assetWindow.Draw();
 
 	ImGui::End();

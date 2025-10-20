@@ -11,7 +11,9 @@ uniform mat4 modelMatrix;
 uniform mat4 camMatrix; // proj * view
 uniform mat4 rotationMatrix;
 uniform mat4 light_VP;
+uniform vec3 lightDirection;
 
+out vec3 lightDir;
 out vec3 vertNormal;
 out vec2 texCoords;
 out vec4 shadowFragPos;
@@ -27,7 +29,8 @@ void main(){
 		// normal = ;
 	}
 	
+	lightDir = lightDirection;
 
-	shadowFragPos = light_VP * vec4(crntPos, 1.0);
+	shadowFragPos = light_VP * vec4(crntPos - (lightDirection * 0.1), 1.0);
 	texCoords = aTex;
 }

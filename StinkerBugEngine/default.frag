@@ -3,7 +3,7 @@
 
 
 #ifdef LIT
-	uniform vec3 lightDir;
+	in vec3 lightDir;
 	uniform vec4 lightColor;
 
 	// simple integer light type constants (GLSL enum-style portability)
@@ -53,7 +53,7 @@ uniform bool lightEnabled;
 
 uniform vec3 camPos;
 uniform vec4 color;
-uniform float ambient = 0.2;
+uniform vec3 ambient;
 
 
 in vec3 crntPos;
@@ -160,7 +160,8 @@ vec4 pointLight(LightObject lo) {
 vec4 directionalLight(){
 	vec3 N = normalize(normal);
 	vec3 L = normalize(-lightDir); // direction from surface to light
-	float diff = max(dot(N, L), ambient); // keep at least ambient
+
+	float NdotL = max(dot(N,L), 0.0);
 
 	// specular
 	float specularStrength = 0.5;
@@ -169,33 +170,37 @@ vec4 directionalLight(){
 	float specFactor = pow(max(dot(V, R), 0.0), 16.0);
 	float specular = specFactor * specularStrength;
 
-	vec3 rgb = (lightColor.rgb * diff);
+	vec3 rgb = lightColor.rgb * NdotL;
 	if(hasSpecular){
 		float s = texture(specular0, texCoords).r * specular;
 		rgb += vec3(s);
 	}
 
-	rgb = max(rgb, vec3(ambient * 2.0));
 	vec4 finalCol = vec4(rgb, 1.0);
 	return finalCol;
 }
 #endif
 
 #ifdef SHADOW // I need to somehow smoothe the lines
+
 float ShadowPCF(vec3 projCoords){
-    float shadow = 0.0;
+    vec3 result = vec3(0.0);
+	float shadow = 0.0;
     float bias = 0.0002;
     vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
 
-    for(int x = -1; x <= 1; ++x) {
-        for(int y = -1; y <= 1; ++y) {
-            shadow += texture(ShadowMap, vec3(projCoords.xy + vec2(x,y) * texelSize, projCoords.z - bias));
-        }
-    }
+	int samples = 3;
+	for(int x=-1; x<=1; ++x){
+		for(int y=-1; y<=1; ++y){
+			vec2 offset = vec2(x, y) * texelSize;
+			shadow += texture(ShadowMap, vec3(projCoords.xy + offset, projCoords.z - bias));
+		}
+	}
+	shadow /= float(samples * samples);
 
-    shadow /= 9.0;
     return shadow;
 }
+
 #endif
 
 void main()
@@ -213,21 +218,26 @@ void main()
             lightVal = directionalLight();
 
 			#ifdef SHADOW
-				vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
-				projCoords = projCoords * 0.5 + 0.5; // NDC -> [0,1]
-				bool outside = any(lessThan(projCoords.xy, vec2(0.0))) || any(greaterThan(projCoords.xy, vec2(1.0))) || projCoords.z > 1.0 || projCoords.z < 0.0;
-				float shadowFactor = 1.0;
+				if(dot(normal, lightDir) < 0.0) { 
+					vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
+					projCoords = projCoords * 0.5 + 0.5; // NDC -> [0,1]
+					bool outside = any(lessThan(projCoords.xy, vec2(0.0))) || any(greaterThan(projCoords.xy, vec2(1.0))) || projCoords.z > 1.0 || projCoords.z < 0.0;
+					float shadowFactor = 1.0;
 
-				shadowFactor = outside ? 1.0 : ShadowPCF(projCoords);
+					shadowFactor = outside ? shadowFactor : ShadowPCF(projCoords);
 
-				// apply to light
-				lightVal.rgb *= max(shadowFactor, ambient * 2.0);
+
+					// apply to light
+					if(shadowFactor < 1.0){
+						lightVal.rgb *= ambient;
+					}
+				}
 			#endif
         }
-        else
-        {
+        else{
             lightVal = vec4(vec3(ambient), 1.0);
         }
+
 		for (int i = 0; i < numLights; i++) {
 			LightObject lo = lightObjs[i];
 			// Calculate Light;
@@ -238,19 +248,18 @@ void main()
 				case LIGHT_POINT:
 					lightVal += pointLight(lo);
 					break;
+				case LIGHT_AREA:
+					break;
 				default:
 					break;
 			}
 		}
+
 	#endif
 
     // === Final color composition ===
     fragColor = baseColor * lightVal;
-
-	// float gamma = 2.2;
-	// vec3 gammaCor = pow(fragColor.rgb, vec3(1.0 / gamma)); 
-
-	// fragColor.rgb = gammaCor;
+	// fragColor.rgb += ambient;
 
     // Opaque unless marked transparent
     fragColor.a = isTransparent ? fragColor.a : 1.0;

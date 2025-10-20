@@ -29,7 +29,7 @@ public:
 	float gravity = -9.82f;
 
 	// Environment
-	float ambient = 0.2f;
+	glm::vec3 ambient = glm::vec3(0.2f);
 	EntityObject* main_light = nullptr;
 	EntityObject* main_camera = nullptr;
 	ECSystem Scene_ECS;

@@ -48,7 +48,7 @@ public:
 	ECSystem Editor_ECS;
 
 	void imgui_init();
-	void imgui_render(Scene& scene);
+	void imgui_render(Scene* scene);
 	void imgui_shutdown();
 
 };

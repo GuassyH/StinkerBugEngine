@@ -123,11 +123,12 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 		// set dir light uniforms
 		if (light) { material->shader.SetMat4("light_VP", light->light_VP); }
 		else { material->shader.SetMat4("light_VP", glm::mat4(1.0f)); }
-		material->shader.SetVec3("lightDir", l_dir);
+		material->shader.SetVec3("lightDirection", l_dir);
 		material->shader.SetVec4("lightColor", glm::vec4(l_col, 1.0f));
 		material->shader.SetBool("lightEnabled", light != nullptr);
 	}
-	material->shader.SetFloat("ambient", SceneManager::getInstance().GetActiveScene().ambient);
+	glm::vec3& scene_amb = SceneManager::getInstance().GetActiveScene().ambient;
+	material->shader.SetVec3("ambient", light != nullptr ? light->ambient : scene_amb);
 
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);
