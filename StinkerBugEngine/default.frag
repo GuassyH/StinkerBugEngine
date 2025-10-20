@@ -189,8 +189,7 @@ float ShadowPCF(vec3 projCoords){
 	float shadow = 0.0;
     float bias = 0.0002;
     vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
-
-	/*
+	
 	int samples = 3;
 	for(int x=-1; x<=1; ++x){
 		for(int y=-1; y<=1; ++y){
@@ -199,12 +198,8 @@ float ShadowPCF(vec3 projCoords){
 		}
 	}
 	shadow /= float(samples * samples);
-	*/
 
-	shadow += texture(ShadowMap, vec3(projCoords.xy, projCoords.z - bias));
-
-
-    return shadow;
+    return mix(ambient, 1.0, shadow);
 }
 
 #endif
@@ -224,7 +219,7 @@ void main()
             lightVal = directionalLight();
 
 			#ifdef SHADOW
-				if(dot(normal, lightDir) < 0.0) { 
+				if(dot(normal, lightDir) < -0.1) { 
 					vec3 projCoords = shadowFragPos.xyz / shadowFragPos.w;
 					projCoords = projCoords * 0.5 + 0.5; // NDC -> [0,1]
 					bool outside = any(lessThan(projCoords.xy, vec2(0.0))) || any(greaterThan(projCoords.xy, vec2(1.0))) || projCoords.z > 1.0 || projCoords.z < 0.0;
@@ -232,11 +227,8 @@ void main()
 
 					shadowFactor = outside ? shadowFactor : ShadowPCF(projCoords);
 
-
 					// apply to light
-					if(shadowFactor < 1.0){
-						lightVal.rgb *= ambient;
-					}
+					lightVal.rgb *= shadowFactor;
 				}
 			#endif
         }
