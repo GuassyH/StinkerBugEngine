@@ -127,8 +127,8 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 		material->shader.SetVec4("lightColor", glm::vec4(l_col, 1.0f));
 		material->shader.SetBool("lightEnabled", light != nullptr);
 	}
-	glm::vec3& scene_amb = SceneManager::getInstance().GetActiveScene().ambient;
-	material->shader.SetVec3("ambient", light != nullptr ? light->ambient : scene_amb);
+	float& scene_amb = SceneManager::getInstance().GetActiveScene().ambient;
+	material->shader.SetFloat("ambient", light != nullptr ? light->ambient : scene_amb);
 
 	VAO1.Bind();
 	glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, 0);

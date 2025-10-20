@@ -24,12 +24,12 @@ public:
 	Scene() = default;
 	EntityObject& CreateEntity();
 	EntityObject& CreateEntity(std::string name);
+	float ambient = 0.2f;
 
 	// Physics
 	float gravity = -9.82f;
 
 	// Environment
-	glm::vec3 ambient = glm::vec3(0.2f);
 	EntityObject* main_light = nullptr;
 	EntityObject* main_camera = nullptr;
 	ECSystem Scene_ECS;

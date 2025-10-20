@@ -53,7 +53,7 @@ uniform bool lightEnabled;
 
 uniform vec3 camPos;
 uniform vec4 color;
-uniform vec3 ambient;
+uniform float ambient;
 
 
 in vec3 crntPos;
@@ -161,7 +161,7 @@ vec4 directionalLight(){
 	vec3 N = normalize(normal);
 	vec3 L = normalize(-lightDir); // direction from surface to light
 
-	float NdotL = max(dot(N,L), 0.0);
+	float NdotL = max(dot(N,L), ambient);
 
 	// specular
 	float specularStrength = 0.5;
@@ -171,6 +171,7 @@ vec4 directionalLight(){
 	float specular = specFactor * specularStrength;
 
 	vec3 rgb = lightColor.rgb * NdotL;
+
 	if(hasSpecular){
 		float s = texture(specular0, texCoords).r * specular;
 		rgb += vec3(s);
@@ -189,6 +190,7 @@ float ShadowPCF(vec3 projCoords){
     float bias = 0.0002;
     vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
 
+	/*
 	int samples = 3;
 	for(int x=-1; x<=1; ++x){
 		for(int y=-1; y<=1; ++y){
@@ -197,6 +199,10 @@ float ShadowPCF(vec3 projCoords){
 		}
 	}
 	shadow /= float(samples * samples);
+	*/
+
+	shadow += texture(ShadowMap, vec3(projCoords.xy, projCoords.z - bias));
+
 
     return shadow;
 }
