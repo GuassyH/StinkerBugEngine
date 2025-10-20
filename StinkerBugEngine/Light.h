@@ -41,7 +41,7 @@ public:
 	float radius = 1.0f;
 	
 	// Directional
-	float ambient = 0.4f;
+	float ambient = 0.5f;
 
 	// Spotlight
 	float angle = 30.0f;

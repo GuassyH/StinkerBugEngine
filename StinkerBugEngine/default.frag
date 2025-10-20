@@ -103,12 +103,11 @@ vec4 spotLight(LightObject lo){
 			float s = texture(specular0, texCoords).r * specular * fo_intensity;
 			finalCol += vec3(s);
 		}
-		return vec4(finalCol, 1.0);
+		return vec4(finalCol, 0.0);
 	}
 	
 	return vec4(0.0);
 }
-
 vec4 pointLight(LightObject lo) {
 	
 
@@ -156,7 +155,7 @@ vec4 pointLight(LightObject lo) {
     
 	return vec4(finalCol, 0.0);
 }
-
+vec4 areaLight(LightObject lo) { return vec4(0.0); }
 vec4 directionalLight(){
 	vec3 N = normalize(normal);
 	vec3 L = normalize(-lightDir); // direction from surface to light
@@ -180,11 +179,13 @@ vec4 directionalLight(){
 	vec4 finalCol = vec4(rgb, 1.0);
 	return finalCol;
 }
+
 #endif
 
 #ifdef SHADOW // I need to somehow smoothe the lines
 
 float ShadowPCF(vec3 projCoords){
+
     vec3 result = vec3(0.0);
 	float shadow = 0.0;
     float bias = 0.0002;
@@ -200,6 +201,28 @@ float ShadowPCF(vec3 projCoords){
 	shadow /= float(samples * samples);
 
     return mix(ambient, 1.0, shadow);
+/*
+    float shadow = 0.0;
+    float bias = 0.0002;
+    vec2 texelSize = 1.0 / textureSize(ShadowMap, 0);
+
+    int kernel = 5; // try 5 or even 7 for a big blur
+    float radius = 2.0; // how far out from center to sample
+
+    for(int x = -kernel/2; x <= kernel/2; ++x)
+    {
+        for(int y = -kernel/2; y <= kernel/2; ++y)
+        {
+            vec2 offset = vec2(x, y) * texelSize * radius;
+            shadow += texture(ShadowMap, vec3(projCoords.xy + offset, projCoords.z - bias));
+        }
+    }
+
+    int totalSamples = kernel * kernel;
+    shadow /= float(totalSamples);
+
+    return mix(ambient, 1.0, shadow);
+	*/
 }
 
 #endif
@@ -209,7 +232,12 @@ void main()
     // === Base color ===
     vec4 baseColor = hasDiffuse ? texture(diffuse0, texCoords) * color : color;
 
-    // Initialize lighting and depth factor
+	// === Depth ===
+	float depthVal = 1.0;
+	float dist = length(camPos - crntPos);
+    depthVal = 1.0 - (clamp(dist / 1000.0, 0.0, 1.0) / 2.0);
+
+    // === Lighting ===
     vec4 lightVal = vec4(1.0);
 
     // === Lighting pass ===
@@ -238,6 +266,7 @@ void main()
 
 		for (int i = 0; i < numLights; i++) {
 			LightObject lo = lightObjs[i];
+			lo.intensity = max(lo.intensity, 0.0);
 			// Calculate Light;
 			switch(lo.type){
 				case LIGHT_SPOTLIGHT:
@@ -247,6 +276,7 @@ void main()
 					lightVal += pointLight(lo);
 					break;
 				case LIGHT_AREA:
+					lightVal += areaLight(lo);
 					break;
 				default:
 					break;
@@ -256,7 +286,7 @@ void main()
 	#endif
 
     // === Final color composition ===
-    fragColor = baseColor * lightVal;
+    fragColor = baseColor * lightVal * depthVal;
 	// fragColor.rgb += ambient;
 
     // Opaque unless marked transparent

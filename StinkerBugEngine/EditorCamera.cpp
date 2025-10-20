@@ -159,7 +159,7 @@ void EditorCamera::Move() {
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) { elevator += 1; }
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) { elevator -= 1; }
 
-	glm::vec3 dir = vertical * camera->forward + horizontal * camera->right + elevator * Constants::Dirs::Up;
+	glm::vec3 dir = vertical * camera->forward + horizontal * camera->right + elevator * camera->localUp;
 	if (glm::length(dir) > 0) { moveDir = glm::normalize(dir); }
 	else { moveDir = glm::vec3(0.0); }
 

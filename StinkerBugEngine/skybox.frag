@@ -35,7 +35,7 @@ void main(){
 	vec3 rayDir = normalize(	(camForward) + rayCoord.x * aspect * scale * -camRight + rayCoord.y * scale * -camUp	);
 	vec3 rayOrigin = camPos;
 
-	vec3 skyColor = mix(SkyBoxLightColor, SkyBoxDarkColor, pow(1.0 - rayDir.y, 2.0));
+	vec3 skyColor = mix(SkyBoxLightColor, SkyBoxDarkColor, 1.0 - rayDir.y);
 
 	vec4 bloom = vec4(0.0);
 	if(dot(rayDir, -sunDir) > 0.999){ bloom = pow(max(0, dot(rayDir, -sunDir)), 4000) * sunColor; }

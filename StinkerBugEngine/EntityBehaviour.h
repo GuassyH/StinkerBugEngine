@@ -8,14 +8,23 @@
 
 #include "Constants.h"
 #include "DeltaTime.h"
+#include "Display.h"
 
 #include "ComponentsList.h"
 #include "WeakPtrProxy.h"
-#include "Display.h"
 
+#include "Model.h"
+#include "Material.h"
+
+#include "SceneManager.h"
+#include "Scene.h"
+
+#include "EntityObject.h"
+#include "ECSystem.h"
 
 class EntityBehaviour : public Component {
 public:
+
 	EntityBehaviour() = default;
 	virtual ~EntityBehaviour() = default;
 	virtual void Init() override;
@@ -24,6 +33,15 @@ public:
 	virtual void Update() {}
 	virtual void PhysicsUpdate() {}
 	virtual void OnCollisionEnter(Collider& other) {}
+
+	EntityObject& CreateEntity() {
+		EntityObject newObj = SceneManager::getInstance().GetActiveScene().CreateEntity(); 
+		return newObj;
+	}
+	EntityObject& CreateEntity(std::string name) { 
+		EntityObject newObj = SceneManager::getInstance().GetActiveScene().CreateEntity(name); 
+		return newObj;
+	}
 };
 
 

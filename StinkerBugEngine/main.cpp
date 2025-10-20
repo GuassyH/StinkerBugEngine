@@ -39,7 +39,6 @@ int main(void) {
 	UI& ui = UI::getInstance();
 	ui.imgui_init();
 
-
 	EntityObject dir_light = scene.CreateEntity("Sun Light");
 	dir_light.transform->AddComponent<Light>().light_type = LightTypes::Directional;
 	dir_light.transform->rotation = glm::vec3(50.0f, 205.0f, 0.0f);
@@ -55,11 +54,11 @@ int main(void) {
 	ghost.transform->rotation = glm::vec3(-90.0f, 0.0f, 0.0f);
 	ghost.transform->position.y = -0.05f;
 	ghost.transform->scale = glm::vec3(1);
+	ghost.transform->AddComponent<TestScript>();
 
 	EntityObject Floor = scene.CreateEntity("Floor");
 	Floor.transform->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Shadow));
 	Floor.transform->scale = glm::vec3(250.0f);
-	// Floor.transform->AddComponent<TestScript>();
 	// Floor.transform->AddComponent<SecondTest>();
 
 
