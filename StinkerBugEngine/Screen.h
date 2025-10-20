@@ -42,6 +42,7 @@ namespace Screen
 
 
 	static inline void InitFBO(float width, float height, unsigned int& fbo, unsigned int& rbo, unsigned int& tex) {
+		
 		// Create FBO
 		glGenFramebuffers(1, &fbo);
 		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -49,7 +50,7 @@ namespace Screen
 		// Create Texture and bind
 		glGenTextures(1, &tex);
 		glBindTexture(GL_TEXTURE_2D, tex);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -108,9 +109,10 @@ namespace Screen
 
 
 		Shader c_shader("ColToID.vert", "ColToID.frag");
-		std::shared_ptr<Material> id_mat_ptr = std::make_shared<Material>(c_shader, MaterialFlags_Depth);;
+		std::shared_ptr<Material> id_mat_ptr = std::make_shared<Material>(c_shader);;
 		glm::vec4 id_color = glm::vec4(0.0f);
 
+		glDisable(GL_FRAMEBUFFER_SRGB);
 		for (auto& [id, components_renderer] : scene.Scene_ECS.components[typeid(MeshRenderer)]) {
 			MeshRenderer& renderer = *std::static_pointer_cast<MeshRenderer>(components_renderer);
 			if (!renderer.model || !renderer.material) { continue; }	// If there isnt a model and material then skip
@@ -124,6 +126,7 @@ namespace Screen
 
 			renderer.model->render(id_mat_ptr, scene.Scene_ECS.GetComponentPtr<Transform>(id), camera, nullptr);
 		}
+		glEnable(GL_FRAMEBUFFER_SRGB);
 
 		// Read the pixel at the mouse position
 		GLubyte pixel[4];

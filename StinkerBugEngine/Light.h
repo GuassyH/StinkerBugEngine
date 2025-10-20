@@ -21,7 +21,7 @@ struct alignas(16) LightBufferObject {
 	float radius_o;
 	float radius;
 	float intensity;
-	int pad1;
+	float angle;
 	int pad2; // pad to 32 byte
 	glm::vec3 pos;
 	float pad3;
@@ -38,19 +38,20 @@ public:
 	glm::vec4 color = glm::vec4(1.0f);
 	float intensity = 1.0f;
 
-	bool cast_shadows = true;
+	float radius = 1.0f;
 
 	// Spotlight
-	float distance;
-	float radius_i;
-	float radius_o;
+	float angle = 30.0f;
 
-	// Pointlight
-	float radius;
+	// Point light
+	bool cast_shadows = true;
+	float radius_i = 0.5f;
+	float radius_o = 1.0f;
+
 
 	virtual void DrawOnInspector() override {
 		if (ImGui::CollapsingHeader("Light")) {
-			const char* items[] = { "Directional", "Spotlight", "Point", "Area" };
+			const char* items[] = { "Directional", "Spot", "Point", "Area" };
 			int current_item = static_cast<int>(light_type);
 			if (ImGui::Combo("Light Type", &current_item, items, IM_ARRAYSIZE(items))) {
 				light_type = static_cast<LightTypes>(current_item);
@@ -61,9 +62,8 @@ public:
 
 			switch(light_type) {
 			case LightTypes::Spotlight:
-				ImGui::DragFloat("Distance", &distance, 0.1f, 0.0f);
-				ImGui::DragFloat("Inner Radius", &radius_i, 0.1f, 0.0f);
-				ImGui::DragFloat("Outer Radius", &radius_o, 0.1f, 0.0f);
+				ImGui::DragFloat("Range", &radius, 0.1f, 0.0f);
+				ImGui::DragFloat("Angle", &angle, 0.1f, 0.0f);
 				ImGui::DragFloat("Intensity", &intensity, 0.1f, 0.0f);
 				break;
 			case LightTypes::Point:

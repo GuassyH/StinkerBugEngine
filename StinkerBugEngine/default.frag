@@ -19,7 +19,7 @@
 		float radius_o;	
 		float radius;
 		float intensity;
-		int pad1;
+		float angle;
 		int pad2;
 		vec3 pos;
 		float pad3;
@@ -55,6 +55,7 @@ uniform vec3 camPos;
 uniform vec4 color;
 uniform float ambient = 0.2;
 
+
 in vec3 crntPos;
 in vec2 texCoords;
 in vec3 vertNormal;
@@ -63,18 +64,58 @@ in vec3 normal;
 out vec4 fragColor;
 
 
+
 #ifdef LIT
 
 vec4 spotLight(LightObject lo){
-	return vec4(1.0);
+	vec3 finalCol = vec3(1.0);
+    
+	vec3 lightVec = lo.pos - crntPos;
+	float dist = length(lightVec);
+	if(dist >= lo.radius) { return vec4(0.0); }
+	
+	float dst_intensity = 1.0 - (dist / lo.radius);
+
+	// Diffuse
+	vec3 lightDir = normalize(lo.pos - crntPos);   // frag > light (for diffuse)
+	vec3 toFrag   = -lightDir;                     // light > frag (for cone)
+	float diffuse = max(dot(normal, lightDir), 0.0);
+
+	// Cone Stuff
+	float cutOff = cos(radians(lo.angle));
+	float theta = dot(lo.dir, toFrag);
+	
+	float outerCutOff = cos(radians(lo.angle + 5.0));
+	float fo_intensity = clamp((theta - outerCutOff) / (cutOff - outerCutOff), 0.0, 1.0);
+
+	// specular lighting
+	float specularLight = 0.50;
+	vec3 viewDirection = normalize(camPos - crntPos);
+	vec3 reflectionDirection = reflect(-toFrag, normal);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0), 16);
+	float specular = specAmount * specularLight;
+
+	// If inside the cone
+	if (theta > outerCutOff) {
+		finalCol = lo.color.rgb * dst_intensity * diffuse * fo_intensity * lo.intensity;
+
+		if(hasSpecular){
+			float s = texture(specular0, texCoords).r * specular * fo_intensity;
+			finalCol += vec3(s);
+		}
+		return vec4(finalCol, 1.0);
+	}
+	
+	return vec4(0.0);
 }
 
 vec4 pointLight(LightObject lo) {
-
+	
 
 	// use inverse square law to calculate intensity
 	vec3 lightVec = lo.pos - crntPos;
 	float dist = length(lightVec);
+
 
 	if(dist >= lo.radius_o) { return vec4(0.0); }
 	
@@ -112,9 +153,6 @@ vec4 pointLight(LightObject lo) {
         finalCol += vec3(s);
     }
 
-	// finalCol.r = max(finalCol.r, 0.0);
-	// finalCol.g = max(finalCol.g, 0.0);
-	// finalCol.b = max(finalCol.b, 0.0);
     
 	return vec4(finalCol, 0.0);
 }
@@ -167,13 +205,6 @@ void main()
 
     // Initialize lighting and depth factor
     vec4 lightVal = vec4(1.0);
-    float depthVal = 1.0;
-
-    // === Optional depth-based fade (temporary separation) ===
-    #ifdef DEPTH
-        float dist = length(camPos - crntPos);
-        depthVal = 1.0 - clamp(dist / 1000.0, 0.0, 1.0);
-    #endif
 
     // === Lighting pass ===
     #ifdef LIT
@@ -187,30 +218,11 @@ void main()
 				bool outside = any(lessThan(projCoords.xy, vec2(0.0))) || any(greaterThan(projCoords.xy, vec2(1.0))) || projCoords.z > 1.0 || projCoords.z < 0.0;
 				float shadowFactor = 1.0;
 
-				if(!outside){
-					// epsilon to handle precision issues
-					float eps = 0.001;
+				shadowFactor = outside ? 1.0 : ShadowPCF(projCoords);
 
-					// distance from map edge
-					float edgeDist = min(min(projCoords.x, 1.0 - projCoords.x),
-										 min(projCoords.y, 1.0 - projCoords.y));
-
-					// factor 0.0 at edge, 1.0 inside
-					float edgeFade = smoothstep(0.0, eps, edgeDist);
-
-					// factor 0.0 if depth outside 0..1
-					float depthFade = smoothstep(1.0 + eps, 1.0, projCoords.z);
-
-					// normal PCF shadow sampling
-					float shadowPCF = ShadowPCF(projCoords);
-
-					// combine: near edge or outside = more shadow, inside = normal PCF
-					shadowFactor = mix(ambient, shadowPCF, edgeFade * depthFade);
-				}
 				// apply to light
 				lightVal.rgb *= max(shadowFactor, ambient * 2.0);
 			#endif
-
         }
         else
         {
@@ -221,7 +233,7 @@ void main()
 			// Calculate Light;
 			switch(lo.type){
 				case LIGHT_SPOTLIGHT:
-					lightVal *= spotLight(lo);
+					lightVal += spotLight(lo);
 					break;
 				case LIGHT_POINT:
 					lightVal += pointLight(lo);
@@ -233,7 +245,12 @@ void main()
 	#endif
 
     // === Final color composition ===
-    fragColor = baseColor * lightVal * depthVal;
+    fragColor = baseColor * lightVal;
+
+	// float gamma = 2.2;
+	// vec3 gammaCor = pow(fragColor.rgb, vec3(1.0 / gamma)); 
+
+	// fragColor.rgb = gammaCor;
 
     // Opaque unless marked transparent
     fragColor.a = isTransparent ? fragColor.a : 1.0;

@@ -50,14 +50,14 @@ int main(void) {
 	main_camera.transform->position = glm::vec3(0.0f, 1.0f, 5.0f);
 
 	EntityObject ghost = scene.CreateEntity("Stewart (Cute Ghost Guy)");
-	ghost.transform->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+	ghost.transform->AddComponent<MeshRenderer>(new Model(), new Material(MaterialFlags_Lit | MaterialFlags_Shadow));
 	ghost.transform->GetComponent<MeshRenderer>().model->loadModel("assets/models/cute_ghost/scene.gltf");
 	ghost.transform->rotation = glm::vec3(-90.0f, 0.0f, 0.0f);
-	ghost.transform->position.y = 0.01f;
+	ghost.transform->position.y = -0.05f;
 	ghost.transform->scale = glm::vec3(2);
 
 	EntityObject Floor = scene.CreateEntity("Floor");
-	Floor.transform->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+	Floor.transform->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Plane()), new Material(MaterialFlags_Lit | MaterialFlags_Shadow));
 	Floor.transform->scale = glm::vec3(250.0f);
 	// Floor.transform->AddComponent<TestScript>();
 	// Floor.transform->AddComponent<SecondTest>();

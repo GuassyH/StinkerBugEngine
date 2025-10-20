@@ -98,8 +98,10 @@ void UI::imgui_render(Scene& scene) {
 
 	ImGui::End();
 
+	glDisable(GL_FRAMEBUFFER_SRGB);
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	glEnable(GL_FRAMEBUFFER_SRGB);
 
 	
 	// io.IniFilename = "layout.ini"; // This like resets it? Im unsure

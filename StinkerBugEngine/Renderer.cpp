@@ -70,6 +70,7 @@ void Renderer::recalculateLightsBuffer(std::unordered_map<std::type_index, std::
         new_lbo.radius = light.radius;
         new_lbo.radius_i = light.radius_i;
         new_lbo.radius_o = light.radius_o;
+        new_lbo.angle = light.angle;
         new_lbo.pos = light.transform->position;
         new_lbo.dir = light.transform->DegToVec();
         new_lbo.color = light.color;

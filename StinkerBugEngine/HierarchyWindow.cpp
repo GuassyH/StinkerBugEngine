@@ -72,7 +72,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		if (ImGui::Button("Create Spot Light", button_size)) {
 			EntityObject new_ntt = scene.CreateEntity("Spot Light");
 			new_ntt.transform->AddComponent<Light>();
-			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Point;
+			new_ntt.transform->GetComponent<Light>().light_type = LightTypes::Spotlight;
 			new_ntt.transform->GetComponent<Light>().radius_o = 10.0f;
 			new_ntt.transform->GetComponent<Light>().radius_i = 0.5f;
 			new_ntt.transform->GetComponent<Light>().intensity = 0.600;
@@ -96,7 +96,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 		if (ImGui::Button("Create Cube", button_size)) {
 			EntityObject new_ntt = scene.CreateEntity("Cube");
-			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Shadow));
 			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
@@ -104,7 +104,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		}
 		if (ImGui::Button("Create Sphere", button_size)) {
 			EntityObject new_ntt = scene.CreateEntity("Sphere");
-			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::UVSphere()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::UVSphere()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Shadow));
 			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();
@@ -112,7 +112,7 @@ void HierarchyWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 		}
 		if (ImGui::Button("Create Plane", button_size)) {
 			EntityObject new_ntt = scene.CreateEntity("Plane");
-			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Plane()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+			new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Plane()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Shadow));
 			new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 			selected_entity = new_ntt.transform->entity;
 			new_ntt.~EntityObject();

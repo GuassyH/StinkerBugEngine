@@ -22,7 +22,6 @@ FullScreenPass::FullScreenPass(Material& material) : material(&material) {
 	EBO1.Unbind();
 
 	FullScreenPass::material->RemoveFlag(MaterialFlags_Lit);
-	FullScreenPass::material->RemoveFlag(MaterialFlags_Depth);
 	FullScreenPass::material->RemoveFlag(MaterialFlags_Shadow);
 	FullScreenPass::material->AddFlag(MaterialFlags_FullscreenPass);
 	

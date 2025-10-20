@@ -57,9 +57,6 @@ Shader::Shader(const char* vertexShaderFile, const char* fragmentShaderFile, Mat
 		if(material->HasFlag(MaterialFlags_Lit)) {
 			defStr << "#define LIT" << "\n";
 		}
-		if(material->HasFlag(MaterialFlags_Depth)) {
-			defStr << "#define DEPTH" << "\n";
-		}
 		if(material->HasFlag(MaterialFlags_Shadow)) {
 			defStr << "#define SHADOW" << "\n";
 		}
@@ -114,9 +111,6 @@ void Shader::Recompile(Material* material) {
 	else {
 		if (material->HasFlag(MaterialFlags_Lit)) {
 			defStr << "#define LIT" << "\n";
-		}
-		if (material->HasFlag(MaterialFlags_Depth)) {
-			defStr << "#define DEPTH" << "\n";
 		}
 		if (material->HasFlag(MaterialFlags_Shadow)) {
 			defStr << "#define SHADOW" << "\n";

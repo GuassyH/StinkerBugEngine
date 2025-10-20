@@ -80,9 +80,10 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 		textures[i].Bind();
 	}
 
-	Renderer::getInstance().bindLightsBuffer();
-	// std::cout << std::to_string(Renderer::getInstance().GetNumLights()) << " : " << std::to_string(glfwGetTime()) << std::endl;
-	material->shader.SetInt("numLights", Renderer::getInstance().GetNumLights());
+	if (material->HasFlag(MaterialFlags_Lit)) {
+		Renderer::getInstance().bindLightsBuffer();
+		material->shader.SetInt("numLights", Renderer::getInstance().GetNumLights());
+	}
 
 	material->shader.SetInt("hasDiffuse", diffuseIdx > 0);
 	material->shader.SetInt("hasSpecular", specularIdx > 0);
@@ -103,6 +104,7 @@ void Mesh::render(std::shared_ptr<Material> material, std::shared_ptr<Transform>
 	// Others
 	material->shader.SetVec3("camPos", cam->transform->position);
 	material->shader.SetVec4("color", material->color);
+
 
 	// Light properties
 	glm::vec3 l_dir;

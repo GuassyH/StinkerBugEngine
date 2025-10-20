@@ -80,7 +80,7 @@ void InspectorWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 			if (!scene.Scene_ECS.HasComponent<MeshRenderer>(selected_entity)) {
 				if (ImGui::Button("Mesh Renderer", ImVec2(235, 20))) {
 					EntityObject new_ntt; new_ntt.transform = scene.Scene_ECS.GetComponentPtr<Transform>(selected_entity);
-					new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Depth | MaterialFlags_Shadow));
+					new_ntt.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(Constants::Shapes::Cube()), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Shadow));
 					new_ntt.transform->GetComponent<MeshRenderer>().material->color = Constants::Colors::White;
 					ImGui::CloseCurrentPopup();
 					new_ntt.~EntityObject();

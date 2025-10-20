@@ -56,15 +56,7 @@ public:
 						material->AddFlag(MaterialFlags_Lit);
 					}
 				}
-				if (ImGui::Selectable("Depth", material->HasFlag(MaterialFlags_Depth), ImGuiSelectableFlags_None, ImVec2(50, 20))) {
-					if (material->HasFlag(MaterialFlags_Depth)) {
-						material->RemoveFlag(MaterialFlags_Depth);
-					}
-					else {
-						material->AddFlag(MaterialFlags_Depth);
-					}
-				}
-				if (ImGui::Selectable("Shadow", material->HasFlag(MaterialFlags_Shadow), ImGuiSelectableFlags_None, ImVec2(50, 20))) {
+				if (ImGui::Selectable("Shadow Receiver", material->HasFlag(MaterialFlags_Shadow), ImGuiSelectableFlags_None, ImVec2(50, 20))) {
 					if (material->HasFlag(MaterialFlags_Shadow)) {
 						material->RemoveFlag(MaterialFlags_Shadow);
 					}

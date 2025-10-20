@@ -8,11 +8,10 @@
 enum MaterialFlags_ {
 	MaterialFlags_None = 0,
 	MaterialFlags_Lit = 1 << 1,
-	MaterialFlags_Depth = 1 << 2,
-	MaterialFlags_NoDepthTest = 1 << 3,
-	MaterialFlags_Shadow = 1 << 4,
-	MaterialFlags_FullscreenPass = 1 << 5,
-	MaterialFlags_Transparent = 1 << 6,
+	MaterialFlags_NoDepthTest = 1 << 2,
+	MaterialFlags_Shadow = 1 << 3,
+	MaterialFlags_FullscreenPass = 1 << 4,
+	MaterialFlags_Transparent = 1 << 5,
 };
 
 class Material {

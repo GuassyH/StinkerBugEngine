@@ -92,7 +92,10 @@ void Display::BeginFrame() {
 	glClearColor(0.1f, 0.1f, 0.13f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	glEnable(GL_BLEND);
+	glEnable(GL_FRAMEBUFFER_SRGB);
+
 	glViewport(0, 0, windowWidth, windowHeight); // Should i do this?
 }
 

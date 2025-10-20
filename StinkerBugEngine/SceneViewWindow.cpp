@@ -41,7 +41,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	ImGui::SameLine();
 	ImGui::Selectable("Render Shadows", &editorCamera->camera->renderShadows, ImGuiSelectableFlags_None, ImVec2(100, 20));
 	ImGui::SameLine();
-	ImGui::Selectable("Local Gizmos", &editorCamera->gizmosLocalSpace, ImGuiSelectableFlags_None, ImVec2(80, 20));
+	ImGui::Selectable("Local Gizmos", &editorCamera->gizmosLocalSpace, ImGuiSelectableFlags_None, ImVec2(85, 20));
 	ImGui::SameLine();
 	ImGui::SetCursorPosX(ImGui::GetWindowSize().x - 50);
 	ImGui::Selectable("Stats", &showStats, ImGuiSelectableFlags_None, ImVec2(35, 20)); // SHOULD BE MENU?
