@@ -38,12 +38,13 @@ public:
 **Models**
 
 Loading models is easy. Simply create an entity then follow this step-by-step:
-new_entity.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_Lit | MaterialFlags_Shadow | MaterialFlags_Depth));
+new_entity.transform->AddComponent<MeshRenderer>(std::make_shared<Model>(), std::make_shared<Material>(MaterialFlags_YourChoice));
 new_entity.transform->GetComponent<MeshRenderer>.model->loadModel("assets/models/file_path/file_scene.gltf");
 new_entity.transform->GetComponent<MeshRenderer>.material->Color = Constants::Colors::White *OR* glm:vec4(1.0f);
 
 *NOTE* 
 You need to set the path of the model to the *scene.gltf* not just the folder. The model loader will manage the rest
+Also you CAN say AddComponent<MeshRenderer>(new Model(), new Material(flags)); HOWEVER it is a lot more resource intensive and less safe
 
 **EntityBehaviour**
 The EntityBehaviour class is what allows custom scripts that can be added to the object.
