@@ -14,15 +14,7 @@ public:
 
 			// it NEEDS to be an object, NOT a reference or pointer
 			EntityObject newEnt = CreateEntity("Test Script Entity");
-
-			if (!newEnt.transform) {
-				std::cout << "NULL" << std::endl;
-			}
-			else {
-				std::cout << "Not Null" << std::endl;
-
-				newEnt.transform->AddComponent<Camera>();
-			}
+			newEnt.transform->AddComponent<MeshRenderer>(new Model(Constants::Shapes::Cube()), new Material(MaterialFlags_Lit | MaterialFlags_Shadow));
 		}
 		else {
 			firstclick = true;

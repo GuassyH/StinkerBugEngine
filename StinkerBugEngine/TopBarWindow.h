@@ -18,6 +18,9 @@ private:
 	Texture PauseTexture;
 	Texture NextTexture;
 
+	Texture PlayingBlip;
+	Texture PausedBlip;
+
 	Display& display = Display::getInstance();
 public:
 	bool play_scene = false;

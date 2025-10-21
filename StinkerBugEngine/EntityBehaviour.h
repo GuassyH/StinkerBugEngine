@@ -34,12 +34,12 @@ public:
 	virtual void PhysicsUpdate() {}
 	virtual void OnCollisionEnter(Collider& other) {}
 
-	EntityObject& CreateEntity() {
-		EntityObject newObj = SceneManager::getInstance().GetActiveScene().CreateEntity(); 
+	EntityObject CreateEntity() {
+		EntityObject& newObj = SceneManager::getInstance().GetActiveScene().CreateEntity(); 
 		return newObj;
 	}
-	EntityObject& CreateEntity(std::string name) { 
-		EntityObject newObj = SceneManager::getInstance().GetActiveScene().CreateEntity(name); 
+	EntityObject CreateEntity(std::string name) { 
+		EntityObject& newObj = SceneManager::getInstance().GetActiveScene().CreateEntity(name); 
 		return newObj;
 	}
 };

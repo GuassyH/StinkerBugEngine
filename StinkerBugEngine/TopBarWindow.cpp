@@ -12,6 +12,14 @@ void TopBarWindow::Init() {
 	NextTexture = Texture("assets/textures/editor", "NextButton.png");
 	NextTexture.numColCh = 4;
 	NextTexture.Load(true, GL_LINEAR);
+
+	PlayingBlip = Texture("assets/textures/editor", "PlayingBlip.png");
+	PlayingBlip.numColCh = 4;
+	PlayingBlip.Load(true, GL_LINEAR);
+
+	PausedBlip = Texture("assets/textures/editor", "PausedBlip.png");
+	PausedBlip.numColCh = 4;
+	PausedBlip.Load(true, GL_LINEAR);
 }
 
 void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
@@ -23,6 +31,12 @@ void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected
 	ImGuiStyle* custom_style = &ImGui::GetStyle();
 	ImVec2 org_pad = custom_style->ItemSpacing;
 	custom_style->ItemSpacing = ImVec2(0.0, 0.0);
+
+	if (play_scene) {
+		ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 70, 7));
+		ImGui::Image((ImTextureID)(intptr_t) pause_scene ? PausedBlip.ID : PlayingBlip.ID, ImVec2(20, 20));
+	}
+
 	ImGui::SetCursorPos(ImVec2((display.windowWidth / 2.0f) - 45, 3));
 	if(ImGui::ImageButton("PlayButton", (ImTextureID)(intptr_t)PlayTexture.ID, ImVec2(20, 20), ImVec2(0,0), ImVec2(1,1))) {
 		play_scene = play_scene ? false : true;

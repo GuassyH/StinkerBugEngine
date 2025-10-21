@@ -197,7 +197,7 @@ void EditorCamera::Look() {
 
 	// Scroll wheel speed adjust
 	if (display.scroll != 0) {
-		moveSpeed = glm::max(0.5f, moveSpeed + (display.scroll > 0 ? 0.5f : -0.5f));
+		moveSpeed = glm::fclamp(moveSpeed * (display.scroll > 0 ? 2.0f : 0.5f), 0.5f, 256.0f);
 	}
 
 
