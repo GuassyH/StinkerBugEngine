@@ -18,7 +18,7 @@
 
 class Transform;
 class Camera;
-struct Light;
+class Light;
 
 struct Mesh {
 public:

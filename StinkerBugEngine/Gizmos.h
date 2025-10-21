@@ -168,15 +168,15 @@ namespace Gizmos {
             arrowZ.gc->reg_color = z_color;
 
             // X Arrow
-            arrowX.mr->model->loadModel("assets/models/editor/gizmos/arrow/arrow_cubed.gltf");
+            arrowX.mr->model->loadModel("editor/models/gizmos/arrow/arrow_cubed.gltf");
             arrowX.transform->scale = glm::vec3(0.5f);
 
             // Y Arrow
-            arrowY.mr->model->loadModel("assets/models/editor/gizmos/arrow/arrow_cubed.gltf");
+            arrowY.mr->model->loadModel("editor/models/gizmos/arrow/arrow_cubed.gltf");
             arrowY.transform->scale = glm::vec3(0.5f);
 
             // Z Arrow
-            arrowZ.mr->model->loadModel("assets/models/editor/gizmos/arrow/arrow_cubed.gltf");
+            arrowZ.mr->model->loadModel("editor/models/gizmos/arrow/arrow_cubed.gltf");
             arrowZ.transform->scale = glm::vec3(0.5f);
 
             // Ball in the middle 
@@ -235,15 +235,15 @@ namespace Gizmos {
 
 
             // X Arrow
-            scaleX.mr->model->loadModel("assets/models/editor/gizmos/scale_handle/scale_handle.gltf");
+            scaleX.mr->model->loadModel("editor/models/gizmos/scale_handle/scale_handle.gltf");
             scaleX.mr->transform->scale = glm::vec3(0.5f);
 
             // Y Arrow
-            scaleY.mr->model->loadModel("assets/models/editor/gizmos/scale_handle/scale_handle.gltf");
+            scaleY.mr->model->loadModel("editor/models/gizmos/scale_handle/scale_handle.gltf");
             scaleY.mr->transform->scale = glm::vec3(0.5f);
 
             // Z Arrow
-            scaleZ.mr->model->loadModel("assets/models/editor/gizmos/scale_handle/scale_handle.gltf");
+            scaleZ.mr->model->loadModel("editor/models/gizmos/scale_handle/scale_handle.gltf");
             scaleZ.mr->transform->scale = glm::vec3(0.5f);
 
             // Ball in the middle
@@ -295,15 +295,15 @@ namespace Gizmos {
             rotateZ.gc->reg_color = z_color;
 
             // X Arrow
-            rotateX.mr->model->loadModel("assets/models/editor/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateX.mr->model->loadModel("editor/models/gizmos/rotation_wheel/rotation_wheel.gltf");
             rotateX.mr->transform->scale = glm::vec3(0.5f);
 
             // Y Arrow
-            rotateY.mr->model->loadModel("assets/models/editor/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateY.mr->model->loadModel("editor/models/gizmos/rotation_wheel/rotation_wheel.gltf");
             rotateY.mr->transform->scale = glm::vec3(0.5f);
 
             // Z Arrow
-            rotateZ.mr->model->loadModel("assets/models/editor/gizmos/rotation_wheel/rotation_wheel.gltf");
+            rotateZ.mr->model->loadModel("editor/models/gizmos/rotation_wheel/rotation_wheel.gltf");
             rotateZ.mr->transform->scale = glm::vec3(0.5f);
 
             rotateX.rotation_offset = glm::vec3(0.0f, 0.0f, -90.0f);

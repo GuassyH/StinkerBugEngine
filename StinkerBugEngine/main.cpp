@@ -24,8 +24,6 @@
 
 int main(void) {
 
-	// try {
-
 	Display& display = Display::getInstance();
 	if (display.Init(2344, 1280, "Stinker Bug Engine") == -1) { std::runtime_error("Display failed to Initialize"); }
 
@@ -75,11 +73,6 @@ int main(void) {
 	sceneManager.UnloadScene();
 	ui.imgui_shutdown();
 	display.~Display();
-
-	// } catch (const std::exception& e) {
-		// std::cerr << "Caught exception: " << e.what() << std::endl;
-		// return -1;
-	// }
 
 	return 0;
 }

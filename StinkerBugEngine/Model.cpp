@@ -1,10 +1,12 @@
 #include "Model.h"
 
 Model::Model(Mesh& mesh) {
+	valid = true;
 	meshes.push_back(mesh);
 }
 
 Model::Model(const Constants::Shapes::Shape& shape) {
+	valid = true;
 	Mesh mesh(shape);
 	meshes.push_back(mesh);
 }
@@ -49,10 +51,18 @@ void Model::loadModel(std::string path) {
 	Assimp::Importer import;
 	const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
 	
+	std::vector<Mesh>().swap(meshes);
+	
+	valid = false;
+
 	if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
 		std::cout << "Could not load model at " << path << std::endl << import.GetErrorString() << std::endl;
+		
+		valid = false;
 		return;
 	}
+	valid = true;
+
 	directory = path.substr(0, path.find_last_of("/"));
 	processNode(scene->mRootNode, scene);
 

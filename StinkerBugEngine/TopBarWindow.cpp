@@ -1,30 +1,30 @@
 #include "TopBarWindow.h"
 
 void TopBarWindow::Init() {
-	PlayTexture = Texture("assets/textures/editor", "PlayButton.png");
+	PlayTexture = Texture("editor/textures", "PlayButton.png");
 	PlayTexture.numColCh = 4;
 	PlayTexture.Load(true, GL_LINEAR);
 
-	PauseTexture = Texture("assets/textures/editor", "PauseButton.png");
+	PauseTexture = Texture("editor/textures", "PauseButton.png");
 	PauseTexture.numColCh = 4;
 	PauseTexture.Load(true, GL_LINEAR);
 
-	NextTexture = Texture("assets/textures/editor", "NextButton.png");
+	NextTexture = Texture("editor/textures", "NextButton.png");
 	NextTexture.numColCh = 4;
 	NextTexture.Load(true, GL_LINEAR);
 
-	PlayingBlip = Texture("assets/textures/editor", "PlayingBlip.png");
+	PlayingBlip = Texture("editor/textures", "PlayingBlip.png");
 	PlayingBlip.numColCh = 4;
 	PlayingBlip.Load(true, GL_LINEAR);
 
-	PausedBlip = Texture("assets/textures/editor", "PausedBlip.png");
+	PausedBlip = Texture("editor/textures", "PausedBlip.png");
 	PausedBlip.numColCh = 4;
 	PausedBlip.Load(true, GL_LINEAR);
 }
 
 void TopBarWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 
-	ImGui::SetNextWindowSize(ImVec2(display.windowWidth, 30));
+	ImGui::SetNextWindowSize(ImVec2(display.windowWidth, 30.0f));
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::Begin("Top_ToolbarWindow", &opened, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoDocking);
 

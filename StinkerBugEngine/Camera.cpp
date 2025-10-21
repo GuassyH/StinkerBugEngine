@@ -88,7 +88,7 @@ void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 	
 	// Opaque
 	for (auto& call : Renderer::getInstance().opaque_meshes) {
-		if (!call.transform || !call.renderer) { continue; }
+		if (!call.transform || !call.renderer || !call.renderer->model->valid) { continue; }
 		call.renderer->model->render(call.renderer->material, call.transform.lock(), this, light);
 	}
 
@@ -96,7 +96,7 @@ void Camera::LightingPass(glm::mat4 light_VP, Light* light) {
 
 	// Transparent Not fully working
 	for (auto& call : Renderer::getInstance().transparent_meshes) {
-		if (!call.transform || !call.renderer) { continue; }
+		if (!call.transform || !call.renderer || !call.renderer->model->valid) { continue; }
 		call.renderer->model->render(call.renderer->material, call.transform.lock(), this, light);
 	}
 }

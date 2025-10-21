@@ -72,7 +72,7 @@ int Display::Init(unsigned int windowWidth, unsigned int windowHeight, const cha
 	// Icon!!
 	GLFWimage icon_image = GLFWimage();
 	int icon_size_x, icon_size_y, numColCh;
-	icon_image.pixels = stbi_load("assets/textures/editor/StinkerBugIcon.png", &icon_size_x, &icon_size_y, &numColCh, 4);
+	icon_image.pixels = stbi_load("editor/textures/StinkerBugIcon.png", &icon_size_x, &icon_size_y, &numColCh, 4);
 	icon_image.height = icon_size_y;
 	icon_image.width = icon_size_x;
 

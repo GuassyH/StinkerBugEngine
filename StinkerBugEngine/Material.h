@@ -6,19 +6,21 @@
 #include "Renderer.h"
 
 enum MaterialFlags_ {
-	MaterialFlags_None = 0,
-	MaterialFlags_Lit = 1 << 1,
-	MaterialFlags_NoDepthTest = 1 << 2,
-	MaterialFlags_Shadow = 1 << 3,
-	MaterialFlags_FullscreenPass = 1 << 4,
-	MaterialFlags_Transparent = 1 << 5,
+	MaterialFlags_None =			0,
+	MaterialFlags_Lit =				1 << 1,
+	MaterialFlags_NoDepthTest =		1 << 2,
+	MaterialFlags_Shadow =			1 << 3,
+	MaterialFlags_FullscreenPass =	1 << 4,
+	MaterialFlags_Transparent =		1 << 5,
 };
 
 class Material {
+private:
+	uint32_t flags;
+
 public:
 	glm::vec4 color = glm::vec4(1.0);
 	Shader shader;
-	uint32_t flags;
 
 	// Texture diffuse0;
 	// Texture specular0;
@@ -37,6 +39,9 @@ public:
 		if ((flag & MaterialFlags_Transparent) == MaterialFlags_Transparent) { // If one of the flags added is transparency, queue a rebuild
 			Renderer::getInstance().queue_mesh_rebuild = true;
 		}
+	}
+	void ClearFlags() {
+		flags &= 0b0;
 	}
 
 	void Recompile() {
