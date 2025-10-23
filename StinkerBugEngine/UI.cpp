@@ -41,7 +41,6 @@ void UI::imgui_init() {
 
 
 void UI::imgui_render(Scene* scene) {
-	if (!scene) { std::runtime_error("ImGui tried to render with a null scene"); }
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -90,11 +89,11 @@ void UI::imgui_render(Scene* scene) {
 	}
 
 
-	gameWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
-	sceneViewWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
-	hierarchyWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
-	inspectorWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
-	consoleWindow.Draw(*scene, is_entity_selected, selected_entity, Editor_ECS);
+	gameWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	sceneViewWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	hierarchyWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	inspectorWindow.Draw(scene, is_entity_selected, selected_entity, Editor_ECS);
+	consoleWindow.Draw();
 	assetWindow.Draw();
 
 	ImGui::End();

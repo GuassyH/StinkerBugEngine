@@ -19,10 +19,11 @@ void SceneViewWindow::Init(ECSystem& editor_ecs) {
 }
  
 
-void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
+void SceneViewWindow::Draw(Scene* scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 
 	// Begin SceneViewWindow
 	ImGui::Begin("Scene View");
+	if (!scene) { ImGui::End(); return; }
 
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
 	if (!window || !window->Active || !window->WasActive || window->Hidden == true)
@@ -52,7 +53,7 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 	// Actual editor Camera
 	editorCamera->camera->width = ImGui::GetWindowWidth();
 	editorCamera->camera->height = ImGui::GetWindowHeight();
-	editorCamera->Render(scene, is_entity_selected, selected_entity, editor_ecs);
+	editorCamera->Render(*scene, is_entity_selected, selected_entity, editor_ecs);
 	if (editorCamera->camera->output_texture ) { 
 
 		ImVec2 windowSize = ImGui::GetContentRegionAvail();
@@ -121,10 +122,10 @@ void SceneViewWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selec
 
 
 	if (ImGui::IsWindowHovered()) {
-		editorCamera->SelectObject(scene, is_entity_selected, selected_entity, editor_ecs);
+		editorCamera->SelectObject(*scene, is_entity_selected, selected_entity, editor_ecs);
 		if (glfwGetKey(display.window, GLFW_KEY_F) == GLFW_PRESS) {
 			if (glfwGetMouseButton(display.window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE) {
-				editorCamera->transform->position = scene.Scene_ECS.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
+				editorCamera->transform->position = scene->Scene_ECS.GetComponent<Transform>(selected_entity).position - (editorCamera->camera->forward * 5.0f);
 			}
 		}
 	}

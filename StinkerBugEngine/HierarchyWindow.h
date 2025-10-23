@@ -15,5 +15,5 @@ private:
 
 	Display& display = Display::getInstance();
 public:
-	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
+	void Draw(Scene* scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 };

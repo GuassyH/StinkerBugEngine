@@ -2,9 +2,11 @@
 #include "Screen.h"
 
 int selectedRes = 5;
-void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
+void GameWindow::Draw(Scene* scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
 	// Begin Game View window
 	ImGui::Begin("Game View");
+
+	if (!scene) { ImGui::End(); return; }
 
 	ImGuiWindow* window = ImGui::GetCurrentWindow();
 	if (!window || !window->Active || !window->WasActive || window->Hidden == true)
@@ -13,12 +15,12 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 		return;
 	}
 
-	if (!scene.HasMainCamera()) {
+	if (!scene->HasMainCamera()) {
 		ImGui::End();
 		return;
 	}
 
-	Camera& camera = scene.main_camera->transform->GetComponent<Camera>();
+	Camera& camera = scene->main_camera->transform->GetComponent<Camera>();
 	if (camera.width <= 0 || camera.height <= 0) {
 		ImGui::End();
 		std::cout << "Camera has invalid dimensions\n";
@@ -60,7 +62,7 @@ void GameWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_e
 		camera.output_texture = new Texture(1920, 1080);
 	}
 
-	camera.Render(&scene);
+	camera.Render(scene);
 
 	ImVec2 windowSize = ImGui::GetContentRegionAvail();
 	ImVec2 windowPos = ImGui::GetWindowPos(); // top-left of the window in screen coordinates

@@ -8,7 +8,7 @@
 
 class EntitySelector {
 public:
-	void Draw(Scene& scene, Entity& ID, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
+	void Draw(Scene* scene, Entity& ID, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 };
 
 #endif

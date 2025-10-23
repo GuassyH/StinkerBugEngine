@@ -16,5 +16,5 @@ private:
 	ConsoleCapture consoleCapture;
 
 public:
-	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
+	void Draw();
 };

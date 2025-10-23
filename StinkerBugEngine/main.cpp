@@ -20,7 +20,6 @@
 #include "Model.h"
 
 #include "TestScript.h"
-#include "SecondTest.h"
 
 int main(void) {
 
@@ -59,8 +58,8 @@ int main(void) {
 	Floor.transform->scale = glm::vec3(250.0f);
 
 
-	Scene* active_scene = &sceneManager.GetActiveScene();
 	while (!glfwWindowShouldClose(display.window)) {
+		Scene* active_scene = &sceneManager.GetActiveScene();
 		
 		display.BeginFrame();
 

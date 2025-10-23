@@ -71,8 +71,8 @@ namespace Gizmos {
 
                 // Set rotation
                 if (local_space) {
-                    glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.transform->GetComponent<Transform>().rotation.z) : glm::vec3(0.0f);
-			        obj.transform->rotation = selected_entity_helper.transform->GetComponent<Transform>().rotation + obj.rotation_offset + additional_offset;
+                    glm::vec3 additional_offset = obj.needs_neg_z ? glm::vec3(0.0f, 0.0f, -selected_entity_helper.transform->rotation.z) : glm::vec3(0.0f);
+			        obj.transform->rotation = selected_entity_helper.transform->rotation + obj.rotation_offset + additional_offset;
                 }
                 else {
                     obj.transform->rotation = obj.rotation_offset;

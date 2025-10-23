@@ -2,7 +2,7 @@
 
 
 
-void ConsoleWindow::Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs) {
+void ConsoleWindow::Draw() {
 	ImGui::Begin("Console");
 	ImGui::Spacing();
 

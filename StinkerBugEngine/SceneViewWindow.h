@@ -28,6 +28,6 @@ public:
 
 	SceneViewWindow() = default;
 	void Init(ECSystem& editor_ecs);
-	void Draw(Scene& scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
+	void Draw(Scene* scene, bool& is_entity_selected, Entity& selected_entity, ECSystem& editor_ecs);
 	
 };
